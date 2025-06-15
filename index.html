@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/flashcard/">
+    <title>AI Flashcard 生成器</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        /* 输入区域样式 */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        /* 按钮样式 */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #generateButton {
+            background-color: #2ecc71;
+            color: white;
+            flex: 1;
+        }
+
+        #generateButton:hover {
+            background-color: #27ae60;
+        }
+
+        #clearButton {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #clearButton:hover {
+            background-color: #c0392b;
+        }
+
+        /* 模型选择 */
+        .model-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            /* 也可以考虑添加 background-color, focus 效果等 */
+        }
+
+        .model-description {
+            display: block; /* 或者 none，由 JS 控制 */
+            margin-top: 5px;
+            color: #555;
+            font-size: 0.875em; /* 略小于主体文字 */
+        }
+        
+        /* 消息和结果样式 */
+        .message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .error {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .success {
+            background-color: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .loading {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+            gap: 10px;
+        }
+        
+        .loading.show {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        }
+
+        /* Flashcard 样式改进 */
+        .flashcard {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* 添加轻微阴影提升层次感 */
+            position: relative; /* 为了放置删除按钮 */
+            transition: box-shadow 0.3s, transform 0.3s; /* 添加过渡效果 */
+        }
+
+        /* 导出按钮合集 */
+        .hidden {
+            display: none;
+        }
+        .mb-20 { /* margin-bottom 20px */
+            margin-bottom: 20px;
+        }
+        .mt-15 { /* margin-top 15px */
+            margin-top: 15px;
+        }
+        .mt-20 {
+            margin-top: 20px;
+        }
+        .d-flex {
+            display: flex;
+        }
+        .gap-10 {
+            gap: 10px;
+        }
+
+        .form-select { /* for select */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box; /* 确保 padding 和 border 不增加总宽度 */
+        }
+
+        .form-input { /* for text inputs */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .btn { /* Base button style */
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            flex: 1; /* if inside a flex container and want them to grow */
+        }
+        .btn-primary {
+            background-color: #3498db; /* 蓝色，例如 "复制" */
+            color: white;
+        }
+        .btn-primary:hover { /* Add hover states */
+            background-color: #2980b9;
+        }
+        .btn-success {
+            background-color: #2ecc71; /* 绿色，例如 "下载" */
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        #exportSection h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em; /* 调整标题大小 */
+        }
+
+        #ankiMarkdownInputs {
+            padding: 15px;
+            background-color: #f9f9f9; /* 轻微背景色区分 */
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px; /* 与下方按钮的间距 */
+        }
+
+        /* 可以为输入框组添加一些间距 */
+        #exportSection .input-group {
+            margin-bottom: 15px;
+        }
+        #exportSection .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        #exportSection label {
+            font-weight: 500; /* 标签加粗一点 */
+        }
+
+        /* 导出按钮的悬停效果 (如果你的主题没有统一处理) */
+        #exportActionButton:hover {
+            background-color: #2980b9;
+        }
+        #downloadButton:hover {
+            background-color: #27ae60;
+        }
+
+        /* 卡片悬停效果 */
+        .flashcard:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px); /* 轻微上浮效果 */
+        }
+
+        .flashcard .question {
+            font-weight: 600;
+            color: #1e40af; /* 深蓝色问题 */
+            margin-bottom: 12px; /* 增加与答案的间距 */
+            font-size: 1.05em; /* 问题字体稍大 */
+            padding-right: 30px; /* 为删除按钮留出空间 */
+        }
+
+        .flashcard .answer {
+            color: #334155; /* 深灰色答案 */
+            line-height: 1.5; /* 增加行高提高可读性 */
+            padding-top: 8px; /* 增加上内边距 */
+            border-top: 1px solid #f0f0f0; /* 添加轻微分隔线 */
+        }
+
+        /* 删除按钮样式 */
+        .delete-btn {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            width: 28px;  /* 确保宽高相等 */
+            height: 28px;
+            background-color: #f8f9fa; /* 浅灰色背景 */
+            color: #6c757d; /* 灰色图标 - 未激活状态 */
+            border-radius: 50%; /* 确保是圆形 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            border: 1px solid #e9ecef; /* 淡色边框增加立体感 */
+            transition: all 0.2s;
+            opacity: 0.7;
+            padding: 0; /* 移除默认padding */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* 轻微阴影 */
+        }
+
+        /* 删除按钮悬停效果 */
+        .delete-btn:hover {
+            opacity: 1;
+            background-color: #f8d7da; /* 淡红色背景 */
+            color: #dc3545; /* 红色图标 */
+            border-color: #f5c2c7; /* 红色边框 */
+        }
+
+        /* 确认状态样式单独定义 */
+        .delete-btn.confirming {
+            width: 52px !important; /* 确保宽度统一 */
+            border-radius: 15px !important; /* 圆角矩形 */
+            background-color: #dc3545 !important;
+            color: white !important;
+            font-size: 13px !important; /* 字体稍小 */
+            opacity: 1 !important;
+        }
+
+        /* 加载动画 */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        
+        /* 反馈内容 */
+         .feedback-section {
+		    text-align: center;
+		    margin-top: 30px;
+		    padding-top: 20px;
+		    border-top: 1px solid #eee;
+		}
+		.feedback-link {
+		    color: #007bff;
+		    text-decoration: none;
+		}
+		.feedback-link:hover { /* 建议添加悬停效果 */
+		    text-decoration: underline;
+		}
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Flashcard 生成器</h1>
+        
+        <!-- 输入区域 -->
+        <div class="input-group">
+            <label for="apiKey">OpenRouter API 密钥:</label>
+            <input type="password" id="apiKey" placeholder="输入你的 OpenRouter API 密钥">
+        </div>
+
+        <div class="input-group">
+            <label for="inputText">输入文本:</label>
+            <textarea id="inputText" placeholder="在此粘贴需要生成 Flashcard 的文本..."></textarea>
+        </div>
+
+        <!-- 3.模型选择 -->
+        <div class="input-group">
+            <label for="modelSelect">选择 AI 模型:</label>
+            <select id="modelSelect" class="model-select">
+                <!-- 选项将由 JavaScript 动态填充 -->
+                <option value="">加载中...</option>
+            </select>
+            <small id="modelDescription" class="model-description"></small>
+        </div>
+
+        <!-- 按钮区域 -->
+        <div class="button-group">
+            <button id="generateButton" onclick="generateFlashcards()">生成 Flashcards</button>
+            <button id="clearButton" onclick="clearInputs()">清除输入</button>
+        </div>
+
+        <!-- 导出功能区 -->
+        <div id="exportSection" class="mb-20 hidden">
+            <h2>导出选项</h2>
+            <div class="input-group">
+                <label for="exportFormatSelect">选择导出格式:</label>
+                <select id="exportFormatSelect" class="form-select">
+                    <option value="anki_markdown" selected>Anki - Markdown (含Deck/Tags)</option>
+                    <option value="anki_tab">Anki - 制表符分隔 (Q A)</option>
+                    <option value="csv">CSV (逗号分隔)</option>
+                    <option value="json">JSON 格式</option>
+                </select>
+            </div>
+            <div id="ankiMarkdownInputs" class="mt-15">
+                <div class="input-group">
+                    <label for="deckNameInput">牌组名称 (Deck Name):</label>
+                    <input type="text" id="deckNameInput" placeholder="例如：我的学习卡片" class="form-input">
+                </div>
+                <div class="input-group">
+                    <label for="tagsInput">标签 (Tags, 逗号分隔):</label>
+                    <input type="text" id="tagsInput" placeholder="例如：学习,AI,编程" class="form-input">
+                </div>
+            </div>
+            <div class="mt-20 d-flex gap-10">
+                <button id="exportActionButton" onclick="performExport()" class="btn btn-primary">复制到剪贴板</button>
+                <button id="downloadButton" onclick="performDownload()" class="btn btn-success">下载文件</button>
+            </div>
+        </div>
+
+        <!-- 消息区域 -->
+        <div id="errorMessage" class="message error"></div>
+        <div id="successMessage" class="message success"></div>
+        <div id="loadingMessage" class="message loading">
+            <span class="spinner"></span>
+            <span>正在生成 Flashcards，请稍候...</span>
+        </div>
+
+        <!-- 结果区域 -->
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // 保存和加载 API 密钥
+        const apiKeyInput = document.getElementById('apiKey');
+        if (localStorage.getItem('openRouterApiKey')) {
+            apiKeyInput.value = localStorage.getItem('openRouterApiKey');
+        }
+        apiKeyInput.addEventListener('input', () => {
+            localStorage.setItem('openRouterApiKey', apiKeyInput.value);
+        });
+        
+        // 显示消息的辅助函数
+        function showMessage(type, messageText) {
+            const errorEl = document.getElementById('errorMessage');
+            const successEl = document.getElementById('successMessage');
+            const loadingEl = document.getElementById('loadingMessage');
+
+            // 首先隐藏所有
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+            loadingEl.classList.remove('show'); // 直接移除 show 类
+
+            if (type === 'loading') {
+                loadingEl.classList.add('show');
+            } else if (type === 'error' && messageText) {
+                errorEl.textContent = messageText;
+                errorEl.style.display = 'block';
+            } else if (type === 'success' && messageText) {
+                successEl.textContent = messageText;
+                successEl.style.display = 'block';
+            }
+        }
+
+        //模型选择
+        const modelSelect = document.getElementById('modelSelect');
+        const modelDescriptionElement = document.getElementById('modelDescription');
+        
+        async function loadModels() {
+            try {
+                // 根据你的实际API路径调整
+                // 云端⚠️ api/supported_models
+                //本地改为 http://127.0.0.1:8000/supported_models
+                const response = await fetch('http://127.0.0.1:8000/supported_models');
+                if (!response.ok) {
+                    throw new Error(`获取模型列表失败: ${response.status}`);
+                }
+                const data = await response.json();
+
+                modelSelect.innerHTML = ''; // 清空加载中提示
+
+                if (data && data.models && Object.keys(data.models).length > 0) {
+                    for (const modelId in data.models) {
+                        const model = data.models[modelId];
+                        const option = document.createElement('option');
+                        option.value = modelId;
+                        // 可以显示模型名称，如果描述简短也可以加上
+                        // option.textContent = `${model.name} (${model.description || '无描述'})`;
+                        option.dataset.name = model.name;
+                        option.dataset.description = model.description || '';
+                        option.dataset.suggestedUse = model.suggested_use || '';
+                        option.textContent = model.name;
+                        modelSelect.appendChild(option);
+                    }
+                    // 默认选中第一个，并显示描述
+                    
+                    if (data.default_model_id && modelSelect.querySelector(`option[value="${data.default_model_id}"]`)) {
+                        modelSelect.value = data.default_model_id;
+                    } else if (modelSelect.options.length > 0) {
+                        // 如果后端没指定，或指定的ID不存在，则默认选择第一个
+                        modelSelect.selectedIndex = 0;
+                    }
+                    updateModelDescription();
+                    modelSelect.addEventListener('change', updateModelDescription);
+
+                } else {
+                    const option = document.createElement('option');
+                    option.value = "";
+                    option.textContent = "无可用模型";
+                    modelSelect.appendChild(option);
+                    modelSelect.disabled = true;
+                }
+            } catch (error) {
+                console.error('加载模型列表错误:', error);
+                modelSelect.innerHTML = '<option value="">加载模型失败</option>';
+                modelSelect.disabled = true;
+                showMessage('error', `无法加载模型列表: ${error.message}`);
+            }
+        }
+
+        // 生成 Flashcards
+        let currentGeneratedCards = []; // 初始化为一个空数组
+        async function generateFlashcards() {
+            const apiKey = apiKeyInput.value.trim();
+            const text = document.getElementById('inputText').value.trim();
+            const resultsDiv = document.getElementById('results');
+            // const copyButton = document.getElementById('copyButton');
+            const selectedModel = modelSelect.value; // 获取选中的模型ID
+
+            // 输入验证
+            if (!apiKey) {
+                showMessage('error', '请输入 OpenRouter API 密钥');
+                return;
+            }
+            if (!text) {
+                showMessage('error', '请输入要处理的文本');
+                return;
+            }
+
+            // API密钥格式验证
+            if (!validateApiKey(apiKey)) {
+                showMessage('error', '无效的 API 密钥');
+                return;
+            }
+
+            // 输入长度验证
+            const inputValidation = validateInputLength(text);
+            if (!inputValidation.valid) {
+                showMessage('error', inputValidation.warning);
+                return;
+            }
+            
+            // AI模型验证
+            if (!selectedModel) {
+                showMessage('error', '请选择一个 AI 模型');
+                return;
+            }
+
+            // 准备生成
+            showMessage('loading');
+            resultsDiv.innerHTML = '';
+            // copyButton.style.display = 'none'; // 旧的复制按钮，现在由导出区控制
+
+            hideExportOptions(); // 开始生成时先隐藏导出选项
+            currentGeneratedCards = []; // <--- 重要：每次生成前先清空旧的卡片数据
+
+            // 云端修改⚠️api/generate_flashcards/
+            //本地改为 http://127.0.0.1:8000/generate_flashcards/
+            try {
+                const response = await fetch('http://127.0.0.1:8000/generate_flashcards/', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        api_key: apiKey,
+                        model_name: selectedModel // <--- 添加选择的模型
+                    })
+                });
+
+                const data = await response.json();
+                
+                // 打印data
+                // console.log('data.detail:', data.detail);
+
+                if (!response.ok) {
+                    // data.detail 可能是字符串，也可能是对象
+                    let errorMsg = '';
+                    if (data && typeof data.detail === 'object' && data.detail.message) {
+                        errorMsg = data.detail.message;
+                    } else if (data && typeof data.detail === 'string') {
+                        errorMsg = data.detail;
+                    } else {
+                        errorMsg = '生成 Flashcards 时发生未知错误';
+                    }
+                    throw new Error(errorMsg);
+                    console.error('Server error:', errorMsg, 'Raw data:', data); // 记录更详细的错误信息
+                    hideExportOptions(); // 确保导出区隐藏
+                    return; // 提前退出
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                    console.error('Application error from backend:', data.error);
+                    hideExportOptions();
+                    return;
+                }
+
+                // 显示结果
+                if (data.flashcards && data.flashcards.length > 0) {
+                    // 1. ⭐ 存储原始数据 ⭐
+                    currentGeneratedCards = data.flashcards.map((card, index) => ({
+                        ...card, // 复制后端返回的 q 和 a
+                        id: `card-${Date.now()}-${index}` // 为每个卡片添加一个唯一的ID，用于后续删除操作
+                    }));
+                    
+                    currentGeneratedCards.forEach(cardData => {
+                        const cardElement = document.createElement('div');
+                        cardElement.className = 'flashcard';
+                        cardElement.dataset.cardId = cardData.id; // ⭐ 将唯一ID存储在DOM元素上
+                        
+                        // 创建删除按钮
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'delete-btn';
+                        deleteBtn.innerHTML = '×'; 
+                        deleteBtn.title = '删除';
+                        deleteBtn.onclick = function(e) {
+                            e.stopPropagation(); // 防止事件冒泡
+                            const cardIdToDelete = cardElement.dataset.cardId; // 获取要删除的卡片的ID
+                            
+                            // 已经处于确认状态
+                            if (deleteBtn.classList.contains('confirming')) {
+                                cardElement.style.height = '0';
+                                cardElement.style.opacity = '0';
+                                cardElement.style.margin = '0';
+                                cardElement.style.padding = '0';
+                                cardElement.style.overflow = 'hidden';
+                                
+                                // 300ms后彻底移除元素
+                                setTimeout(() => {
+                                    cardElement.remove();
+                                    
+                                    // ⭐ 4. 从 currentGeneratedCards 中移除对应的数据 ⭐
+                                    currentGeneratedCards = currentGeneratedCards.filter(
+                                        c => c.id !== cardIdToDelete
+                                    );
+
+                                    // 检查是否还有卡片
+                                    if (currentGeneratedCards.length === 0) {
+                                        // copyButton.style.display = 'none';
+                                        hideExportOptions(); // 如果没有卡片了，隐藏导出区
+                                        showMessage('error', '已删除所有卡片');
+                                    }else{
+                                        showMessage('success', `卡片已删除。剩余 ${currentGeneratedCards.length} 张。`);
+                                    }
+                                }, 300);
+                            } else {
+                                // 进入确认状态
+                                deleteBtn.classList.add('confirming');
+                                deleteBtn.innerHTML = '确认';
+                                
+                                // 3秒后如果没确认，恢复原状
+                                setTimeout(() => {
+                                    if (deleteBtn.classList.contains('confirming')) {
+                                        deleteBtn.classList.remove('confirming');
+                                        deleteBtn.innerHTML = '×';
+                                    }
+                                }, 3000);
+                            }
+                        };
+                        
+                        // 创建问题和答案元素
+                        const questionElement = document.createElement('div');
+                        questionElement.className = 'question';
+                        questionElement.textContent = 'Q: ' + cardData.q;
+                        
+                        const answerElement = document.createElement('div');
+                        answerElement.className = 'answer';
+                        answerElement.textContent = 'A: ' + cardData.a;
+                        
+                        // 将元素添加到卡片
+                        cardElement.appendChild(deleteBtn);
+                        cardElement.appendChild(questionElement);
+                        cardElement.appendChild(answerElement);
+                        
+                        // 将卡片添加到结果区域
+                        resultsDiv.appendChild(cardElement);
+                    });
+
+                    // copyButton.style.display = 'block';
+                    showExportOptions(); // <--- ⭐ 显示新的导出区域 ⭐
+                    showMessage('success', `成功生成 ${currentGeneratedCards.length} 个 Flashcards！`);
+                } else {
+                    showMessage('error', '未能生成任何 Flashcards');
+                    currentGeneratedCards = []; // 确保即使返回空数组，内存数据也是空的
+                    hideExportOptions();
+                }
+
+            } catch (error) {
+                showMessage('error', error.message);
+                console.error('Error:', error);
+                currentGeneratedCards = []; // 发生严重错误，清空数据
+                hideExportOptions();
+            }
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // 在这里获取所有页面加载完成后才存在的 DOM 元素
+            const exportSection = document.getElementById('exportSection');
+            const exportFormatSelect = document.getElementById('exportFormatSelect');
+            const ankiMarkdownInputs = document.getElementById('ankiMarkdownInputs');
+            const deckNameInput = document.getElementById('deckNameInput');
+            const tagsInput = document.getElementById('tagsInput');
+            // const resultsDiv = document.getElementById('results'); // resultsDiv 也在这里获取
+            
+            // --- 事件监听 ---
+            if (exportFormatSelect) {
+                exportFormatSelect.addEventListener('change', handleFormatChange);
+                handleFormatChange();
+            }
+        });
+
+        // --- 函数定义 ---
+        function handleFormatChange() {
+            if (!exportFormatSelect || !ankiMarkdownInputs) return;
+            const selectedFormat = exportFormatSelect.value;
+            ankiMarkdownInputs.style.display = (selectedFormat === 'anki_markdown') ? 'block' : 'none';
+        }
+
+        function showExportOptions() {
+            if (exportSection) exportSection.style.display = 'block';
+        }
+
+        function hideExportOptions() {
+            if (exportSection) exportSection.style.display = 'none';
+        }
+
+        // ====================================================================
+        // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ 这部分是主要修改点 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+        // 辅助函数：直接从内存中获取当前处理的 Flashcards 数据
+        function getCurrentFlashcardsData() {
+            return currentGeneratedCards; // 直接返回内存中的数据
+        }
+
+        // --- 格式化函数 (这些保持不变) ---
+        function formatAnkiMarkdown(cards, deck, tagsString) {
+            // 处理 deck/tags
+            const deckName = deck.trim() || 'Default Deck'; // 获取用户输入的牌组名称，或使用默认值
+            const tagsArray = tagsString
+                ? tagsString.split(',').map(tag => tag.trim()).filter(tag => tag)
+                : ['GeneratedFlashcard']; // 如果用户未输入标签，则使用默认标签数组
+            
+            let output = [];// 用于拼接所有卡片的文本
+
+            cards.forEach(card => {
+                let cardText = "```anki\n"; // <--- 为每张卡片添加开始标记
+                cardText += `deck: ${deckName}\n`;;
+                cardText += `tags:\n`;
+                if (tagsArray.length > 0) {
+                    tagsArray.forEach(tag => {
+                        cardText += `  - ${tag}\n`;
+                    });
+                }
+                cardText += `---\n`;
+                cardText += `问题：${card.q}\n`; // card.q 现在是纯净的
+                cardText += `===\n`;
+                cardText += `答案：${card.a}\n\n`; // card.a 现在是纯净的
+                cardText += "```"; 
+                // output += cardText;
+                output.push(cardText);
+            });
+            return output.join('\n\n');
+        }
+
+        function formatAnkiTab(cards) {
+            return cards.map(card => `${card.q}\t${card.a}`).join('\n'); // card.q 和 card.a 是纯净的
+        }
+
+        function formatCsv(cards) {
+            let csvContent = '"Question","Answer"\n';
+            cards.forEach(card => {
+                const q = card.q.replace(/"/g, '""'); // card.q 是纯净的
+                const a = card.a.replace(/"/g, '""'); // card.a 是纯净的
+                csvContent += `"${q}","${a}"\n`;
+            });
+            return csvContent.trim();
+        }
+
+        function formatJson(cards) {
+            return JSON.stringify(cards, null, 2); // cards 现在是纯净的数组
+        }
+
+        // --- 导出和下载核心函数 (这些保持不变) ---
+        function getFormattedText() {
+            const cards = getCurrentFlashcardsData(); // 现在这里得到的是纯净数据
+            if (cards.length === 0) {
+                showMessage('error', '没有可导出的 Flashcards');
+                return null;
+            }
+
+            const format = exportFormatSelect.value;
+            let formattedText = '';
+
+            switch (format) {
+                case 'anki_markdown':
+                    const deck = deckNameInput.value.trim();
+                    const tags = tagsInput.value.trim();
+                    if (!deck) {
+                        showMessage('error', '请输入牌组名称 (Deck Name)');
+                        deckNameInput.focus(); // 建议加上
+                        return null;
+                    }
+                    formattedText = formatAnkiMarkdown(cards, deck, tags);
+                    break;
+                case 'anki_tab':
+                    formattedText = formatAnkiTab(cards);
+                    break;
+                case 'csv':
+                    formattedText = formatCsv(cards);
+                    break;
+                case 'json':
+                    formattedText = formatJson(cards);
+                    break;
+                default:
+                    showMessage('error', '未知的导出格式');
+                    return null;
+            }
+            return formattedText;
+        }
+
+        async function performExport() {
+            const textToCopy = getFormattedText();
+            if (textToCopy === null) return;
+
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                showMessage('success', '已复制到剪贴板！');
+            } catch (err) {
+                showMessage('error', '复制失败: ' + err.message);
+                console.error('复制失败:', err);
+                // 考虑提供一个 textarea 让用户手动复制 (这部分逻辑可以后续添加)
+                // const fallbackCopyArea = document.getElementById('fallbackCopyArea');
+                // if (fallbackCopyArea) {
+                //     fallbackCopyArea.value = textToCopy;
+                //     fallbackCopyArea.style.display = 'block';
+                //     fallbackCopyArea.select();
+                //     showMessage('info', '自动复制失败，请从下方文本框手动复制。');
+                // }
+            }
+        }
+
+        function performDownload() {
+            const textToDownload = getFormattedText();
+            if (textToDownload === null) return;
+
+            const format = exportFormatSelect.value;
+            let filename = "flashcards";
+            let mimeType = "text/plain";
+
+            switch (format) {
+                case 'anki_markdown':
+                    filename += ".md";
+                    mimeType = "text/markdown";
+                    break;
+                case 'anki_tab':
+                    filename += ".txt"; // 通常制表符分隔也用 .txt
+                    break;
+                case 'csv':
+                    filename += ".csv";
+                    mimeType = "text/csv";
+                    break;
+                case 'json':
+                    filename += ".json";
+                    mimeType = "application/json";
+                    break;
+            }
+
+            const blob = new Blob([textToDownload], { type: `${mimeType};charset=utf-8` }); // 已修正 typo
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a); // 附加到 body 以确保在所有浏览器中工作
+            a.click();
+            document.body.removeChild(a); // 清理
+            URL.revokeObjectURL(url);
+            showMessage('success', `文件 ${filename} 已开始下载！`);
+        }
+
+        // 复制为 Anki 格式
+        async function copyToAnki() {
+            const flashcards = document.getElementsByClassName('flashcard');
+            if (flashcards.length === 0) {
+                showMessage('error', '没有可复制的 Flashcards');
+                return;
+            }
+
+            let ankiText = '';
+            Array.from(flashcards).forEach(card => {
+                // 注意这里，因为结构改变，需要获取文本内容并去掉"Q: "和"A: "前缀
+                const question = card.querySelector('.question').textContent.replace('Q: ', '').trim();
+                const answer = card.querySelector('.answer').textContent.replace('A: ', '').trim();
+                ankiText += `${question}\t${answer}\n`;
+            });
+
+            try {
+                await navigator.clipboard.writeText(ankiText.trim());
+                showMessage('success', '已复制到剪贴板！');
+            } catch (err) {
+                showMessage('error', '复制失败: ' + err.message);
+                console.error('复制失败:', err);
+            }
+        }
+
+        // HTML 转义函数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 验证 API 密钥
+        function validateApiKey(apiKey) {
+            return apiKey && /^sk-or-.+/.test(apiKey.trim());
+        }
+
+        // 验证输入长度
+        function validateInputLength(text, min=20, max=4000) {
+            if (text.length < min) return {valid: false, warning: "输入内容过短，建议添加更多上下文。"};
+            if (text.length > max) return {valid: false, warning: "输入内容过长，可能超出LLM处理能力。"};
+            return {valid: true};
+        }
+
+        // 清除输入框
+        function clearInputs() {
+            document.getElementById('inputText').value = '';
+            // API密钥通常不需要清除，因为用户可能希望保留它
+            // 但如果需要同时清除API密钥，取消下面这行的注释
+            // document.getElementById('apiKey').value = '';
+            
+            hideExportOptions(); // <--- 清除输入时也隐藏导出区域
+            // 清除结果区域
+            document.getElementById('results').innerHTML = '';
+            
+            // 隐藏复制按钮
+            // document.getElementById('copyButton').style.display = 'none';
+            
+            // 清除所有提示消息
+            showMessage('', '');
+        }
+
+        // 更新模型信息
+        function updateModelDescription() {
+            const selectedOption = modelSelect.options[modelSelect.selectedIndex];
+            if (selectedOption && selectedOption.value) { // Ensure it's a real model, not "loading"
+                const desc = selectedOption.dataset.description;
+                const use = selectedOption.dataset.suggestedUse;
+                let displayText = '';
+                if (desc) displayText += `${desc}. `;
+                if (use) displayText += `建议用途: ${use}`;
+
+                if (displayText) {
+                    modelDescriptionElement.textContent = displayText.trim();
+                    modelDescriptionElement.style.display = 'block';
+                } else {
+                    modelDescriptionElement.style.display = 'none';
+                }
+            } else {
+                modelDescriptionElement.style.display = 'none';
+            }
+        }
+
+        // 页面加载时调用
+        document.addEventListener('DOMContentLoaded', loadModels);
+
+
+
+    </script>
+
+    <div class="feedback-section">
+    <p>遇到问题或有任何建议？
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSeHYHOkUJDkkA8_GH184edc4W9ElhJtee9H7RLaRCse-DCAgA/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="feedback-link">
+            点击这里反馈
+        </a>
+    </p>
+    </div>
+
+</body>
+</html>
