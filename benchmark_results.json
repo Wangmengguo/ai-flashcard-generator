@@ -1,0 +1,60 @@
+{
+  "timestamp": "2025-06-20 22:18:10",
+  "parsing_performance": {
+    "iterations": 1000,
+    "test_cases": 5,
+    "results_match": false,
+    "original_function": {
+      "avg_time_ms": 0.01804001829586923,
+      "min_time_ms": 0.006207963451743126,
+      "max_time_ms": 0.3440419677644968,
+      "median_time_ms": 0.007207971066236496,
+      "p95_time_ms": 0.05500001134350896,
+      "total_time_ms": 90.20009147934616
+    },
+    "optimized_function": {
+      "avg_time_ms": 0.0146898889914155,
+      "min_time_ms": 0.005332985892891884,
+      "max_time_ms": 0.12241699732840061,
+      "median_time_ms": 0.006165995728224516,
+      "p95_time_ms": 0.04449998959898949,
+      "total_time_ms": 73.4494449570775
+    },
+    "improvement": {
+      "avg_speedup": 1.22805681556964,
+      "total_speedup": 1.22805681556964,
+      "time_saved_ms": 16.750646522268653,
+      "improvement_percent": 18.570542720684692
+    }
+  },
+  "memory_usage": {
+    "original_peak_mb": 0.015270233154296875,
+    "optimized_peak_mb": 0.019193649291992188,
+    "memory_saved_mb": -0.0039234161376953125,
+    "memory_improvement_percent": -25.69323007744192
+  },
+  "regex_performance": {
+    "simple": {
+      "avg_time_ms": 0.00023186043836176395,
+      "min_time_ms": 0.00016600824892520905,
+      "max_time_ms": 0.001167005393654108,
+      "matches_found": 1
+    },
+    "complex": {
+      "avg_time_ms": 0.08807661279570311,
+      "min_time_ms": 0.08579099085181952,
+      "max_time_ms": 0.12245797552168369,
+      "matches_found": 281
+    },
+    "optimized": {
+      "avg_time_ms": 0.08886725310003385,
+      "min_time_ms": 0.08537503890693188,
+      "max_time_ms": 0.12574996799230576,
+      "matches_found": 281
+    }
+  },
+  "test_environment": {
+    "test_cases": 5,
+    "total_test_text_length": 890
+  }
+}

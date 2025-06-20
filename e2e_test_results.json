@@ -1,0 +1,160 @@
+[
+  {
+    "template": "academic",
+    "max_cards_requested": 8,
+    "cards_generated": 8,
+    "response_time": 3.286513090133667,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "academic",
+      "template_name": "学术研究",
+      "max_cards": 8,
+      "cards_generated": 8,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 482
+    }
+  },
+  {
+    "template": "exam",
+    "max_cards_requested": 6,
+    "cards_generated": 6,
+    "response_time": 3.164376974105835,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "exam",
+      "template_name": "考试备考",
+      "max_cards": 6,
+      "cards_generated": 6,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 411
+    }
+  },
+  {
+    "template": "language",
+    "max_cards_requested": 10,
+    "cards_generated": 10,
+    "response_time": 5.1338348388671875,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "language",
+      "template_name": "语言学习",
+      "max_cards": 10,
+      "cards_generated": 10,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 1159
+    }
+  },
+  {
+    "template": "technical",
+    "max_cards_requested": 7,
+    "cards_generated": 6,
+    "response_time": 3.7443699836730957,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "technical",
+      "template_name": "技术文档",
+      "max_cards": 7,
+      "cards_generated": 6,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 685
+    }
+  },
+  {
+    "template": "general",
+    "max_cards_requested": 5,
+    "cards_generated": 3,
+    "response_time": 0.0952901840209961,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "default",
+      "template_name": "通用模板",
+      "max_cards": 5,
+      "cards_generated": 3,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 173
+    }
+  },
+  {
+    "template": "general",
+    "max_cards_requested": 1,
+    "cards_generated": 1,
+    "response_time": 0.16272807121276855,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "default",
+      "template_name": "通用模板",
+      "max_cards": 1,
+      "cards_generated": 1,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 45
+    }
+  },
+  {
+    "template": "language",
+    "max_cards_requested": 50,
+    "cards_generated": 50,
+    "response_time": 13.469654083251953,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "language",
+      "template_name": "语言学习",
+      "max_cards": 50,
+      "cards_generated": 50,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 2717
+    }
+  },
+  {
+    "template": "general",
+    "max_cards_requested": 5,
+    "status": "error",
+    "error": {
+      "detail": [
+        {
+          "type": "string_too_short",
+          "loc": [
+            "body",
+            "text"
+          ],
+          "msg": "String should have at least 1 character",
+          "input": "",
+          "ctx": {
+            "min_length": 1
+          }
+        }
+      ]
+    },
+    "response_time": 0.08910989761352539
+  },
+  {
+    "template": "academic",
+    "max_cards_requested": 10,
+    "cards_generated": 1,
+    "response_time": 2.9034812450408936,
+    "status": "success",
+    "token_usage": {},
+    "processing_info": {
+      "prompt_source": "template",
+      "template_used": "academic",
+      "template_name": "学术研究",
+      "max_cards": 10,
+      "cards_generated": 1,
+      "model_used": "google/gemini-2.5-flash-preview",
+      "raw_output_length": 302
+    }
+  }
+]
