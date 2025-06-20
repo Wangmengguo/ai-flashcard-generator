@@ -3,4 +3,8 @@ uvicorn>=0.24.0
 httpx>=0.25.0
 pydantic>=2.4.2
 python-dotenv>=1.0.0
-gunicorn>=21.2.0 
+gunicorn>=21.2.0
+
+# 性能测试和监控依赖
+aiohttp>=3.8.0
+memory-profiler>=0.61.0 

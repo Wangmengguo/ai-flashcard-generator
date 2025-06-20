@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Flashcard 生成器 - 增强版</title>
+    <style>
+        /* 全局变量 */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #22c55e;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --border-focus: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+        }
+
+        /* 基础样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-secondary);
+            min-height: 100vh;
+        }
+
+        /* 容器样式 */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .main-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* 标题栏 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* 导航标签 */
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--bg-primary);
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* 内容区域 */
+        .content {
+            padding: 2rem;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 表单样式 */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: var(--primary-color);
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: var(--bg-primary);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+        }
+
+        .form-textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Prompt自定义区域 */
+        .prompt-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .prompt-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .template-card {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-card.selected {
+            border-color: var(--primary-color);
+            background: rgb(37 99 235 / 0.05);
+        }
+
+        .template-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .template-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* 滑块样式 */
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+
+        .slider-input {
+            position: absolute;
+            top: -2px;
+            width: 100%;
+            height: 10px;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .slider-fill {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: width 0.2s;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: -6px;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .card-count-display {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        /* 按钮样式 */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-primary);
+            border-color: var(--primary-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* 消息样式 */
+        .message {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .message.show {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-error {
+            background: rgb(239 68 68 / 0.1);
+            color: #dc2626;
+            border: 1px solid rgb(239 68 68 / 0.2);
+        }
+
+        .message-success {
+            background: rgb(34 197 94 / 0.1);
+            color: #16a34a;
+            border: 1px solid rgb(34 197 94 / 0.2);
+        }
+
+        .message-loading {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 卡片展示区域 */
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .flashcards-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .flashcard {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .flashcard:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .flashcard-question {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            padding-right: 2rem;
+        }
+
+        .flashcard-answer {
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .flashcard-delete {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+
+        .flashcard-delete:hover {
+            background: var(--danger-color);
+            color: white;
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* 批量处理区域 */
+        .batch-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .batch-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .batch-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .batch-item-title {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .batch-item-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgb(107 114 128 / 0.1);
+            color: var(--text-secondary);
+        }
+
+        .status-processing {
+            background: rgb(245 158 11 / 0.1);
+            color: #d97706;
+        }
+
+        .status-completed {
+            background: rgb(34 197 94 / 0.1);
+            color: #16a34a;
+        }
+
+        .status-error {
+            background: rgb(239 68 68 / 0.1);
+            color: #dc2626;
+        }
+
+        /* 历史记录区域 */
+        .history-section {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-title {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .history-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .history-preview {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* 导出区域 */
+        .export-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .export-section.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .export-formats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .format-option {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .format-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .format-option.selected {
+            border-color: var(--primary-color);
+            background: rgb(37 99 235 / 0.05);
+        }
+
+        .format-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .format-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 0.5rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-tabs {
+                overflow-x: auto;
+            }
+
+            .nav-tab {
+                min-width: 100px;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .prompt-templates,
+            .export-formats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .flashcard {
+                padding: 1rem;
+            }
+
+            .flashcard-question {
+                font-size: 1rem;
+            }
+        }
+
+        /* 实用工具类 */
+        .hidden { display: none !important; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .mb-0 { margin-bottom: 0 !important; }
+        .mb-1 { margin-bottom: 0.5rem !important; }
+        .mb-2 { margin-bottom: 1rem !important; }
+        .mt-0 { margin-top: 0 !important; }
+        .mt-1 { margin-top: 0.5rem !important; }
+        .mt-2 { margin-top: 1rem !important; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="main-card">
+            <!-- 标题栏 -->
+            <header class="header">
+                <h1>AI Flashcard 生成器</h1>
+                <p>智能问答卡片生成工具 - 支持自定义Prompt、批量处理</p>
+            </header>
+
+            <!-- 导航标签 -->
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-tab="single">单文本生成</button>
+                <button class="nav-tab" data-tab="batch">批量处理</button>
+                <button class="nav-tab" data-tab="history">历史记录</button>
+                <button class="nav-tab" data-tab="settings">设置</button>
+            </nav>
+
+            <!-- 内容区域 -->
+            <main class="content">
+                <!-- 单文本生成面板 -->
+                <div id="tab-single" class="tab-panel active">
+                    <!-- 基础设置 -->
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            基础配置
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="apiKey" class="form-label">OpenRouter API 密钥</label>
+                                <input type="password" id="apiKey" class="form-input" placeholder="输入你的 OpenRouter API 密钥">
+                                <small class="form-help">密钥将安全保存在本地，格式: sk-or-...</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelSelect" class="form-label">AI 模型</label>
+                                <select id="modelSelect" class="form-select">
+                                    <option value="">加载中...</option>
+                                </select>
+                                <small id="modelDescription" class="form-help"></small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Prompt自定义区域 -->
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            Prompt 模板设置
+                        </h2>
+                        <div class="prompt-section">
+                            <div class="prompt-templates">
+                                <div class="template-card selected" data-template="default">
+                                    <div class="template-title">默认模板</div>
+                                    <div class="template-desc">适用于一般文本的标准问答卡片生成</div>
+                                </div>
+                                <div class="template-card" data-template="detailed">
+                                    <div class="template-title">详细解析</div>
+                                    <div class="template-desc">生成更详细的解释性问答，适合学术内容</div>
+                                </div>
+                                <div class="template-card" data-template="simple">
+                                    <div class="template-title">简洁模式</div>
+                                    <div class="template-desc">生成简短、核心的问答对，便于快速记忆</div>
+                                </div>
+                                <div class="template-card" data-template="custom">
+                                    <div class="template-title">自定义</div>
+                                    <div class="template-desc">使用自己的Prompt模板进行生成</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customPrompt" class="form-label">自定义 Prompt（仅在选择自定义模式时生效）</label>
+                                <textarea id="customPrompt" class="form-textarea" placeholder="输入你的自定义Prompt..." style="min-height: 120px; display: none;"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 生成设置 -->
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                            </svg>
+                            生成参数
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="cardCount" class="form-label">
+                                    卡片数量上限: <span class="card-count-display" id="cardCountDisplay">10</span> 张
+                                </label>
+                                <div class="slider-container">
+                                    <div class="slider-track">
+                                        <input type="range" id="cardCount" class="slider-input" min="5" max="50" value="10">
+                                        <div class="slider-fill" id="sliderFill"></div>
+                                        <div class="slider-thumb" id="sliderThumb"></div>
+                                    </div>
+                                    <div class="slider-labels">
+                                        <span>5张</span>
+                                        <span>25张</span>
+                                        <span>50张</span>
+                                    </div>
+                                </div>
+                                <small class="form-help">设置生成卡片的最大数量，实际数量取决于文本内容</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputText" class="form-label">输入文本</label>
+                                <textarea id="inputText" class="form-textarea" placeholder="在此粘贴需要生成 Flashcard 的文本..."></textarea>
+                                <small class="form-help">建议输入20-4000字符的文本内容</small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 操作按钮 -->
+                    <div class="btn-group">
+                        <button id="generateButton" class="btn btn-primary" onclick="generateFlashcards()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            生成 Flashcards
+                        </button>
+                        <button id="clearButton" class="btn btn-secondary" onclick="clearInputs()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                            </svg>
+                            清除输入
+                        </button>
+                    </div>
+
+                    <!-- 消息区域 -->
+                    <div id="messageContainer">
+                        <div id="errorMessage" class="message message-error"></div>
+                        <div id="successMessage" class="message message-success"></div>
+                        <div id="loadingMessage" class="message message-loading">
+                            <div class="spinner"></div>
+                            <span>正在生成 Flashcards，请稍候...</span>
+                        </div>
+                    </div>
+
+                    <!-- 结果展示区域 -->
+                    <section id="resultsSection" class="results-section" style="display: none;">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-5H16V4.5C16 3.12 14.88 2 13.5 2h-3C9.12 2 8 3.12 8 4.5V6H4.5C3.67 6 3 6.67 3 7.5S3.67 9 4.5 9H6v10.5C6 20.88 7.12 22 8.5 22h7c1.38 0 2.5-1.12 2.5-2.5V9h1.5C20.33 9 21 8.33 21 7.5S20.33 6 19.5 6zM10 4.5c0-.28.22-.5.5-.5h3c.28 0 .5.22.5.5V6h-4V4.5z"/>
+                            </svg>
+                            生成结果
+                        </h2>
+                        <div id="flashcardsGrid" class="flashcards-grid"></div>
+                    </section>
+
+                    <!-- 导出区域 -->
+                    <section id="exportSection" class="export-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                            </svg>
+                            导出选项
+                        </h2>
+                        
+                        <div class="export-formats">
+                            <div class="format-option selected" data-format="anki_markdown">
+                                <div class="format-title">Anki Markdown</div>
+                                <div class="format-desc">包含牌组和标签信息</div>
+                            </div>
+                            <div class="format-option" data-format="anki_tab">
+                                <div class="format-title">Anki 制表符</div>
+                                <div class="format-desc">简单的问答对格式</div>
+                            </div>
+                            <div class="format-option" data-format="csv">
+                                <div class="format-title">CSV 格式</div>
+                                <div class="format-desc">Excel兼容格式</div>
+                            </div>
+                            <div class="format-option" data-format="json">
+                                <div class="format-title">JSON 格式</div>
+                                <div class="format-desc">程序化处理格式</div>
+                            </div>
+                        </div>
+
+                        <div id="ankiMarkdownOptions" class="form-grid">
+                            <div class="form-group">
+                                <label for="deckName" class="form-label">牌组名称</label>
+                                <input type="text" id="deckName" class="form-input" placeholder="例如：我的学习卡片">
+                            </div>
+                            <div class="form-group">
+                                <label for="tags" class="form-label">标签（逗号分隔）</label>
+                                <input type="text" id="tags" class="form-input" placeholder="例如：学习,AI,编程">
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button id="copyButton" class="btn btn-primary" onclick="copyToClipboard()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                </svg>
+                                复制到剪贴板
+                            </button>
+                            <button id="downloadButton" class="btn btn-secondary" onclick="downloadFile()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                </svg>
+                                下载文件
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 批量处理面板 -->
+                <div id="tab-batch" class="tab-panel">
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            批量文本处理
+                        </h2>
+                        <div class="batch-section">
+                            <div class="form-group">
+                                <label for="batchTexts" class="form-label">批量文本输入（每行一个文本片段）</label>
+                                <textarea id="batchTexts" class="form-textarea" placeholder="第一段文本&#10;第二段文本&#10;第三段文本&#10;..." style="min-height: 200px;"></textarea>
+                                <small class="form-help">每行代表一个独立的文本片段，将分别生成卡片</small>
+                            </div>
+                            <div class="btn-group">
+                                <button id="batchProcessButton" class="btn btn-primary" onclick="startBatchProcess()">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                    开始批量处理
+                                </button>
+                                <button id="clearBatchButton" class="btn btn-secondary" onclick="clearBatch()">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                    </svg>
+                                    清空列表
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="batchProgress" style="display: none;">
+                            <h3 class="section-title">处理进度</h3>
+                            <div id="batchList"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 历史记录面板 -->
+                <div id="tab-history" class="tab-panel">
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                            </svg>
+                            历史记录
+                        </h2>
+                        <div class="history-section">
+                            <div class="text-center" style="padding: 2rem;">
+                                <p class="form-help">历史记录功能将在未来版本中提供数据持久化支持</p>
+                                <p class="form-help">当前会话生成的卡片会临时保存在此处</p>
+                            </div>
+                            <div id="historyList"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 设置面板 -->
+                <div id="tab-settings" class="tab-panel">
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                            </svg>
+                            应用设置
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">主题设置</label>
+                                <select id="themeSelect" class="form-select">
+                                    <option value="light">浅色主题</option>
+                                    <option value="dark">深色主题（即将支持）</option>
+                                    <option value="auto">跟随系统（即将支持）</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">自动保存设置</label>
+                                <select id="autoSaveSelect" class="form-select">
+                                    <option value="enabled">启用自动保存</option>
+                                    <option value="disabled">禁用自动保存</option>
+                                </select>
+                                <small class="form-help">自动保存API密钥和用户设置到本地存储</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">默认导出格式</label>
+                                <select id="defaultExportSelect" class="form-select">
+                                    <option value="anki_markdown">Anki Markdown</option>
+                                    <option value="anki_tab">Anki 制表符</option>
+                                    <option value="csv">CSV 格式</option>
+                                    <option value="json">JSON 格式</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button class="btn btn-secondary" onclick="resetSettings()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                                </svg>
+                                重置设置
+                            </button>
+                            <button class="btn btn-danger" onclick="clearAllData()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                                清除所有数据
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentFlashcards = [];
+        let currentTemplate = 'default';
+        let currentExportFormat = 'anki_markdown';
+        let batchProcesses = [];
+        let sessionHistory = [];
+
+        // Prompt模板定义
+        const PROMPT_TEMPLATES = {
+            default: `你是一位高阶抽认卡（Flashcards）生成专家，请将用户输入的原始中文文本转化为优质、问题驱动的问答卡片。严格参照下述规范：
+
+1. 【输出语言】仅用中文。
+2. 【知识原子化】每段文本≈一个考点，卡片信息应原子化（单一知识点），绝不混合多个独立概念；避免碎片化（不把过小信息单独成卡）。
+3. 【问答格式规范】每张卡片用如下形式：
+Q: <针对该段核心概念的清晰、独立问题>
+A: <精准、完整、简明扼要的答案>
+问答对间用"---"分隔，每个问答单独占一行。
+4. 【问题类型】优先设为简答题，避免使用"对/错"、"是/否"即可回答的问题。
+5. 【高优先级内容】优先抽取（如原文有）：
+   - 概念定义与本质
+   - 关键步骤、流程、公式
+   - 原理或因果关系
+   - 分类、对比
+   - 典型例子或实际应用场景
+   - 常见易错点或高频混淆
+6. 【信息筛选与上限】如能抽取高质量卡片≤{cardCount}张，全输出；如>{cardCount}张，优先保留信息量最大、代表性最强的前{cardCount}张（衡量标准为对理解全貌最重要的卡片）。
+7. 【表达要求】
+   - 回答必须准确、独立、完整且可单独理解。问题和答案不得出现上下文专属代词（如"它"、"其"、"他们"等）。
+   - 允许适度同义改写以提升可记忆性，但绝不添加或推断原文未明示的事实或信息。
+   - 问答风格统一，保持与示例一致的表达方式，不得出现解释性备注或输出模板外内容。
+8. 【质量门槛】如遇信息稀疏或逻辑不清，无法构造高质量问答卡，请直接忽略该段材料，不强行生成低质卡片。
+9. 【输出格式】请严格用 markdown 段落，便于后续处理。
+
+请按以上全部规范和范例格式，生成最佳问答抽认卡。`,
+
+            detailed: `你是一位专业的教育内容专家，专门为学术学习创建详细的问答卡片。请遵循以下规范：
+
+1. 【输出语言】仅用中文。
+2. 【详细解析】每张卡片应包含详细的解释和分析，帮助深度理解。
+3. 【问答格式】：
+Q: <深入的分析性问题>
+A: <详细的解释，包含背景、原理、示例>
+问答对间用"---"分隔。
+4. 【内容重点】：
+   - 概念的深层含义和背景
+   - 详细的步骤说明和原理解释
+   - 相关概念的对比和关联
+   - 实际应用场景和案例分析
+   - 常见误解和注意事项
+5. 【数量限制】生成不超过{cardCount}张高质量卡片。
+6. 【表达要求】答案要详尽但条理清晰，适合深度学习和理解。
+
+请生成详细解析型的问答卡片。`,
+
+            simple: `你是一位记忆训练专家，专门创建简洁高效的记忆卡片。请遵循以下规范：
+
+1. 【输出语言】仅用中文。
+2. 【简洁原则】每张卡片都应简短、直接、易于记忆。
+3. 【问答格式】：
+Q: <简短直接的问题>
+A: <简洁准确的答案>
+问答对间用"---"分隔。
+4. 【内容特点】：
+   - 核心概念和关键信息
+   - 重要的数字、日期、名称
+   - 简单的因果关系
+   - 基础定义和分类
+5. 【数量限制】生成不超过{cardCount}张卡片，但注重质量和记忆效果。
+6. 【表达要求】问题和答案都要简短有力，便于快速记忆和复习。
+
+请生成简洁高效的记忆卡片。`,
+
+            custom: '' // 用户自定义内容
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // 加载保存的API密钥
+            loadSavedApiKey();
+            
+            // 加载模型列表
+            loadModels();
+            
+            // 初始化事件监听器
+            initializeEventListeners();
+            
+            // 初始化滑块
+            initializeSlider();
+            
+            // 检测环境并设置API基础URL
+            detectEnvironment();
+        }
+
+        function loadSavedApiKey() {
+            const apiKeyInput = document.getElementById('apiKey');
+            const savedKey = localStorage.getItem('openRouterApiKey');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+            
+            apiKeyInput.addEventListener('input', () => {
+                localStorage.setItem('openRouterApiKey', apiKeyInput.value);
+            });
+        }
+
+        function initializeEventListeners() {
+            // 标签切换
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            // Prompt模板选择
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.addEventListener('click', () => selectTemplate(card.dataset.template));
+            });
+
+            // 导出格式选择
+            document.querySelectorAll('.format-option').forEach(option => {
+                option.addEventListener('click', () => selectExportFormat(option.dataset.format));
+            });
+        }
+
+        function initializeSlider() {
+            const slider = document.getElementById('cardCount');
+            const fill = document.getElementById('sliderFill');
+            const thumb = document.getElementById('sliderThumb');
+            const display = document.getElementById('cardCountDisplay');
+
+            function updateSlider() {
+                const value = slider.value;
+                const percentage = ((value - slider.min) / (slider.max - slider.min)) * 100;
+                
+                fill.style.width = percentage + '%';
+                thumb.style.left = 'calc(' + percentage + '% - 9px)';
+                display.textContent = value;
+            }
+
+            slider.addEventListener('input', updateSlider);
+            updateSlider(); // 初始化
+        }
+
+        function detectEnvironment() {
+            // 简单的环境检测逻辑
+            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+            window.API_BASE_URL = isLocal ? 'http://127.0.0.1:8000' : '';
+        }
+
+        function switchTab(tabName) {
+            // 更新标签状态
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // 更新面板显示
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function selectTemplate(templateName) {
+            // 更新模板选择状态
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-template="${templateName}"]`).classList.add('selected');
+
+            currentTemplate = templateName;
+
+            // 显示/隐藏自定义Prompt输入框
+            const customPromptTextarea = document.getElementById('customPrompt');
+            if (templateName === 'custom') {
+                customPromptTextarea.style.display = 'block';
+            } else {
+                customPromptTextarea.style.display = 'none';
+            }
+        }
+
+        function selectExportFormat(formatName) {
+            // 更新格式选择状态
+            document.querySelectorAll('.format-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-format="${formatName}"]`).classList.add('selected');
+
+            currentExportFormat = formatName;
+
+            // 显示/隐藏Anki Markdown选项
+            const ankiMarkdownOptions = document.getElementById('ankiMarkdownOptions');
+            if (formatName === 'anki_markdown') {
+                ankiMarkdownOptions.style.display = 'grid';
+            } else {
+                ankiMarkdownOptions.style.display = 'none';
+            }
+        }
+
+        async function loadModels() {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/supported_models`);
+                if (!response.ok) {
+                    throw new Error(`获取模型列表失败: ${response.status}`);
+                }
+                const data = await response.json();
+
+                const modelSelect = document.getElementById('modelSelect');
+                const modelDescription = document.getElementById('modelDescription');
+                
+                modelSelect.innerHTML = '';
+
+                if (data && data.models && Object.keys(data.models).length > 0) {
+                    for (const modelId in data.models) {
+                        const model = data.models[modelId];
+                        const option = document.createElement('option');
+                        option.value = modelId;
+                        option.textContent = model.name;
+                        option.dataset.description = model.description || '';
+                        option.dataset.suggestedUse = model.suggested_use || '';
+                        modelSelect.appendChild(option);
+                    }
+
+                    // 设置默认选择
+                    if (data.default_model_id && modelSelect.querySelector(`option[value="${data.default_model_id}"]`)) {
+                        modelSelect.value = data.default_model_id;
+                    }
+
+                    // 添加变化监听器
+                    modelSelect.addEventListener('change', updateModelDescription);
+                    updateModelDescription();
+                } else {
+                    modelSelect.innerHTML = '<option value="">无可用模型</option>';
+                    modelSelect.disabled = true;
+                }
+            } catch (error) {
+                console.error('加载模型列表错误:', error);
+                const modelSelect = document.getElementById('modelSelect');
+                modelSelect.innerHTML = '<option value="">加载模型失败</option>';
+                modelSelect.disabled = true;
+                showMessage('error', `无法加载模型列表: ${error.message}`);
+            }
+        }
+
+        function updateModelDescription() {
+            const modelSelect = document.getElementById('modelSelect');
+            const modelDescription = document.getElementById('modelDescription');
+            const selectedOption = modelSelect.options[modelSelect.selectedIndex];
+            
+            if (selectedOption && selectedOption.value) {
+                const desc = selectedOption.dataset.description;
+                const use = selectedOption.dataset.suggestedUse;
+                let displayText = '';
+                if (desc) displayText += `${desc}. `;
+                if (use) displayText += `建议用途: ${use}`;
+
+                if (displayText) {
+                    modelDescription.textContent = displayText.trim();
+                    modelDescription.style.display = 'block';
+                } else {
+                    modelDescription.style.display = 'none';
+                }
+            } else {
+                modelDescription.style.display = 'none';
+            }
+        }
+
+        function showMessage(type, text) {
+            // 隐藏所有消息
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.classList.remove('show');
+            });
+
+            if (type && text) {
+                const messageElement = document.getElementById(`${type}Message`);
+                if (messageElement) {
+                    messageElement.textContent = text;
+                    messageElement.classList.add('show');
+                }
+            }
+        }
+
+        function getCurrentPrompt() {
+            const cardCount = document.getElementById('cardCount').value;
+            
+            if (currentTemplate === 'custom') {
+                const customPrompt = document.getElementById('customPrompt').value.trim();
+                return customPrompt || PROMPT_TEMPLATES.default.replace('{cardCount}', cardCount);
+            } else {
+                return PROMPT_TEMPLATES[currentTemplate].replace(/{cardCount}/g, cardCount);
+            }
+        }
+
+        async function generateFlashcards() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const text = document.getElementById('inputText').value.trim();
+            const modelName = document.getElementById('modelSelect').value;
+            const generateButton = document.getElementById('generateButton');
+
+            // 输入验证
+            if (!apiKey) {
+                showMessage('error', '请输入 OpenRouter API 密钥');
+                return;
+            }
+            if (!text) {
+                showMessage('error', '请输入要处理的文本');
+                return;
+            }
+            if (!modelName) {
+                showMessage('error', '请选择一个 AI 模型');
+                return;
+            }
+
+            // 验证API密钥格式
+            if (!validateApiKey(apiKey)) {
+                showMessage('error', '无效的 API 密钥格式');
+                return;
+            }
+
+            // 验证文本长度
+            const lengthValidation = validateInputLength(text);
+            if (!lengthValidation.valid) {
+                showMessage('error', lengthValidation.warning);
+                return;
+            }
+
+            // 开始生成
+            generateButton.disabled = true;
+            showMessage('loading', '正在生成 Flashcards，请稍候...');
+            
+            // 隐藏结果和导出区域
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('exportSection').classList.remove('show');
+
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/generate_flashcards/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        api_key: apiKey,
+                        model_name: modelName,
+                        custom_prompt: getCurrentPrompt()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    let errorMsg = '';
+                    if (data && typeof data.detail === 'object' && data.detail.message) {
+                        errorMsg = data.detail.message;
+                    } else if (data && typeof data.detail === 'string') {
+                        errorMsg = data.detail;
+                    } else {
+                        errorMsg = '生成 Flashcards 时发生未知错误';
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // 处理生成结果
+                if (data.flashcards && data.flashcards.length > 0) {
+                    currentFlashcards = data.flashcards.map((card, index) => ({
+                        ...card,
+                        id: `card-${Date.now()}-${index}`
+                    }));
+
+                    displayFlashcards(currentFlashcards);
+                    showMessage('success', `成功生成 ${currentFlashcards.length} 个 Flashcards！`);
+                    
+                    // 显示结果和导出区域
+                    document.getElementById('resultsSection').style.display = 'block';
+                    document.getElementById('exportSection').classList.add('show');
+
+                    // 添加到历史记录
+                    addToHistory({
+                        id: Date.now(),
+                        timestamp: new Date(),
+                        text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+                        model: modelName,
+                        template: currentTemplate,
+                        cardCount: currentFlashcards.length,
+                        flashcards: [...currentFlashcards]
+                    });
+                } else {
+                    showMessage('error', '未能生成任何 Flashcards');
+                    currentFlashcards = [];
+                }
+
+            } catch (error) {
+                showMessage('error', error.message);
+                console.error('Error:', error);
+                currentFlashcards = [];
+            } finally {
+                generateButton.disabled = false;
+            }
+        }
+
+        function displayFlashcards(flashcards) {
+            const grid = document.getElementById('flashcardsGrid');
+            grid.innerHTML = '';
+
+            flashcards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'flashcard';
+                cardElement.dataset.cardId = card.id;
+
+                cardElement.innerHTML = `
+                    <button class="flashcard-delete" onclick="deleteFlashcard('${card.id}')" title="删除这张卡片">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                    <div class="flashcard-question">Q: ${escapeHtml(card.q)}</div>
+                    <div class="flashcard-answer">A: ${escapeHtml(card.a)}</div>
+                `;
+
+                grid.appendChild(cardElement);
+            });
+        }
+
+        function deleteFlashcard(cardId) {
+            const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+            if (cardElement) {
+                cardElement.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    cardElement.remove();
+                    
+                    // 从数据中移除
+                    currentFlashcards = currentFlashcards.filter(card => card.id !== cardId);
+                    
+                    // 检查是否还有卡片
+                    if (currentFlashcards.length === 0) {
+                        document.getElementById('resultsSection').style.display = 'none';
+                        document.getElementById('exportSection').classList.remove('show');
+                        showMessage('error', '已删除所有卡片');
+                    } else {
+                        showMessage('success', `卡片已删除。剩余 ${currentFlashcards.length} 张。`);
+                    }
+                }, 300);
+            }
+        }
+
+        function clearInputs() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('exportSection').classList.remove('show');
+            document.getElementById('flashcardsGrid').innerHTML = '';
+            currentFlashcards = [];
+            showMessage('', '');
+        }
+
+        // 导出功能
+        function getFormattedData() {
+            if (currentFlashcards.length === 0) {
+                showMessage('error', '没有可导出的卡片');
+                return null;
+            }
+
+            switch (currentExportFormat) {
+                case 'anki_markdown':
+                    return formatAnkiMarkdown();
+                case 'anki_tab':
+                    return formatAnkiTab();
+                case 'csv':
+                    return formatCsv();
+                case 'json':
+                    return formatJson();
+                default:
+                    showMessage('error', '未知的导出格式');
+                    return null;
+            }
+        }
+
+        function formatAnkiMarkdown() {
+            const deckName = document.getElementById('deckName').value.trim() || 'Default Deck';
+            const tagsInput = document.getElementById('tags').value.trim();
+            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : ['GeneratedFlashcard'];
+
+            let output = [];
+            currentFlashcards.forEach(card => {
+                let cardText = "```anki\\n";
+                cardText += `deck: ${deckName}\\n`;
+                cardText += `tags:\\n`;
+                tags.forEach(tag => {
+                    cardText += `  - ${tag}\\n`;
+                });
+                cardText += `---\\n`;
+                cardText += `问题：${card.q}\\n`;
+                cardText += `===\\n`;
+                cardText += `答案：${card.a}\\n\\n`;
+                cardText += "```";
+                output.push(cardText);
+            });
+            return output.join('\\n\\n');
+        }
+
+        function formatAnkiTab() {
+            return currentFlashcards.map(card => `${card.q}\\t${card.a}`).join('\\n');
+        }
+
+        function formatCsv() {
+            let csvContent = '"Question","Answer"\\n';
+            currentFlashcards.forEach(card => {
+                const q = card.q.replace(/"/g, '""');
+                const a = card.a.replace(/"/g, '""');
+                csvContent += `"${q}","${a}"\\n`;
+            });
+            return csvContent.trim();
+        }
+
+        function formatJson() {
+            return JSON.stringify(currentFlashcards, null, 2);
+        }
+
+        async function copyToClipboard() {
+            const data = getFormattedData();
+            if (!data) return;
+
+            try {
+                await navigator.clipboard.writeText(data);
+                showMessage('success', '已复制到剪贴板！');
+            } catch (err) {
+                showMessage('error', '复制失败: ' + err.message);
+                console.error('复制失败:', err);
+            }
+        }
+
+        function downloadFile() {
+            const data = getFormattedData();
+            if (!data) return;
+
+            let filename = "flashcards";
+            let mimeType = "text/plain";
+
+            switch (currentExportFormat) {
+                case 'anki_markdown':
+                    filename += ".md";
+                    mimeType = "text/markdown";
+                    break;
+                case 'anki_tab':
+                    filename += ".txt";
+                    break;
+                case 'csv':
+                    filename += ".csv";
+                    mimeType = "text/csv";
+                    break;
+                case 'json':
+                    filename += ".json";
+                    mimeType = "application/json";
+                    break;
+            }
+
+            const blob = new Blob([data], { type: `${mimeType};charset=utf-8` });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('success', `文件 ${filename} 已开始下载！`);
+        }
+
+        // 批量处理功能
+        async function startBatchProcess() {
+            const batchTexts = document.getElementById('batchTexts').value.trim();
+            if (!batchTexts) {
+                showMessage('error', '请输入要批量处理的文本');
+                return;
+            }
+
+            const texts = batchTexts.split('\\n').filter(text => text.trim());
+            if (texts.length === 0) {
+                showMessage('error', '没有有效的文本片段');
+                return;
+            }
+
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const modelName = document.getElementById('modelSelect').value;
+
+            if (!apiKey || !modelName) {
+                showMessage('error', '请先配置API密钥和模型');
+                return;
+            }
+
+            // 初始化批量处理
+            batchProcesses = texts.map((text, index) => ({
+                id: `batch-${Date.now()}-${index}`,
+                text: text.trim(),
+                status: 'pending',
+                result: null,
+                error: null
+            }));
+
+            displayBatchProgress();
+            document.getElementById('batchProgress').style.display = 'block';
+
+            // 依次处理每个文本
+            for (let i = 0; i < batchProcesses.length; i++) {
+                const process = batchProcesses[i];
+                process.status = 'processing';
+                updateBatchItem(process);
+
+                try {
+                    const response = await fetch(`${window.API_BASE_URL}/generate_flashcards/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            text: process.text,
+                            api_key: apiKey,
+                            model_name: modelName,
+                            custom_prompt: getCurrentPrompt()
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.flashcards) {
+                        process.status = 'completed';
+                        process.result = data.flashcards;
+                    } else {
+                        process.status = 'error';
+                        process.error = data.error || '生成失败';
+                    }
+                } catch (error) {
+                    process.status = 'error';
+                    process.error = error.message;
+                }
+
+                updateBatchItem(process);
+                
+                // 添加短暂延迟避免API限流
+                if (i < batchProcesses.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+
+            showMessage('success', '批量处理完成！');
+        }
+
+        function displayBatchProgress() {
+            const batchList = document.getElementById('batchList');
+            batchList.innerHTML = '';
+
+            batchProcesses.forEach(process => {
+                const item = document.createElement('div');
+                item.className = 'batch-item';
+                item.id = `batch-item-${process.id}`;
+                
+                item.innerHTML = `
+                    <div class="batch-item-header">
+                        <div class="batch-item-title">${escapeHtml(process.text.substring(0, 50))}${process.text.length > 50 ? '...' : ''}</div>
+                        <div class="batch-item-status status-${process.status}">${getStatusText(process.status)}</div>
+                    </div>
+                    <div class="batch-item-content">
+                        ${process.error ? `<div style="color: var(--danger-color);">错误: ${escapeHtml(process.error)}</div>` : ''}
+                        ${process.result ? `<div style="color: var(--success-color);">生成了 ${process.result.length} 张卡片</div>` : ''}
+                    </div>
+                `;
+
+                batchList.appendChild(item);
+            });
+        }
+
+        function updateBatchItem(process) {
+            const item = document.getElementById(`batch-item-${process.id}`);
+            if (item) {
+                const statusElement = item.querySelector('.batch-item-status');
+                const contentElement = item.querySelector('.batch-item-content');
+                
+                statusElement.className = `batch-item-status status-${process.status}`;
+                statusElement.textContent = getStatusText(process.status);
+                
+                let contentHTML = '';
+                if (process.error) {
+                    contentHTML += `<div style="color: var(--danger-color);">错误: ${escapeHtml(process.error)}</div>`;
+                }
+                if (process.result) {
+                    contentHTML += `<div style="color: var(--success-color);">生成了 ${process.result.length} 张卡片</div>`;
+                }
+                contentElement.innerHTML = contentHTML;
+            }
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '等待中',
+                'processing': '处理中',
+                'completed': '已完成',
+                'error': '错误'
+            };
+            return statusMap[status] || status;
+        }
+
+        function clearBatch() {
+            document.getElementById('batchTexts').value = '';
+            document.getElementById('batchProgress').style.display = 'none';
+            batchProcesses = [];
+        }
+
+        // 历史记录功能
+        function addToHistory(entry) {
+            sessionHistory.unshift(entry);
+            // 限制历史记录数量
+            if (sessionHistory.length > 50) {
+                sessionHistory = sessionHistory.slice(0, 50);
+            }
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            if (sessionHistory.length === 0) {
+                historyList.innerHTML = '<div class="text-center" style="padding: 2rem;"><p class="form-help">暂无历史记录</p></div>';
+                return;
+            }
+
+            sessionHistory.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.onclick = () => loadFromHistory(entry);
+                
+                item.innerHTML = `
+                    <div class="history-header">
+                        <div class="history-title">${entry.cardCount} 张卡片</div>
+                        <div class="history-meta">${formatDate(entry.timestamp)}</div>
+                    </div>
+                    <div class="history-preview">${escapeHtml(entry.text)}</div>
+                    <div class="history-meta">模型: ${entry.model} | 模板: ${entry.template}</div>
+                `;
+
+                historyList.appendChild(item);
+            });
+        }
+
+        function loadFromHistory(entry) {
+            currentFlashcards = [...entry.flashcards];
+            displayFlashcards(currentFlashcards);
+            
+            // 显示结果区域
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('exportSection').classList.add('show');
+            
+            // 切换到主面板
+            switchTab('single');
+            
+            showMessage('success', `已加载历史记录：${entry.cardCount} 张卡片`);
+        }
+
+        // 设置功能
+        function resetSettings() {
+            if (confirm('确定要重置所有设置吗？这将清除已保存的设置信息。')) {
+                // 重置表单
+                document.getElementById('themeSelect').value = 'light';
+                document.getElementById('autoSaveSelect').value = 'enabled';
+                document.getElementById('defaultExportSelect').value = 'anki_markdown';
+                
+                showMessage('success', '设置已重置');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清除所有数据吗？这将删除API密钥、历史记录等所有本地数据。')) {
+                localStorage.clear();
+                sessionHistory = [];
+                currentFlashcards = [];
+                document.getElementById('apiKey').value = '';
+                updateHistoryDisplay();
+                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('exportSection').classList.remove('show');
+                showMessage('success', '所有数据已清除');
+            }
+        }
+
+        // 工具函数
+        function validateApiKey(apiKey) {
+            return apiKey && /^sk-or-.+/.test(apiKey.trim());
+        }
+
+        function validateInputLength(text, min = 20, max = 10000) {
+            if (text.length < min) return { valid: false, warning: "输入内容过短，建议添加更多上下文。" };
+            if (text.length > max) return { valid: false, warning: "输入内容过长，可能超出LLM处理能力。" };
+            return { valid: true };
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now.getTime() - date.getTime();
+            const minutes = Math.floor(diff / 60000);
+            
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (minutes < 1440) return `${Math.floor(minutes / 60)}小时前`;
+            return date.toLocaleDateString('zh-CN');
+        }
+
+        // 添加fade out动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.9); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

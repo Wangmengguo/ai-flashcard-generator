@@ -196,13 +196,20 @@ OPENROUTER_ERROR_MAP = {
 
 # 2. 定义数据模型
 class FlashcardRequest(BaseModel):
-    text: str
-    api_key: str
-    model_name: str
-    custom_prompt: str | None = None
+    text: str = Field(..., min_length=1, max_length=10000, description="待处理的文本内容")
+    api_key: str = Field(..., min_length=1, description="OpenRouter API密钥")
+    model_name: str = Field(..., description="使用的AI模型名称")
+    
+    # 新增的自定义参数
+    template_id: Optional[str] = Field(default=None, description="提示词模板ID")
+    max_cards: Optional[int] = Field(default=None, ge=1, le=50, description="最大卡片数量")
+    custom_system_prompt: Optional[str] = Field(default=None, description="自定义系统提示词")
+    custom_user_prompt: Optional[str] = Field(default=None, description="自定义用户提示词")
+    priority_keywords: Optional[List[str]] = Field(default=None, description="优先关键词列表")
+    additional_instructions: Optional[str] = Field(default=None, max_length=500, description="附加指令")
     
     class Config:
-        json_schema_extra = {
+        schema_extra = {
             "example": {
                 "text": "光合作用是植物将光能转化为化学能的过程...",
                 "api_key": "your-openrouter-api-key",
@@ -439,7 +446,6 @@ async def generate_flashcards_from_llm(
         text_to_process: str, 
         user_api_key: str, 
         model_name: str,
-        custom_prompt: str | None = None,
         use_cache: bool = True
 ) -> list[FlashcardPair]:
     """调用 OpenRouter API 生成 Flashcards（支持缓存）"""
@@ -463,13 +469,11 @@ async def generate_flashcards_from_llm(
             detail=f"不支持的模型。当前仅支持: {list(SUPPORTED_MODELS.keys())}"
         )
     
-    # 使用自定义prompt或默认prompt
-    system_prompt = custom_prompt if custom_prompt else SYSTEM_PROMPT
-    
+    # 其余代码保持不变，但使用传入的 model_name
     payload = {
         "model": model_name,
         "messages": [
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"请为以下文本生成Flashcards：\n\n{text_to_process}"}
         ]
     }
@@ -712,8 +716,7 @@ async def create_flashcards(request: FlashcardRequest, background_tasks: Backgro
             generated_cards = await generate_flashcards_from_llm(
                 request.text,
                 request.api_key,
-                request.model_name,
-                request.custom_prompt
+                request.model_name
             )
             
             if not generated_cards:
