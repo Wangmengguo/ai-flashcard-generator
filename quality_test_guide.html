@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard 质量测试指南</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #2563eb;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        .template-card {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .template-card h4 {
+            margin: 0 0 10px 0;
+            color: #1e40af;
+        }
+        .sample-text {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-style: italic;
+            border-left: 3px solid #10b981;
+        }
+        .quality-criteria {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .criteria-item {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #d1fae5;
+        }
+        .criteria-item h5 {
+            margin: 0 0 8px 0;
+            color: #047857;
+        }
+        .rating-form {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .rating-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .rating-table th, .rating-table td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        .rating-table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        .rating-scale {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .rating-scale input[type="radio"] {
+            margin: 0 5px;
+        }
+        .quick-links {
+            background: #dbeafe;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .quick-links a {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin: 5px;
+            transition: background 0.2s;
+        }
+        .quick-links a:hover {
+            background: #1d4ed8;
+        }
+        .tip {
+            background: #fef7ff;
+            border: 1px solid #e879f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .tip-icon {
+            color: #a855f7;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 AI Flashcard 质量测试指南</h1>
+        <p>全面验证5种模板的卡片生成质量</p>
+    </div>
+
+    <div class="quick-links">
+        <h3>🚀 快速开始</h3>
+        <a href="unified_index.html" target="_blank">打开测试界面</a>
+        <a href="test_new_interface.html" target="_blank">备用测试界面</a>
+        <a href="#test-samples">查看测试样本</a>
+        <a href="#quality-assessment">质量评估表</a>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 测试准备清单</h2>
+        <div class="tip">
+            <span class="tip-icon">💡 提示:</span> 建议准备60分钟进行完整测试，确保环境安静，便于专注评估卡片质量。
+        </div>
+        
+        <h3>✅ 测试前准备</h3>
+        <ul>
+            <li>✅ 确认服务器运行正常 (http://127.0.0.1:8001)</li>
+            <li>✅ 准备OpenRouter API密钥</li>
+            <li>✅ 打开测试界面 (unified_index.html)</li>
+            <li>✅ 准备记录工具 (纸笔或电子文档)</li>
+            <li>✅ 选择你熟悉的测试文本 (确保能判断准确性)</li>
+        </ul>
+    </div>
+
+    <div class="test-section" id="test-samples">
+        <h2>📚 推荐测试样本</h2>
+        
+        <div class="template-card">
+            <h4>🎓 Academic 学术研究模板</h4>
+            <p><strong>测试重点:</strong> 理论定义、研究方法、学术术语准确性</p>
+            <div class="sample-text">
+                <strong>推荐文本:</strong><br>
+                "深度学习是机器学习的一个子领域，它基于人工神经网络的学习和改进。深度学习模型由多个处理层组成，每一层都学习数据的不同抽象层次的表示。这种分层的特征学习使得深度学习在图像识别、自然语言处理和语音识别等任务中取得了突破性进展。深度学习的核心思想是通过大量数据和计算资源，让机器自动学习复杂的数据表示，而不需要人工设计特征。"
+            </div>
+            <p><strong>期望卡片类型:</strong> 概念定义、技术原理、应用领域、核心优势</p>
+        </div>
+
+        <div class="template-card">
+            <h4>📝 Exam 考试备考模板</h4>
+            <p><strong>测试重点:</strong> 考点覆盖、记忆友好性、答案准确性</p>
+            <div class="sample-text">
+                <strong>推荐文本:</strong><br>
+                "牛顿第二定律：物体的加速度与所受的合外力成正比，与物体的质量成反比，加速度的方向与合外力的方向相同。数学表达式为 F = ma，其中F代表合外力，m代表物体质量，a代表加速度。这个定律是经典力学的基础，广泛应用于各种物理问题的分析。在实际应用中，需要注意力的矢量性质和参考系的选择。"
+            </div>
+            <p><strong>期望卡片类型:</strong> 定律内容、公式记忆、应用场景、注意事项</p>
+        </div>
+
+        <div class="template-card">
+            <h4>🗣️ Language 语言学习模板</h4>
+            <p><strong>测试重点:</strong> 词汇解释、语法要点、实用表达</p>
+            <div class="sample-text">
+                <strong>推荐文本:</strong><br>
+                "Artificial Intelligence (AI) refers to the simulation of human intelligence in machines that are programmed to think and learn like humans. Machine learning is a subset of AI that focuses on the development of algorithms and statistical models that enable computers to perform tasks without being explicitly programmed. Deep learning, a further subset of machine learning, uses neural networks with multiple layers to model complex patterns in data."
+            </div>
+            <p><strong>期望卡片类型:</strong> 词汇翻译、概念解释、语法结构、表达方式</p>
+        </div>
+
+        <div class="template-card">
+            <h4>💻 Technical 技术文档模板</h4>
+            <p><strong>测试重点:</strong> 技术准确性、操作步骤、最佳实践</p>
+            <div class="sample-text">
+                <strong>推荐文本:</strong><br>
+                "FastAPI是一个现代、快速的Python Web框架，用于构建API。它基于标准Python类型提示，具有自动交互式文档生成、数据验证、序列化等功能。支持异步操作，性能接近NodeJS和Go。安装方法：pip install fastapi uvicorn。基本用法：创建app实例，使用装饰器定义路由，运行时使用uvicorn main:app --reload启动开发服务器。"
+            </div>
+            <p><strong>期望卡片类型:</strong> 技术定义、安装方法、基本用法、性能特点</p>
+        </div>
+
+        <div class="template-card">
+            <h4>🎯 General 通用模板</h4>
+            <p><strong>测试重点:</strong> 知识点覆盖、易懂性、适用性</p>
+            <div class="sample-text">
+                <strong>推荐文本:</strong><br>
+                "可持续发展是指满足当前需求而不损害后代满足其需求能力的发展模式。它包括三个维度：经济可持续性（长期经济增长）、环境可持续性（保护生态环境）和社会可持续性（社会公平与包容）。联合国2030年可持续发展议程设定了17个可持续发展目标，涵盖消除贫困、保护地球、确保繁荣等方面。"
+            </div>
+            <p><strong>期望卡片类型:</strong> 概念定义、组成要素、具体目标、实际意义</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 质量评估标准</h2>
+        <div class="quality-criteria">
+            <div class="criteria-item">
+                <h5>✅ 准确性 (Accuracy)</h5>
+                <p>内容是否正确无误，是否存在事实错误或概念混淆</p>
+            </div>
+            <div class="criteria-item">
+                <h5>🎯 相关性 (Relevance)</h5>
+                <p>是否提取了文本中的关键信息，问题是否切中要害</p>
+            </div>
+            <div class="criteria-item">
+                <h5>💡 清晰性 (Clarity)</h5>
+                <p>问答表述是否清楚易懂，没有歧义或模糊表达</p>
+            </div>
+            <div class="criteria-item">
+                <h5>📝 完整性 (Completeness)</h5>
+                <p>答案是否充分回答问题，信息是否完整</p>
+            </div>
+            <div class="criteria-item">
+                <h5>🎓 实用性 (Utility)</h5>
+                <p>是否有助于学习记忆，符合模板的专业特点</p>
+            </div>
+            <div class="criteria-item">
+                <h5>🔄 独立性 (Independence)</h5>
+                <p>每张卡片是否可以独立理解，不依赖其他卡片</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section" id="quality-assessment">
+        <h2>📊 质量评估记录表</h2>
+        <div class="rating-form">
+            <h3>测试记录模板</h3>
+            <p>为每个模板测试完成后，请记录以下信息：</p>
+            
+            <table class="rating-table">
+                <thead>
+                    <tr>
+                        <th>评估项目</th>
+                        <th>评分 (1-5分)</th>
+                        <th>具体问题</th>
+                        <th>改进建议</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>准确性</td>
+                        <td>
+                            <div class="rating-scale">
+                                1 <input type="radio" name="accuracy" value="1">
+                                2 <input type="radio" name="accuracy" value="2">
+                                3 <input type="radio" name="accuracy" value="3">
+                                4 <input type="radio" name="accuracy" value="4">
+                                5 <input type="radio" name="accuracy" value="5">
+                            </div>
+                        </td>
+                        <td><input type="text" placeholder="记录发现的问题..."></td>
+                        <td><input type="text" placeholder="改进建议..."></td>
+                    </tr>
+                    <tr>
+                        <td>相关性</td>
+                        <td>
+                            <div class="rating-scale">
+                                1 <input type="radio" name="relevance" value="1">
+                                2 <input type="radio" name="relevance" value="2">
+                                3 <input type="radio" name="relevance" value="3">
+                                4 <input type="radio" name="relevance" value="4">
+                                5 <input type="radio" name="relevance" value="5">
+                            </div>
+                        </td>
+                        <td><input type="text" placeholder="记录发现的问题..."></td>
+                        <td><input type="text" placeholder="改进建议..."></td>
+                    </tr>
+                    <tr>
+                        <td>清晰性</td>
+                        <td>
+                            <div class="rating-scale">
+                                1 <input type="radio" name="clarity" value="1">
+                                2 <input type="radio" name="clarity" value="2">
+                                3 <input type="radio" name="clarity" value="3">
+                                4 <input type="radio" name="clarity" value="4">
+                                5 <input type="radio" name="clarity" value="5">
+                            </div>
+                        </td>
+                        <td><input type="text" placeholder="记录发现的问题..."></td>
+                        <td><input type="text" placeholder="改进建议..."></td>
+                    </tr>
+                    <tr>
+                        <td>完整性</td>
+                        <td>
+                            <div class="rating-scale">
+                                1 <input type="radio" name="completeness" value="1">
+                                2 <input type="radio" name="completeness" value="2">
+                                3 <input type="radio" name="completeness" value="3">
+                                4 <input type="radio" name="completeness" value="4">
+                                5 <input type="radio" name="completeness" value="5">
+                            </div>
+                        </td>
+                        <td><input type="text" placeholder="记录发现的问题..."></td>
+                        <td><input type="text" placeholder="改进建议..."></td>
+                    </tr>
+                    <tr>
+                        <td>实用性</td>
+                        <td>
+                            <div class="rating-scale">
+                                1 <input type="radio" name="utility" value="1">
+                                2 <input type="radio" name="utility" value="2">
+                                3 <input type="radio" name="utility" value="3">
+                                4 <input type="radio" name="utility" value="4">
+                                5 <input type="radio" name="utility" value="5">
+                            </div>
+                        </td>
+                        <td><input type="text" placeholder="记录发现的问题..."></td>
+                        <td><input type="text" placeholder="改进建议..."></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔬 详细测试流程</h2>
+        
+        <h3>Phase 1: 模板专业性测试 (20分钟)</h3>
+        <ol>
+            <li><strong>选择模板</strong> - 从Academic开始，依次测试所有5个模板</li>
+            <li><strong>输入测试文本</strong> - 使用上面推荐的样本文本</li>
+            <li><strong>设置参数</strong> - 建议5-10张卡片，观察质量</li>
+            <li><strong>评估结果</strong> - 重点关注模板的专业特色是否体现</li>
+            <li><strong>记录问题</strong> - 每个模板测试后立即记录发现</li>
+        </ol>
+
+        <h3>Phase 2: 数量与质量关系测试 (15分钟)</h3>
+        <ol>
+            <li><strong>少量测试</strong> - 同一文本生成1-3张卡片</li>
+            <li><strong>中量测试</strong> - 同一文本生成10-15张卡片</li>
+            <li><strong>大量测试</strong> - 同一文本生成30-50张卡片</li>
+            <li><strong>质量对比</strong> - 观察是否出现质量下降或重复</li>
+        </ol>
+
+        <h3>Phase 3: 真实场景测试 (15分钟)</h3>
+        <ol>
+            <li><strong>选择熟悉内容</strong> - 使用你专业领域的文本</li>
+            <li><strong>学习效果验证</strong> - 生成后立即测试自己</li>
+            <li><strong>记忆友好性</strong> - 评估是否符合记忆曲线</li>
+            <li><strong>实际应用</strong> - 想象在真实学习中的使用场景</li>
+        </ol>
+
+        <h3>Phase 4: 用户体验测试 (10分钟)</h3>
+        <ol>
+            <li><strong>界面易用性</strong> - 测试操作流程是否直观</li>
+            <li><strong>响应速度</strong> - 记录不同文本长度的响应时间</li>
+            <li><strong>导出功能</strong> - 测试各种导出格式</li>
+            <li><strong>整体满意度</strong> - 评估综合使用体验</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>📈 预期成果</h2>
+        <div class="tip">
+            <span class="tip-icon">🎯 目标:</span> 通过系统性测试，确保每个模板都能生成符合其专业特色的高质量卡片，为生产部署提供质量保证。
+        </div>
+        
+        <h3>测试完成后，你应该能够回答：</h3>
+        <ul>
+            <li>✅ 哪个模板的生成质量最高？为什么？</li>
+            <li>✅ 不同卡片数量设置对质量有什么影响？</li>
+            <li>✅ 哪些类型的文本最适合用这个系统？</li>
+            <li>✅ 实际学习效果如何？是否真的有助于记忆？</li>
+            <li>✅ 用户体验是否友好？有哪些可以改进的地方？</li>
+            <li>✅ 系统是否已经可以投入实际使用？</li>
+        </ul>
+
+        <h3>📝 建议记录格式</h3>
+        <div class="sample-text">
+            <strong>测试总结模板：</strong><br>
+            <strong>日期：</strong> 2025-06-20<br>
+            <strong>测试时长：</strong> 60分钟<br>
+            <strong>总体评分：</strong> X/5分<br>
+            <strong>最佳模板：</strong> [模板名称]<br>
+            <strong>主要优点：</strong> [列举2-3个突出优势]<br>
+            <strong>需要改进：</strong> [列举1-2个问题]<br>
+            <strong>使用建议：</strong> [给出实际使用建议]<br>
+            <strong>生产就绪度：</strong> [是否推荐投入使用]
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 开始测试</h2>
+        <p style="text-align: center; font-size: 18px; color: #2563eb;">
+            <strong>准备好了吗？点击下面的链接开始你的质量测试之旅！</strong>
+        </p>
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="unified_index.html" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-size: 16px; font-weight: bold;">🎯 开始质量测试</a>
+        </div>
+        <p style="text-align: center; color: #6b7280;">
+            建议在新窗口打开测试界面，这样可以同时参考本指南
+        </p>
+    </div>
+</body>
+</html>

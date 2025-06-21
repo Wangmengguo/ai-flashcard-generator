@@ -43,8 +43,11 @@ class PromptTemplate:
     def format_system_prompt(self, **kwargs) -> str:
         """格式化系统提示词"""
         try:
-            # 替换max_cards占位符
-            formatted_prompt = self.system_prompt.format(max_cards=self.max_cards, **kwargs)
+            # 准备格式化参数，避免参数冲突
+            format_kwargs = {'max_cards': self.max_cards}
+            # 如果kwargs中有max_cards，优先使用传入的值
+            format_kwargs.update(kwargs)
+            formatted_prompt = self.system_prompt.format(**format_kwargs)
             return formatted_prompt
         except KeyError as e:
             logger.warning(f"Missing placeholder in system prompt: {e}")
@@ -53,11 +56,11 @@ class PromptTemplate:
     def format_user_prompt(self, text: str, **kwargs) -> str:
         """格式化用户提示词"""
         try:
-            formatted_prompt = self.user_prompt_template.format(
-                text=text, 
-                max_cards=self.max_cards, 
-                **kwargs
-            )
+            # 准备格式化参数，避免参数冲突
+            format_kwargs = {'text': text, 'max_cards': self.max_cards}
+            # 如果kwargs中有重复参数，优先使用传入的值
+            format_kwargs.update(kwargs)
+            formatted_prompt = self.user_prompt_template.format(**format_kwargs)
             return formatted_prompt
         except KeyError as e:
             logger.warning(f"Missing placeholder in user prompt: {e}")

@@ -5,6 +5,7 @@ AI Flashcard Generator - 重构版本
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 import httpx
@@ -107,8 +108,8 @@ class FlashcardRequest(BaseModel):
     priority_keywords: Optional[List[str]] = Field(default=None, description="优先关键词列表")
     additional_instructions: Optional[str] = Field(default=None, max_length=500, description="附加指令")
     
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "text": "光合作用是植物将光能转化为化学能的过程...",
                 "api_key": "your-openrouter-api-key",
@@ -118,6 +119,7 @@ class FlashcardRequest(BaseModel):
                 "priority_keywords": ["光合作用", "叶绿素", "ATP"]
             }
         }
+    }
 
 class FlashcardPair(BaseModel):
     q: str
@@ -397,6 +399,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 静态文件服务 - 解决前端访问问题
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+# 导入FileResponse
+from fastapi.responses import FileResponse
+
+# 为方便访问，在根路径提供前端文件
+@app.get("/unified")
+async def get_unified_interface():
+    """提供统一界面的便捷访问"""
+    return FileResponse("unified_index.html")
+
+@app.get("/test")
+async def get_test_interface():
+    """提供测试界面的便捷访问"""
+    return FileResponse("test_new_interface.html")
+
+@app.get("/quality")
+async def get_quality_guide():
+    """提供质量测试指南"""
+    return FileResponse("quality_test_guide.html")
 
 # API端点定义
 

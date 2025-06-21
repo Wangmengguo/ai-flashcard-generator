@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>质量评估记录工具</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .assessment-form {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .rating-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .rating-item input[type="radio"] {
+            width: auto;
+        }
+        .btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #059669;
+        }
+        .btn-secondary {
+            background: #6b7280;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        .results-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .summary-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .test-record {
+            background: #fafafa;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #10b981;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 质量评估记录工具</h1>
+        <p>系统化记录和分析flashcard生成质量</p>
+    </div>
+
+    <div class="assessment-form">
+        <h2>🧪 新建质量评估记录</h2>
+        
+        <div class="form-group">
+            <label for="templateName">测试模板</label>
+            <select id="templateName">
+                <option value="">选择测试的模板...</option>
+                <option value="academic">🎓 Academic (学术研究)</option>
+                <option value="exam">📝 Exam (考试备考)</option>
+                <option value="language">🗣️ Language (语言学习)</option>
+                <option value="technical">💻 Technical (技术文档)</option>
+                <option value="general">🎯 General (通用模板)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="cardCount">生成卡片数量</label>
+            <input type="number" id="cardCount" placeholder="实际生成的卡片数量" min="1" max="50">
+        </div>
+
+        <div class="form-group">
+            <label for="textSample">测试文本类型</label>
+            <input type="text" id="textSample" placeholder="如：机器学习理论、物理定律、英语文章等">
+        </div>
+
+        <h3>📋 质量评分 (1-5分)</h3>
+        
+        <div class="form-group">
+            <label>✅ 准确性 (内容正确性)</label>
+            <div class="rating-group">
+                <div class="rating-item"><input type="radio" name="accuracy" value="1" id="acc1"><label for="acc1">1分</label></div>
+                <div class="rating-item"><input type="radio" name="accuracy" value="2" id="acc2"><label for="acc2">2分</label></div>
+                <div class="rating-item"><input type="radio" name="accuracy" value="3" id="acc3"><label for="acc3">3分</label></div>
+                <div class="rating-item"><input type="radio" name="accuracy" value="4" id="acc4"><label for="acc4">4分</label></div>
+                <div class="rating-item"><input type="radio" name="accuracy" value="5" id="acc5"><label for="acc5">5分</label></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🎯 相关性 (关键信息提取)</label>
+            <div class="rating-group">
+                <div class="rating-item"><input type="radio" name="relevance" value="1" id="rel1"><label for="rel1">1分</label></div>
+                <div class="rating-item"><input type="radio" name="relevance" value="2" id="rel2"><label for="rel2">2分</label></div>
+                <div class="rating-item"><input type="radio" name="relevance" value="3" id="rel3"><label for="rel3">3分</label></div>
+                <div class="rating-item"><input type="radio" name="relevance" value="4" id="rel4"><label for="rel4">4分</label></div>
+                <div class="rating-item"><input type="radio" name="relevance" value="5" id="rel5"><label for="rel5">5分</label></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>💡 清晰性 (表达易懂性)</label>
+            <div class="rating-group">
+                <div class="rating-item"><input type="radio" name="clarity" value="1" id="cla1"><label for="cla1">1分</label></div>
+                <div class="rating-item"><input type="radio" name="clarity" value="2" id="cla2"><label for="cla2">2分</label></div>
+                <div class="rating-item"><input type="radio" name="clarity" value="3" id="cla3"><label for="cla3">3分</label></div>
+                <div class="rating-item"><input type="radio" name="clarity" value="4" id="cla4"><label for="cla4">4分</label></div>
+                <div class="rating-item"><input type="radio" name="clarity" value="5" id="cla5"><label for="cla5">5分</label></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>📝 完整性 (信息充分性)</label>
+            <div class="rating-group">
+                <div class="rating-item"><input type="radio" name="completeness" value="1" id="com1"><label for="com1">1分</label></div>
+                <div class="rating-item"><input type="radio" name="completeness" value="2" id="com2"><label for="com2">2分</label></div>
+                <div class="rating-item"><input type="radio" name="completeness" value="3" id="com3"><label for="com3">3分</label></div>
+                <div class="rating-item"><input type="radio" name="completeness" value="4" id="com4"><label for="com4">4分</label></div>
+                <div class="rating-item"><input type="radio" name="completeness" value="5" id="com5"><label for="com5">5分</label></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🎓 实用性 (学习帮助度)</label>
+            <div class="rating-group">
+                <div class="rating-item"><input type="radio" name="utility" value="1" id="uti1"><label for="uti1">1分</label></div>
+                <div class="rating-item"><input type="radio" name="utility" value="2" id="uti2"><label for="uti2">2分</label></div>
+                <div class="rating-item"><input type="radio" name="utility" value="3" id="uti3"><label for="uti3">3分</label></div>
+                <div class="rating-item"><input type="radio" name="utility" value="4" id="uti4"><label for="uti4">4分</label></div>
+                <div class="rating-item"><input type="radio" name="utility" value="5" id="uti5"><label for="uti5">5分</label></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="issues">发现的问题</label>
+            <textarea id="issues" placeholder="记录发现的具体问题，如：术语不准确、问题重复、答案不完整等..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="suggestions">改进建议</label>
+            <textarea id="suggestions" placeholder="针对发现的问题提出改进建议..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="highlights">亮点特色</label>
+            <textarea id="highlights" placeholder="记录这个模板的突出优势或特色..."></textarea>
+        </div>
+
+        <button class="btn" onclick="addAssessment()">📊 添加评估记录</button>
+        <button class="btn btn-secondary" onclick="clearForm()">🗑️ 清空表单</button>
+    </div>
+
+    <div class="results-section">
+        <h2>📈 评估结果统计</h2>
+        
+        <div class="quick-stats" id="quickStats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTests">0</div>
+                <div class="stat-label">总测试次数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgScore">0.0</div>
+                <div class="stat-label">平均总分</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="bestTemplate">-</div>
+                <div class="stat-label">最佳模板</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalCards">0</div>
+                <div class="stat-label">总生成卡片</div>
+            </div>
+        </div>
+
+        <div id="assessmentRecords"></div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="exportResults()">📄 导出测试报告</button>
+            <button class="btn btn-secondary" onclick="clearResults()">🗑️清空所有记录</button>
+        </div>
+    </div>
+
+    <script>
+        let assessments = JSON.parse(localStorage.getItem('qualityAssessments') || '[]');
+
+        function updateDisplay() {
+            displayStatistics();
+            displayRecords();
+        }
+
+        function addAssessment() {
+            const template = document.getElementById('templateName').value;
+            const cardCount = parseInt(document.getElementById('cardCount').value);
+            const textSample = document.getElementById('textSample').value;
+            
+            if (!template || !cardCount || !textSample) {
+                alert('请填写模板、卡片数量和文本类型');
+                return;
+            }
+
+            const accuracy = getRadioValue('accuracy');
+            const relevance = getRadioValue('relevance');
+            const clarity = getRadioValue('clarity');
+            const completeness = getRadioValue('completeness');
+            const utility = getRadioValue('utility');
+
+            if (!accuracy || !relevance || !clarity || !completeness || !utility) {
+                alert('请完成所有质量评分');
+                return;
+            }
+
+            const assessment = {
+                timestamp: new Date().toLocaleString('zh-CN'),
+                template: template,
+                cardCount: cardCount,
+                textSample: textSample,
+                scores: {
+                    accuracy: parseInt(accuracy),
+                    relevance: parseInt(relevance),
+                    clarity: parseInt(clarity),
+                    completeness: parseInt(completeness),
+                    utility: parseInt(utility)
+                },
+                totalScore: parseInt(accuracy) + parseInt(relevance) + parseInt(clarity) + parseInt(completeness) + parseInt(utility),
+                issues: document.getElementById('issues').value,
+                suggestions: document.getElementById('suggestions').value,
+                highlights: document.getElementById('highlights').value
+            };
+
+            assessments.push(assessment);
+            localStorage.setItem('qualityAssessments', JSON.stringify(assessments));
+            
+            updateDisplay();
+            clearForm();
+            
+            alert('评估记录已保存！');
+        }
+
+        function getRadioValue(name) {
+            const radios = document.querySelectorAll(`input[name="${name}"]:checked`);
+            return radios.length > 0 ? radios[0].value : null;
+        }
+
+        function clearForm() {
+            document.getElementById('templateName').selectedIndex = 0;
+            document.getElementById('cardCount').value = '';
+            document.getElementById('textSample').value = '';
+            document.getElementById('issues').value = '';
+            document.getElementById('suggestions').value = '';
+            document.getElementById('highlights').value = '';
+            
+            // 清空所有单选按钮
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+        }
+
+        function displayStatistics() {
+            const totalTests = assessments.length;
+            const avgScore = totalTests > 0 ? (assessments.reduce((sum, a) => sum + a.totalScore, 0) / totalTests).toFixed(1) : '0.0';
+            const totalCards = assessments.reduce((sum, a) => sum + a.cardCount, 0);
+            
+            // 找出最佳模板
+            const templateScores = {};
+            assessments.forEach(a => {
+                if (!templateScores[a.template]) {
+                    templateScores[a.template] = { total: 0, count: 0 };
+                }
+                templateScores[a.template].total += a.totalScore;
+                templateScores[a.template].count += 1;
+            });
+            
+            let bestTemplate = '-';
+            let bestAvg = 0;
+            for (const [template, data] of Object.entries(templateScores)) {
+                const avg = data.total / data.count;
+                if (avg > bestAvg) {
+                    bestAvg = avg;
+                    bestTemplate = template;
+                }
+            }
+
+            document.getElementById('totalTests').textContent = totalTests;
+            document.getElementById('avgScore').textContent = avgScore;
+            document.getElementById('bestTemplate').textContent = bestTemplate;
+            document.getElementById('totalCards').textContent = totalCards;
+        }
+
+        function displayRecords() {
+            const container = document.getElementById('assessmentRecords');
+            if (assessments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280;">暂无评估记录</p>';
+                return;
+            }
+
+            container.innerHTML = assessments.map((assessment, index) => `
+                <div class="test-record">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0;">${getTemplateName(assessment.template)} - ${assessment.textSample}</h4>
+                        <span style="color: #6b7280; font-size: 12px;">${assessment.timestamp}</span>
+                    </div>
+                    <div class="score-display">${assessment.totalScore}/25分</div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 10px 0;">
+                        <div>准确性: ${assessment.scores.accuracy}/5</div>
+                        <div>相关性: ${assessment.scores.relevance}/5</div>
+                        <div>清晰性: ${assessment.scores.clarity}/5</div>
+                        <div>完整性: ${assessment.scores.completeness}/5</div>
+                        <div>实用性: ${assessment.scores.utility}/5</div>
+                    </div>
+                    <div><strong>卡片数量:</strong> ${assessment.cardCount}张</div>
+                    ${assessment.issues ? `<div><strong>问题:</strong> ${assessment.issues}</div>` : ''}
+                    ${assessment.suggestions ? `<div><strong>建议:</strong> ${assessment.suggestions}</div>` : ''}
+                    ${assessment.highlights ? `<div><strong>亮点:</strong> ${assessment.highlights}</div>` : ''}
+                    <button class="btn btn-secondary" onclick="deleteAssessment(${index})" style="margin-top: 10px; padding: 5px 10px; font-size: 12px;">删除</button>
+                </div>
+            `).join('');
+        }
+
+        function getTemplateName(template) {
+            const names = {
+                'academic': '🎓 学术研究',
+                'exam': '📝 考试备考',
+                'language': '🗣️ 语言学习',
+                'technical': '💻 技术文档',
+                'general': '🎯 通用模板'
+            };
+            return names[template] || template;
+        }
+
+        function deleteAssessment(index) {
+            if (confirm('确定要删除这条评估记录吗？')) {
+                assessments.splice(index, 1);
+                localStorage.setItem('qualityAssessments', JSON.stringify(assessments));
+                updateDisplay();
+            }
+        }
+
+        function clearResults() {
+            if (confirm('确定要清空所有评估记录吗？此操作不可恢复。')) {
+                assessments = [];
+                localStorage.removeItem('qualityAssessments');
+                updateDisplay();
+            }
+        }
+
+        function exportResults() {
+            if (assessments.length === 0) {
+                alert('暂无数据可导出');
+                return;
+            }
+
+            const report = generateReport();
+            const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `flashcard_quality_report_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function generateReport() {
+            const totalTests = assessments.length;
+            const avgScore = (assessments.reduce((sum, a) => sum + a.totalScore, 0) / totalTests).toFixed(1);
+            const totalCards = assessments.reduce((sum, a) => sum + a.cardCount, 0);
+
+            let report = `AI Flashcard Generator 质量测试报告\n`;
+            report += `生成时间: ${new Date().toLocaleString('zh-CN')}\n`;
+            report += `==========================================\n\n`;
+            
+            report += `📊 测试统计\n`;
+            report += `总测试次数: ${totalTests}\n`;
+            report += `平均总分: ${avgScore}/25\n`;
+            report += `总生成卡片数: ${totalCards}\n\n`;
+
+            report += `📋 详细记录\n`;
+            assessments.forEach((assessment, index) => {
+                report += `\n${index + 1}. ${getTemplateName(assessment.template)}\n`;
+                report += `   时间: ${assessment.timestamp}\n`;
+                report += `   文本类型: ${assessment.textSample}\n`;
+                report += `   卡片数量: ${assessment.cardCount}张\n`;
+                report += `   总分: ${assessment.totalScore}/25\n`;
+                report += `   详细评分: 准确性${assessment.scores.accuracy} 相关性${assessment.scores.relevance} 清晰性${assessment.scores.clarity} 完整性${assessment.scores.completeness} 实用性${assessment.scores.utility}\n`;
+                if (assessment.issues) report += `   问题: ${assessment.issues}\n`;
+                if (assessment.suggestions) report += `   建议: ${assessment.suggestions}\n`;
+                if (assessment.highlights) report += `   亮点: ${assessment.highlights}\n`;
+            });
+
+            return report;
+        }
+
+        // 页面加载时显示现有数据
+        document.addEventListener('DOMContentLoaded', updateDisplay);
+    </script>
+</body>
+</html>

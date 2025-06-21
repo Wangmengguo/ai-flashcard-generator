@@ -758,26 +758,41 @@
                         </h2>
                         <div class="prompt-section">
                             <div class="prompt-templates">
-                                <div class="template-card selected" data-template="default">
-                                    <div class="template-title">默认模板</div>
-                                    <div class="template-desc">适用于一般文本的标准问答卡片生成</div>
+                                <div class="template-card selected" data-template="general">
+                                    <div class="template-title">🎯 通用模板</div>
+                                    <div class="template-desc">适用于一般性文本内容的默认模板</div>
                                 </div>
-                                <div class="template-card" data-template="detailed">
-                                    <div class="template-title">详细解析</div>
-                                    <div class="template-desc">生成更详细的解释性问答，适合学术内容</div>
+                                <div class="template-card" data-template="academic">
+                                    <div class="template-title">🎓 学术研究</div>
+                                    <div class="template-desc">适用于学术论文、研究报告和理论性文本</div>
                                 </div>
-                                <div class="template-card" data-template="simple">
-                                    <div class="template-title">简洁模式</div>
-                                    <div class="template-desc">生成简短、核心的问答对，便于快速记忆</div>
+                                <div class="template-card" data-template="exam">
+                                    <div class="template-title">📝 考试备考</div>
+                                    <div class="template-desc">适用于各类考试复习材料和教学内容</div>
+                                </div>
+                                <div class="template-card" data-template="language">
+                                    <div class="template-title">🗣️ 语言学习</div>
+                                    <div class="template-desc">适用于外语学习和语言技能提升</div>
+                                </div>
+                                <div class="template-card" data-template="technical">
+                                    <div class="template-title">💻 技术文档</div>
+                                    <div class="template-desc">适用于技术文档、编程教程和工程资料</div>
                                 </div>
                                 <div class="template-card" data-template="custom">
-                                    <div class="template-title">自定义</div>
+                                    <div class="template-title">⚙️ 自定义</div>
                                     <div class="template-desc">使用自己的Prompt模板进行生成</div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="customPrompt" class="form-label">自定义 Prompt（仅在选择自定义模式时生效）</label>
                                 <textarea id="customPrompt" class="form-textarea" placeholder="输入你的自定义Prompt..." style="min-height: 120px; display: none;"></textarea>
+                                <div id="customPromptHelp" class="form-help" style="display: none; margin-top: 8px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 0.875rem; line-height: 1.5;">
+                                    <strong>📝 格式要求：</strong><br>
+                                    • 必须指定输出格式：<code>Q: 问题内容</code> 和 <code>A: 答案内容</code><br>
+                                    • 问答对之间用 <code>---</code> 分隔<br>
+                                    • 留空将使用高质量的默认模板<br>
+                                    <strong>💡 示例：</strong>请生成Q/A格式的卡片，用"---"分隔
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -1032,94 +1047,54 @@
         let batchProcesses = [];
         let sessionHistory = [];
 
-        // Prompt模板定义
-        const PROMPT_TEMPLATES = {
-            default: `你是一位高阶抽认卡（Flashcards）生成专家，请将用户输入的原始中文文本转化为优质、问题驱动的问答卡片。严格参照下述规范：
-
-1. 【输出语言】仅用中文。
-2. 【知识原子化】每段文本≈一个考点，卡片信息应原子化（单一知识点），绝不混合多个独立概念；避免碎片化（不把过小信息单独成卡）。
-3. 【问答格式规范】每张卡片用如下形式：
-Q: <针对该段核心概念的清晰、独立问题>
-A: <精准、完整、简明扼要的答案>
-问答对间用"---"分隔，每个问答单独占一行。
-4. 【问题类型】优先设为简答题，避免使用"对/错"、"是/否"即可回答的问题。
-5. 【高优先级内容】优先抽取（如原文有）：
-   - 概念定义与本质
-   - 关键步骤、流程、公式
-   - 原理或因果关系
-   - 分类、对比
-   - 典型例子或实际应用场景
-   - 常见易错点或高频混淆
-6. 【信息筛选与上限】如能抽取高质量卡片≤{cardCount}张，全输出；如>{cardCount}张，优先保留信息量最大、代表性最强的前{cardCount}张（衡量标准为对理解全貌最重要的卡片）。
-7. 【表达要求】
-   - 回答必须准确、独立、完整且可单独理解。问题和答案不得出现上下文专属代词（如"它"、"其"、"他们"等）。
-   - 允许适度同义改写以提升可记忆性，但绝不添加或推断原文未明示的事实或信息。
-   - 问答风格统一，保持与示例一致的表达方式，不得出现解释性备注或输出模板外内容。
-8. 【质量门槛】如遇信息稀疏或逻辑不清，无法构造高质量问答卡，请直接忽略该段材料，不强行生成低质卡片。
-9. 【输出格式】请严格用 markdown 段落，便于后续处理。
-
-请按以上全部规范和范例格式，生成最佳问答抽认卡。`,
-
-            detailed: `你是一位专业的教育内容专家，专门为学术学习创建详细的问答卡片。请遵循以下规范：
-
-1. 【输出语言】仅用中文。
-2. 【详细解析】每张卡片应包含详细的解释和分析，帮助深度理解。
-3. 【问答格式】：
-Q: <深入的分析性问题>
-A: <详细的解释，包含背景、原理、示例>
-问答对间用"---"分隔。
-4. 【内容重点】：
-   - 概念的深层含义和背景
-   - 详细的步骤说明和原理解释
-   - 相关概念的对比和关联
-   - 实际应用场景和案例分析
-   - 常见误解和注意事项
-5. 【数量限制】生成不超过{cardCount}张高质量卡片。
-6. 【表达要求】答案要详尽但条理清晰，适合深度学习和理解。
-
-请生成详细解析型的问答卡片。`,
-
-            simple: `你是一位记忆训练专家，专门创建简洁高效的记忆卡片。请遵循以下规范：
-
-1. 【输出语言】仅用中文。
-2. 【简洁原则】每张卡片都应简短、直接、易于记忆。
-3. 【问答格式】：
-Q: <简短直接的问题>
-A: <简洁准确的答案>
-问答对间用"---"分隔。
-4. 【内容特点】：
-   - 核心概念和关键信息
-   - 重要的数字、日期、名称
-   - 简单的因果关系
-   - 基础定义和分类
-5. 【数量限制】生成不超过{cardCount}张卡片，但注重质量和记忆效果。
-6. 【表达要求】问题和答案都要简短有力，便于快速记忆和复习。
-
-请生成简洁高效的记忆卡片。`,
-
-            custom: '' // 用户自定义内容
-        };
+        // 模板数据存储 (从后端API动态获取)
+        let templateData = {};
+        
+        // 从后端获取模板数据
+        async function loadTemplates() {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/templates`);
+                const data = await response.json();
+                templateData = data.templates;
+                console.log('Templates loaded:', templateData);
+                return true;
+            } catch (error) {
+                console.error('Failed to load templates:', error);
+                // 使用默认模板作为后备
+                templateData = {
+                    general: {
+                        name: "通用模板",
+                        description: "适用于一般性文本内容的默认模板",
+                        max_cards: 10
+                    }
+                };
+                return false;
+            }
+        }
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
         });
 
-        function initializeApp() {
+        async function initializeApp() {
+            // 首先检测环境并设置API基础URL
+            detectEnvironment();
+            
             // 加载保存的API密钥
             loadSavedApiKey();
             
-            // 加载模型列表
-            loadModels();
+            // 加载模型列表和模板数据
+            await Promise.all([
+                loadModels(),
+                loadTemplates()
+            ]);
             
             // 初始化事件监听器
             initializeEventListeners();
             
             // 初始化滑块
             initializeSlider();
-            
-            // 检测环境并设置API基础URL
-            detectEnvironment();
         }
 
         function loadSavedApiKey() {
@@ -1151,29 +1126,40 @@ A: <简洁准确的答案>
             });
         }
 
-        function initializeSlider() {
+        // 滑块更新函数（全局可访问）
+        function updateSlider() {
             const slider = document.getElementById('cardCount');
             const fill = document.getElementById('sliderFill');
             const thumb = document.getElementById('sliderThumb');
             const display = document.getElementById('cardCountDisplay');
+            
+            const value = slider.value;
+            const percentage = ((value - slider.min) / (slider.max - slider.min)) * 100;
+            
+            fill.style.width = percentage + '%';
+            thumb.style.left = 'calc(' + percentage + '% - 9px)';
+            display.textContent = value;
+        }
 
-            function updateSlider() {
-                const value = slider.value;
-                const percentage = ((value - slider.min) / (slider.max - slider.min)) * 100;
-                
-                fill.style.width = percentage + '%';
-                thumb.style.left = 'calc(' + percentage + '% - 9px)';
-                display.textContent = value;
-            }
-
+        function initializeSlider() {
+            const slider = document.getElementById('cardCount');
             slider.addEventListener('input', updateSlider);
             updateSlider(); // 初始化
         }
 
         function detectEnvironment() {
-            // 简单的环境检测逻辑
-            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            window.API_BASE_URL = isLocal ? 'http://127.0.0.1:8000' : '';
+            // 检测当前访问方式
+            if (location.protocol === 'file:') {
+                // 通过file://访问，需要指定完整的API地址
+                window.API_BASE_URL = 'http://127.0.0.1:8001';
+            } else if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+                // 通过HTTP访问本地服务器，使用相对路径
+                window.API_BASE_URL = '';
+            } else {
+                // 生产环境，使用相对路径
+                window.API_BASE_URL = '';
+            }
+            console.log('API Base URL:', window.API_BASE_URL);
         }
 
         function switchTab(tabName) {
@@ -1199,12 +1185,32 @@ A: <简洁准确的答案>
 
             currentTemplate = templateName;
 
-            // 显示/隐藏自定义Prompt输入框
+            // 显示/隐藏自定义Prompt输入框和帮助信息
             const customPromptTextarea = document.getElementById('customPrompt');
+            const customPromptHelp = document.getElementById('customPromptHelp');
             if (templateName === 'custom') {
                 customPromptTextarea.style.display = 'block';
+                customPromptHelp.style.display = 'block';
             } else {
                 customPromptTextarea.style.display = 'none';
+                customPromptHelp.style.display = 'none';
+            }
+
+            // 根据选择的模板更新默认卡片数量
+            if (templateName !== 'custom' && templateData[templateName]) {
+                const defaultMaxCards = templateData[templateName].max_cards;
+                const cardCountSlider = document.getElementById('cardCount');
+                const cardCountDisplay = document.getElementById('cardCountDisplay');
+                
+                cardCountSlider.value = defaultMaxCards;
+                if (cardCountDisplay) {
+                    cardCountDisplay.textContent = defaultMaxCards;
+                }
+                
+                // 重要：更新滑块的视觉表示
+                updateSlider();
+                
+                console.log(`Template ${templateName} selected, max_cards set to ${defaultMaxCards}`);
             }
         }
 
@@ -1309,14 +1315,45 @@ A: <简洁准确的答案>
             }
         }
 
-        function getCurrentPrompt() {
-            const cardCount = document.getElementById('cardCount').value;
+        function getCurrentTemplateConfig() {
+            const cardCount = parseInt(document.getElementById('cardCount').value);
             
             if (currentTemplate === 'custom') {
                 const customPrompt = document.getElementById('customPrompt').value.trim();
-                return customPrompt || PROMPT_TEMPLATES.default.replace('{cardCount}', cardCount);
+                
+                // 如果用户没有输入自定义提示词，使用专业的默认模板
+                const systemPrompt = customPrompt || `你是一位高阶抽认卡（Flashcards）生成专家，请将用户输入的原始中文文本转化为优质、问题驱动的问答卡片。严格参照下述规范：
+
+1. 【输出语言】仅用中文。
+2. 【知识原子化】每段文本≈一个考点，卡片信息应原子化（单一知识点），绝不混合多个独立概念。
+3. 【问答格式规范】每张卡片用如下形式：
+Q: <针对该段核心概念的清晰、独立问题>
+A: <精准、完整、简明扼要的答案>
+问答对间用"---"分隔。
+4. 【问题类型】优先设为简答题，避免使用"对/错"、"是/否"即可回答的问题。
+5. 【高优先级内容】优先抽取：
+   - 概念定义与本质
+   - 关键步骤、流程、公式
+   - 原理或因果关系
+   - 分类、对比
+   - 典型例子或实际应用场景
+6. 【信息筛选与上限】生成不超过${cardCount}张高质量卡片，优先保留信息量最大、代表性最强的内容。
+7. 【表达要求】回答必须准确、独立、完整且可单独理解。问题和答案不得出现上下文专属代词。
+8. 【质量门槛】如遇信息稀疏或逻辑不清，无法构造高质量问答卡，请直接忽略该段材料。
+
+请按以上规范生成问答抽认卡。`;
+
+                return {
+                    template_id: null,
+                    max_cards: cardCount,
+                    custom_system_prompt: systemPrompt,
+                    custom_user_prompt: `请为以下文本生成Flashcards（最多${cardCount}张）：\n\n{text}`
+                };
             } else {
-                return PROMPT_TEMPLATES[currentTemplate].replace(/{cardCount}/g, cardCount);
+                return {
+                    template_id: currentTemplate,
+                    max_cards: cardCount
+                };
             }
         }
 
@@ -1362,17 +1399,20 @@ A: <简洁准确的答案>
             document.getElementById('exportSection').classList.remove('show');
 
             try {
+                const templateConfig = getCurrentTemplateConfig();
+                const requestBody = {
+                    text: text,
+                    api_key: apiKey,
+                    model_name: modelName,
+                    ...templateConfig
+                };
+
                 const response = await fetch(`${window.API_BASE_URL}/generate_flashcards/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        text: text,
-                        api_key: apiKey,
-                        model_name: modelName,
-                        custom_prompt: getCurrentPrompt()
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 const data = await response.json();
