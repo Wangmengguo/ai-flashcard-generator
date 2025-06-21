@@ -1,22 +1,24 @@
-# AI Flashcard Generator - 部署指南
+# 🚀 AI Flashcard Generator - 完整部署指南
 
-## 概述
+本指南提供 AI Flashcard Generator 项目的完整部署解决方案，包括本地开发、测试环境和生产环境的部署流程，以及最佳实践和运维指南。
 
-本指南详细说明了AI Flashcard Generator项目的容器化部署流程，包括本地开发、测试环境和生产环境的完整部署方案。
+---
 
-## 目录
+## 📋 目录
 
 - [系统要求](#系统要求)
 - [快速开始](#快速开始)
 - [环境配置](#环境配置)
 - [容器化部署](#容器化部署)
-- [CI/CD流程](#cicd流程)
-- [安全配置](#安全配置)
+- [部署检查清单](#部署检查清单)
+- [生产最佳实践](#生产最佳实践)
 - [监控和日志](#监控和日志)
 - [故障排除](#故障排除)
-- [性能优化](#性能优化)
+- [扩展部署](#扩展部署)
 
-## 系统要求
+---
+
+## 🖥️ 系统要求
 
 ### 最低要求
 - Docker Engine 20.10+
@@ -43,7 +45,9 @@
 - macOS 12+
 - Windows 10/11 (WSL2)
 
-## 快速开始
+---
+
+## 🚀 快速开始
 
 ### 1. 克隆项目
 ```bash
@@ -93,13 +97,17 @@ docker-compose up -d
 ### 5. 配置验证
 ```bash
 # 验证部署配置
+make validate
+# 或
 python validate-config.py
 
 # 检查应用健康状态
 make health
 ```
 
-## 环境配置
+---
+
+## ⚙️ 环境配置
 
 ### 环境变量文件
 
@@ -138,7 +146,140 @@ SSL_CERT_PATH=/etc/ssl/certs/cert.pem
 SSL_KEY_PATH=/etc/ssl/private/key.pem
 ```
 
-## 容器化部署
+#### 性能配置
+```bash
+# 工作进程配置
+WORKERS=4
+MAX_TEXT_LENGTH=10000
+REQUEST_TIMEOUT=60
+
+# 日志配置
+LOG_LEVEL=info
+LOG_FORMAT=json  # 生产环境
+ACCESS_LOG=/app/logs/access.log
+ERROR_LOG=/app/logs/error.log
+```
+
+#### 完整环境变量配置 (69个配置选项)
+```bash
+# === 核心应用配置 ===
+ENVIRONMENT=production
+DEBUG=false
+SECRET_KEY=your-super-secret-key-here
+HOST=0.0.0.0
+PORT=8000
+
+# === API配置 ===
+OPENROUTER_API_KEY=your-openrouter-api-key
+API_BASE_URL=https://openrouter.ai/api/v1
+DEFAULT_MODEL=google/gemini-2.5-flash-preview
+MAX_TEXT_LENGTH=10000
+REQUEST_TIMEOUT=60
+
+# === 安全配置 ===
+CORS_ORIGINS=https://yourdomain.com
+CORS_CREDENTIALS=true
+CORS_METHODS=GET,POST,OPTIONS
+CORS_HEADERS=*
+SSL_ENABLED=true
+SSL_CERT_PATH=/etc/ssl/certs/cert.pem
+SSL_KEY_PATH=/etc/ssl/private/key.pem
+
+# === 性能配置 ===
+WORKERS=4
+WORKER_CLASS=uvicorn.workers.UvicornWorker
+KEEPALIVE=2
+MAX_REQUESTS=1000
+MAX_REQUESTS_JITTER=100
+TIMEOUT=30
+GRACEFUL_TIMEOUT=30
+
+# === 日志配置 ===
+LOG_LEVEL=info
+LOG_FORMAT=json
+LOG_FILE=/app/logs/app.log
+ACCESS_LOG=/app/logs/access.log
+ERROR_LOG=/app/logs/error.log
+LOG_ROTATION=daily
+LOG_RETENTION=30
+
+# === 监控配置 ===
+METRICS_ENABLED=true
+HEALTH_CHECK_PATH=/health
+METRICS_PATH=/metrics
+PROMETHEUS_ENABLED=true
+
+# === 缓存配置 ===
+REDIS_URL=redis://redis:6379
+CACHE_TTL=3600
+CACHE_ENABLED=true
+
+# === 数据库配置 (未来扩展) ===
+DATABASE_URL=postgresql://user:pass@db:5432/flashcard
+DB_POOL_SIZE=20
+DB_MAX_OVERFLOW=30
+DB_POOL_TIMEOUT=30
+DB_POOL_RECYCLE=3600
+
+# === 文件存储配置 ===
+UPLOAD_MAX_SIZE=10485760  # 10MB
+ALLOWED_EXTENSIONS=txt,md
+STORAGE_PATH=/app/storage
+
+# === 速率限制配置 ===
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS=100
+RATE_LIMIT_WINDOW=60
+RATE_LIMIT_STORAGE=redis
+
+# === 邮件配置 (通知) ===
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+SMTP_TLS=true
+
+# === 外部服务配置 ===
+SENTRY_DSN=https://your-sentry-dsn
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/your/webhook/url
+
+# === Docker配置 ===
+COMPOSE_PROJECT_NAME=flashcard-generator
+DOCKER_REGISTRY=ghcr.io/your-username
+IMAGE_TAG=latest
+
+# === Nginx配置 ===
+NGINX_CLIENT_MAX_BODY_SIZE=10m
+NGINX_PROXY_TIMEOUT=60s
+NGINX_PROXY_CONNECT_TIMEOUT=60s
+NGINX_PROXY_SEND_TIMEOUT=60s
+
+# === 监控服务配置 ===
+PROMETHEUS_RETENTION=15d
+GRAFANA_ADMIN_PASSWORD=admin
+GRAFANA_SECRET_KEY=your-grafana-secret
+
+# === 备份配置 ===
+BACKUP_ENABLED=true
+BACKUP_SCHEDULE=0 2 * * *
+BACKUP_RETENTION=30
+BACKUP_S3_BUCKET=your-backup-bucket
+
+# === 开发配置 ===
+HOT_RELOAD=true
+AUTO_RELOAD=true
+RELOAD_DIRS=/app
+RELOAD_INCLUDES=*.py
+
+# === 安全扫描配置 ===
+SECURITY_SCAN_ENABLED=true
+TRIVY_ENABLED=true
+BANDIT_ENABLED=true
+```
+
+---
+
+## 🐳 容器化部署
 
 ### 2025年优化特性
 
@@ -203,148 +344,314 @@ docker-compose --profile monitoring up -d
 # Grafana: http://localhost:3000 (admin/admin)
 ```
 
-### 服务配置
-
-#### 主应用服务
-- **端口**: 8000
-- **健康检查**: `/supported_models`
-- **日志**: `/app/logs/`
-- **重启策略**: unless-stopped
-
-#### 反向代理 (Nginx)
-- **HTTP端口**: 80
-- **HTTPS端口**: 443
-- **配置**: `nginx/nginx.conf`
-- **SSL证书**: `nginx/ssl/`
-
-#### 监控服务
-- **Prometheus**: 端口9090
-- **Grafana**: 端口3000
-- **数据持久化**: Docker volumes
-
-## CI/CD流程
-
-### GitHub Actions工作流
-
-CI/CD流程包含以下阶段：
-
-1. **安全扫描** - Trivy漏洞扫描
-2. **代码质量** - Black、Flake8、Bandit检查
-3. **单元测试** - pytest测试套件
-4. **镜像构建** - 多平台Docker镜像
-5. **部署** - 自动部署到staging/production
-
-### 触发条件
-- **Push到main分支** → 部署到生产环境
-- **Push到develop分支** → 部署到测试环境
-- **Pull Request** → 运行测试和检查
-- **Release发布** → 创建版本化镜像
-
-### 环境变量设置
-
-在GitHub仓库设置中配置以下密钥：
+### 自动化工具完善 (Makefile)
 
 ```bash
-# 容器仓库
-GITHUB_TOKEN  # 自动提供
+# 查看所有可用命令
+make help
 
-# 部署密钥（如果使用SSH部署）
-DEPLOY_SSH_KEY
-STAGING_HOST
-PRODUCTION_HOST
+# 开发环境管理
+make dev          # 启动开发环境
+make dev-logs     # 查看开发日志
+make dev-stop     # 停止开发环境
 
-# 通知设置
-SLACK_WEBHOOK_URL
+# 生产环境管理
+make prod         # 启动生产环境
+make prod-full    # 启动完整生产环境（含监控）
+make prod-logs    # 查看生产日志
+
+# 构建和部署
+make build        # 构建Docker镜像
+make push         # 推送镜像到仓库
+make deploy       # 部署到远程服务器
+
+# 测试和质量保证
+make test         # 运行测试
+make lint         # 代码检查
+make security     # 安全扫描
+
+# 维护工具
+make health       # 健康检查
+make verify       # 综合部署验证
+make validate     # 配置验证
+make backup       # 创建备份
+make clean        # 清理容器
+
+# 快速部署
+make quick-dev    # 快速开发环境搭建
+make quick-prod   # 快速生产环境搭建
+
+# 监控
+make monitor      # 打开监控面板
 ```
 
-### 部署脚本示例
+---
 
+## ✅ 部署检查清单
+
+### 部署前检查 (Pre-Deployment)
+
+#### 环境准备
+- [ ] Docker Engine 20.10+ 已安装
+- [ ] Docker Compose 2.0+ 已安装  
+- [ ] 系统满足最低要求 (2GB RAM, 1 CPU核心, 10GB 磁盘空间)
+- [ ] 网络端口 80, 443, 8000 可用
+- [ ] Git 仓库已克隆到目标服务器
+
+#### 环境变量配置
+- [ ] `.env` 文件已创建并配置
+- [ ] **OPENROUTER_API_KEY** 已设置 (CRITICAL - 必须设置)
+- [ ] **CORS_ORIGINS** 已配置为实际域名 (生产环境)
+- [ ] **SECRET_KEY** 已设置为强密码 (生产环境)
+- [ ] SSL证书路径已配置 (如启用HTTPS)
+- [ ] 日志目录权限已设置
+
+#### 安全配置
+- [ ] 防火墙规则已配置
+- [ ] SSL/TLS证书已安装 (生产环境)
+- [ ] 非root用户运行权限已设置
+- [ ] API密钥已安全存储
+- [ ] CORS策略已严格配置 (生产环境)
+
+#### 网络配置
+- [ ] 域名DNS记录已配置
+- [ ] 反向代理配置已验证 (如使用)
+- [ ] 端口映射已正确设置
+- [ ] 健康检查端点可访问
+
+### 快速部署命令
+
+#### 开发环境部署
 ```bash
-#!/bin/bash
-# deploy.sh
+# 1. 环境准备
+cp .env.example .env
+# 编辑 .env 文件，设置 OPENROUTER_API_KEY
 
-set -e
+# 2. 启动开发环境
+make dev
 
-echo "开始部署到生产环境..."
-
-# 拉取最新镜像
-docker-compose pull
-
-# 优雅重启服务
-docker-compose up -d --no-deps --force-recreate flashcard-app
-
-# 等待健康检查
-echo "等待应用启动..."
-sleep 30
-
-# 验证部署
-if curl -f http://localhost:8000/supported_models; then
-    echo "部署成功！"
-else
-    echo "部署失败，回滚..."
-    docker-compose rollback
-    exit 1
-fi
+# 3. 验证部署
+curl http://localhost:8001/supported_models
 ```
 
-## 安全配置
+#### 生产环境部署
+```bash
+# 1. 环境准备
+cp .env.production .env
+# 编辑 .env 文件，设置所有必需变量
 
-### 容器安全
+# 2. 构建和启动
+make build
+make prod
 
-1. **非root用户运行**
-   ```dockerfile
-   RUN groupadd -r appuser && useradd -r -g appuser appuser
-   USER appuser
-   ```
+# 3. 验证部署
+make verify
+```
 
-2. **最小化镜像**
-   - 使用slim基础镜像
-   - 多阶段构建
-   - 删除不必要的包
+#### 完整生产环境 (含监控)
+```bash
+# 启动完整生产环境
+make prod-full
 
-3. **安全扫描**
-   - Trivy漏洞扫描
-   - 定期更新基础镜像
+# 访问服务
+# 应用: http://localhost:8000
+# Prometheus: http://localhost:9090  
+# Grafana: http://localhost:3000 (admin/admin)
+```
 
-### 网络安全
+### 部署后验证 (Post-Deployment)
 
-1. **HTTPS配置**
-   ```bash
-   # 生成自签名证书（仅用于测试）
-   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-     -keyout nginx/ssl/key.pem \
-     -out nginx/ssl/cert.pem
-   ```
+#### 基础功能验证
+- [ ] API端点响应正常
+  ```bash
+  curl http://localhost:8000/supported_models
+  ```
+- [ ] 健康检查通过
+  ```bash
+  curl http://localhost:8000/health
+  ```
+- [ ] 前端页面可访问
+  ```bash
+  curl http://localhost:8000/
+  ```
 
-2. **防火墙设置**
-   ```bash
-   # UFW配置示例
-   sudo ufw allow 22/tcp   # SSH
-   sudo ufw allow 80/tcp   # HTTP
-   sudo ufw allow 443/tcp  # HTTPS
-   sudo ufw enable
-   ```
+#### 功能测试
+- [ ] 文本输入和卡片生成功能正常
+- [ ] 不同AI模型切换正常
+- [ ] 导出功能 (Anki, CSV, JSON) 正常
+- [ ] 错误处理和用户反馈正常
 
-### API安全
+#### 性能验证
+- [ ] 响应时间在可接受范围内 (<5秒)
+- [ ] 内存使用正常 (<2GB for 4 workers)
+- [ ] CPU使用率正常 (<80% under load)
+- [ ] 日志文件正常写入
 
-1. **输入验证**
-   - 文本长度限制
-   - 字符过滤
-   - API密钥验证
+#### 安全验证
+- [ ] HTTPS正常工作 (生产环境)
+- [ ] API密钥不在日志中泄露
+- [ ] CORS策略生效
+- [ ] 防火墙规则正确应用
 
-2. **速率限制**
-   ```bash
-   RATE_LIMIT_REQUESTS=100
-   RATE_LIMIT_WINDOW=60
-   ```
+### 成功部署标准
 
-3. **CORS策略**
-   ```bash
-   # 生产环境严格设置
-   CORS_ORIGINS=https://yourdomain.com
-   ```
+部署被认为成功当:
+- [ ] 所有健康检查通过
+- [ ] API响应时间 < 3秒 (正常负载)
+- [ ] 错误率 < 1% (24小时内)
+- [ ] 内存使用稳定 (无内存泄漏)
+- [ ] 日志记录正常 (无错误堆栈)
+- [ ] 监控指标正常显示
 
-## 监控和日志
+---
+
+## 🛡️ 生产最佳实践
+
+### 安全最佳实践
+
+#### 1. 容器安全
+
+**非root用户运行**
+```dockerfile
+# 确保应用以非root用户运行
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+USER appuser
+```
+
+**最小化镜像**
+- 使用官方slim基础镜像
+- 删除不必要的包和文件
+- 使用多阶段构建减少攻击面
+
+**安全扫描**
+```bash
+# 使用Trivy扫描镜像漏洞
+trivy image flashcard-generator:latest
+
+# 集成到CI/CD流程
+make security
+```
+
+#### 2. 网络安全
+
+**HTTPS强制启用**
+```nginx
+# nginx配置示例
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    
+    ssl_certificate /etc/ssl/certs/cert.pem;
+    ssl_certificate_key /etc/ssl/private/key.pem;
+    
+    # 现代SSL配置
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512;
+    ssl_prefer_server_ciphers off;
+    
+    # 安全头
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+}
+```
+
+**防火墙配置**
+```bash
+# UFW配置示例
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+
+# 仅允许特定IP访问管理端口
+sudo ufw allow from 192.168.1.0/24 to any port 9090  # Prometheus
+sudo ufw allow from 192.168.1.0/24 to any port 3000  # Grafana
+```
+
+#### 3. API安全
+
+**速率限制**
+```bash
+# 环境变量配置
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS=100
+RATE_LIMIT_WINDOW=60
+```
+
+**输入验证和净化**
+- 严格的文本长度限制 (最大10000字符)
+- 字符过滤和净化
+- API密钥格式验证
+
+**CORS策略**
+```bash
+# 生产环境严格设置
+CORS_ORIGINS=https://yourdomain.com
+```
+
+### 性能优化最佳实践
+
+#### 1. 容器配置优化
+
+**资源限制**
+```yaml
+# docker-compose.yml
+services:
+  flashcard-app:
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+```
+
+**工作进程优化**
+```bash
+# 2025年推荐配置
+# 使用Uvicorn内置多进程支持
+WORKERS=4  # CPU核心数
+WORKER_CLASS=uvicorn.workers.UvicornWorker
+KEEPALIVE=2
+```
+
+#### 2. 缓存策略
+
+**静态文件缓存**
+```nginx
+location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+}
+```
+
+**API响应缓存**
+- Redis缓存实现
+- 模型响应缓存
+- 频率限制缓存
+
+#### 3. 性能目标指标
+- 响应时间: P95 < 3秒, P99 < 5秒
+- 吞吐量: > 100 requests/second
+- 错误率: < 0.1%
+- 可用性: > 99.9%
+- 内存使用: < 2GB (4 workers)
+
+---
+
+## 📊 监控和日志
 
 ### 健康检查
 
@@ -354,7 +661,7 @@ fi
 - `/ready` - 就绪状态检查
 - `/metrics` - Prometheus指标
 
-### 日志配置
+### 结构化日志配置
 
 ```bash
 # 日志级别
@@ -379,6 +686,7 @@ ERROR_LOG=/app/logs/error.log
 - 生成的卡片数量
 - API错误统计
 - 模型使用情况
+- 系统资源使用 (CPU, 内存, 磁盘)
 
 ### 日志轮换
 
@@ -391,33 +699,80 @@ logging:
     max-file: "3"
 ```
 
-## 故障排除
+### 告警配置
 
-### 常见问题
+#### Prometheus告警规则
+```yaml
+# prometheus-alerts.yml
+groups:
+- name: flashcard-generator
+  rules:
+  - alert: HighErrorRate
+    expr: rate(requests_total{status=~"5.."}[5m]) > 0.1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High error rate detected"
+      
+  - alert: HighMemoryUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory usage detected"
+      
+  - alert: HighResponseTime
+    expr: histogram_quantile(0.95, rate(request_duration_seconds_bucket[5m])) > 5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High response time detected"
+```
+
+---
+
+## 🔧 故障排除
+
+### 常见问题及解决方案
 
 #### 1. 容器启动失败
 ```bash
 # 查看详细日志
 docker-compose logs flashcard-app
 
-# 检查配置
+# 检查配置语法
 docker-compose config
 
 # 验证环境变量
-docker-compose exec flashcard-app env
+docker-compose exec flashcard-app env | grep OPENROUTER
 ```
 
-#### 2. API调用失败
+#### 2. API调用失败 (OpenRouter)
 ```bash
-# 检查OpenRouter连接
+# 测试API密钥
 curl -H "Authorization: Bearer YOUR_API_KEY" \
      https://openrouter.ai/api/v1/models
+
+# 检查网络连接
+docker-compose exec flashcard-app ping openrouter.ai
 
 # 测试本地API
 curl http://localhost:8000/supported_models
 ```
 
-#### 3. 内存不足
+#### 3. 前端无法访问后端
+```bash
+# 检查CORS设置
+docker-compose exec flashcard-app env | grep CORS
+
+# 检查端口映射
+docker-compose ps
+```
+
+#### 4. 内存不足
 ```bash
 # 查看资源使用
 docker stats
@@ -426,7 +781,7 @@ docker stats
 docker-compose up -d --scale flashcard-app=1 --memory="2g"
 ```
 
-#### 4. SSL证书问题
+#### 5. SSL证书问题
 ```bash
 # 验证证书
 openssl x509 -in nginx/ssl/cert.pem -text -noout
@@ -459,72 +814,84 @@ grep "slow" /path/to/logs/app.log
 docker exec flashcard-app python -m memory_profiler main.py
 ```
 
-## 性能优化
-
-### 容器优化
-
-1. **镜像大小优化**
-   - 使用Alpine Linux基础镜像
-   - 清理pip缓存
-   - 删除构建依赖
-
-2. **运行时优化**
-   ```bash
-   # Gunicorn工作进程数
-   WORKERS=4
-
-   # 工作进程类型
-   WORKER_CLASS=uvicorn.workers.UvicornWorker
-
-   # 连接保持
-   KEEPALIVE=2
-   ```
-
-### 缓存策略
-
-1. **静态文件缓存**
-   ```nginx
-   location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-       expires 1y;
-       add_header Cache-Control "public, immutable";
-   }
-   ```
-
-2. **API响应缓存**
-   - Redis缓存实现
-   - 模型响应缓存
-   - 频率限制缓存
-
-### 数据库优化（未来扩展）
+### 自动化诊断工具
 
 ```bash
-# PostgreSQL配置
-DATABASE_URL=postgresql://user:pass@db:5432/flashcard
-POSTGRES_MAX_CONNECTIONS=100
-POSTGRES_SHARED_BUFFERS=256MB
+# 运行综合验证
+make verify
+
+# 运行健康检查
+make health
+
+# 查看系统状态
+make status
+
+# 生成诊断报告
+python deployment-check.py
 ```
 
-## 扩展部署
+---
+
+## 📈 扩展部署
 
 ### 水平扩展
 
-```yaml
-# docker-compose.yml
-services:
-  flashcard-app:
-    deploy:
-      replicas: 3
-    scale: 3
+#### 负载均衡配置
+```nginx
+# nginx负载均衡
+upstream flashcard_backend {
+    least_conn;
+    server flashcard-app-1:8000 max_fails=3 fail_timeout=30s;
+    server flashcard-app-2:8000 max_fails=3 fail_timeout=30s;
+    server flashcard-app-3:8000 max_fails=3 fail_timeout=30s;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    
+    location / {
+        proxy_pass http://flashcard_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # 健康检查
+        proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+    }
+}
 ```
 
-### 负载均衡
+#### Docker Swarm部署
+```yaml
+# docker-compose.swarm.yml
+version: '3.8'
 
-```nginx
-upstream flashcard_backend {
-    server flashcard-app-1:8000;
-    server flashcard-app-2:8000;
-    server flashcard-app-3:8000;
-}
+services:
+  flashcard-app:
+    image: flashcard-generator:latest
+    deploy:
+      mode: replicated
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - flashcard-network
+
+networks:
+  flashcard-network:
+    driver: overlay
+    attachable: true
 ```
 
 ### 数据持久化
@@ -535,81 +902,152 @@ volumes:
     driver: local
   redis_data:
     driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
 ```
 
-## 备份和恢复
-
-### 数据备份
+### 跨区域部署
 
 ```bash
-# 备份脚本
+# 区域A部署
+docker-compose -f docker-compose.yml -f docker-compose.region-a.yml up -d
+
+# 区域B部署  
+docker-compose -f docker-compose.yml -f docker-compose.region-b.yml up -d
+```
+
+---
+
+## 💾 备份和恢复
+
+### 数据备份策略
+
+#### 自动备份脚本
+```bash
 #!/bin/bash
-docker-compose exec postgres pg_dump -U user flashcard > backup_$(date +%Y%m%d).sql
+# backup.sh - 由 make backup 调用
 
-# 日志备份
-tar -czf logs_backup_$(date +%Y%m%d).tar.gz logs/
+set -e
+
+BACKUP_DIR="/backup/flashcard-generator"
+DATE=$(date +%Y%m%d_%H%M%S)
+
+mkdir -p "$BACKUP_DIR"
+
+# 备份配置文件
+tar -czf "$BACKUP_DIR/config_$DATE.tar.gz" \
+    .env* \
+    docker-compose.yml \
+    nginx/ \
+    monitoring/
+
+# 备份日志文件
+tar -czf "$BACKUP_DIR/logs_$DATE.tar.gz" logs/
+
+# 备份数据库 (如果有)
+# docker-compose exec postgres pg_dump -U user flashcard > "$BACKUP_DIR/db_$DATE.sql"
+
+# 清理旧备份 (保留30天)
+find "$BACKUP_DIR" -name "*.tar.gz" -mtime +30 -delete
+find "$BACKUP_DIR" -name "*.sql" -mtime +30 -delete
+
+echo "Backup completed: $DATE"
 ```
 
-### 灾难恢复
+#### 定时备份
+```bash
+# 添加到crontab
+0 2 * * * /opt/flashcard-generator/backup.sh >> /var/log/backup.log 2>&1
+```
+
+### 灾难恢复计划
 
 ```bash
-# 恢复数据库
-docker-compose exec postgres psql -U user flashcard < backup_20241201.sql
+#!/bin/bash
+# restore.sh
+
+BACKUP_FILE=$1
+RESTORE_DATE=$(date +%Y%m%d_%H%M%S)
+
+if [ -z "$BACKUP_FILE" ]; then
+    echo "Usage: $0 <backup_file>"
+    exit 1
+fi
+
+echo "Starting disaster recovery: $RESTORE_DATE"
+
+# 停止服务
+docker-compose down
+
+# 备份当前状态
+mv .env .env.backup_$RESTORE_DATE
+mv docker-compose.yml docker-compose.yml.backup_$RESTORE_DATE
 
 # 恢复配置
-cp backup/config/* config/
+tar -xzf "$BACKUP_FILE" -C .
+
+# 重启服务
+docker-compose up -d
+
+# 验证恢复
+sleep 30
+curl -f http://localhost:8000/health || {
+    echo "Recovery failed, rolling back..."
+    docker-compose down
+    mv .env.backup_$RESTORE_DATE .env
+    mv docker-compose.yml.backup_$RESTORE_DATE docker-compose.yml
+    docker-compose up -d
+    exit 1
+}
+
+echo "Disaster recovery completed successfully"
 ```
 
-## 新增部署工具 (2025年更新)
+---
 
-### 1. 配置验证工具
+## 🔒 安全审计和合规
+
+### 定期安全检查
+
+#### 自动化安全扫描
 ```bash
-# 运行全面配置检查
-python validate-config.py
+#!/bin/bash
+# security-audit.sh - 由 make security 调用
 
-# 检查特定配置文件
-python validate-config.py /path/to/project
+echo "Starting security audit..."
+
+# 镜像漏洞扫描
+trivy image flashcard-generator:latest --format json > security-report.json
+
+# 代码安全扫描
+bandit -r . -f json -o bandit-report.json
+
+# 依赖安全检查
+safety check --json > safety-report.json
+
+# 生成汇总报告
+python generate-security-report.py
+
+echo "Security audit completed"
 ```
 
-### 2. Makefile快捷命令
-```bash
-# 查看所有可用命令
-make help
+### 合规性检查
 
-# 开发环境管理
-make dev          # 启动开发环境
-make dev-logs     # 查看开发日志
-make dev-stop     # 停止开发环境
+#### GDPR合规
+- 确保用户数据不被持久化存储
+- 实现数据处理透明度
+- 提供数据删除机制
 
-# 生产环境管理
-make prod         # 启动生产环境
-make prod-full    # 启动完整生产环境（含监控）
-make prod-logs    # 查看生产日志
+#### SOC2合规
+- 实现访问控制和审计日志
+- 确保数据传输加密
+- 建立事件响应流程
 
-# 测试和质量保证
-make test         # 运行测试
-make lint         # 代码检查
-make security     # 安全扫描
+---
 
-# 维护工具
-make health       # 健康检查
-make backup       # 创建备份
-make clean        # 清理容器
-```
-
-### 3. 自动化部署脚本
-```bash
-# 快速开发环境搭建
-make quick-dev
-
-# 快速生产环境搭建
-make quick-prod
-
-# 远程部署
-make deploy SERVER=your-server.com
-```
-
-## 升级说明
+## 🔄 升级和维护
 
 ### 从旧版本升级
 
@@ -629,7 +1067,7 @@ make backup
 git pull origin main
 
 # 3. 验证新配置
-python validate-config.py
+make validate
 
 # 4. 重新构建镜像
 make build
@@ -638,31 +1076,63 @@ make build
 make prod
 
 # 6. 验证升级
-make health
+make verify
 ```
 
-## 联系和支持
+### 定期维护任务
+
+- [ ] 每周检查安全更新
+- [ ] 每月备份配置和日志
+- [ ] 每季度更新依赖包版本
+- [ ] 每半年审查安全配置
+
+---
+
+## 📞 联系和支持
 
 如果在部署过程中遇到问题，请：
 
-1. 运行配置验证: `python validate-config.py`
+1. 运行配置验证: `make validate`
 2. 查看[故障排除](#故障排除)部分
-3. 查看[部署检查清单](DEPLOYMENT_CHECKLIST.md)
-4. 查看[生产最佳实践](PRODUCTION_BEST_PRACTICES.md)
-5. 检查GitHub Issues
-6. 提交新的Issue并包含：
+3. 检查GitHub Issues
+4. 提交新的Issue并包含：
    - 配置验证结果
    - 错误信息和日志
    - 系统信息
    - 复现步骤
 
+### 支持资源
+
+- **配置验证工具**: `make validate` 或 `python validate-config.py`
+- **健康检查**: `make health`
+- **综合验证**: `make verify`
+- **诊断报告**: `python deployment-check.py`
+
 ---
 
+## 📝 总结
+
+遵循这个完整部署指南将确保AI Flashcard Generator在生产环境中的:
+
+1. **安全性**: 通过多层安全措施保护应用和数据
+2. **性能**: 通过优化配置和监控确保最佳性能
+3. **可靠性**: 通过健康检查和故障恢复机制确保高可用
+4. **可维护性**: 通过结构化日志和监控简化运维工作
+5. **可扩展性**: 通过水平扩展支持增长需求
+
 **注意**: 在生产环境部署前，请确保：
-- 运行 `python validate-config.py` 验证配置
+- 运行 `make validate` 验证配置
 - 设置强密码和密钥
 - 配置正确的CORS域名
 - 启用HTTPS
 - 设置适当的防火墙规则
 - 定期备份重要数据
-- 查看[部署检查清单](DEPLOYMENT_CHECKLIST.md)
+
+定期审查和更新这些实践，确保它们与最新的安全和性能标准保持一致。
+
+---
+
+**文档维护者**: AI Flashcard Generator 部署团队  
+**最后更新**: 2025-06-21  
+**文档版本**: 2.0 (整合版)  
+**涵盖内容**: 完整部署流程 + 检查清单 + 最佳实践

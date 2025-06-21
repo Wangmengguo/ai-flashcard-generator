@@ -118,39 +118,56 @@ open http://localhost:8000/local_index.html
 
 ### 📁 目录结构
 ```
-ai-flashcard-generator/
-├── 🔧 核心应用
-│   ├── main.py                    # 原版API服务
-│   ├── main_refactored.py         # 重构版本（推荐）
+🚀 AI Flashcard Generator (Enterprise-Grade)
+├── 🔧 核心应用 (根目录)
+│   ├── main_refactored.py         # 🚀 生产级API服务
 │   ├── prompt_manager.py          # 模板管理系统
-│   └── prompt_templates.json      # 模板配置文件
-├── 🎨 用户界面
-│   ├── index.html                 # 生产版界面
-│   ├── local_index.html           # 开发版界面  
-│   ├── unified_index.html         # 统一界面（推荐）
-│   └── test_new_interface.html    # 测试界面
-├── 🐳 部署配置
-│   ├── Dockerfile                 # 容器镜像
-│   ├── docker-compose.yml         # 开发环境
-│   ├── nginx/                     # Web服务器配置
-│   └── .github/workflows/         # CI/CD流程
-├── 📊 监控运维
-│   ├── monitoring/                # Prometheus + Grafana
-│   ├── config/                    # 应用配置
-│   └── benchmark.py               # 性能基准测试
+│   ├── prompt_templates.json      # 模板配置文件
+│   └── requirements.txt           # 核心依赖
+├── 🎨 前端界面 (根目录)
+│   └── unified_index.html         # 🚀 生产级主界面（统一版本）
+├── 🎯 前端体系
+│   ├── frontend/
+│   │   ├── FRONTEND.md            # 前端使用指南
+│   │   └── tools/                 # 质量测试工具
+│   │       ├── quality_assessment_tool.html
+│   │       └── quality_test_guide.html
 ├── 🧪 测试框架
-│   ├── test_prompt_system.py      # 单元测试
-│   ├── performance_test.py        # 性能测试
-│   ├── test_e2e_with_api.py       # 端到端测试
-│   ├── quality_test_guide.html    # 质量测试指南
-│   ├── quality_assessment_tool.html # 质量评估工具
-│   └── TESTING_STATUS_TRACKER.md  # 测试状态跟踪
-└── 📚 项目文档
-    ├── API_SPECIFICATION.md       # API详细规范
-    ├── ARCHITECTURE_ANATOMY.md    # 架构解析文档
-    ├── DEPLOYMENT_GUIDE.md        # 部署操作指南
-    ├── PERFORMANCE_GUIDE.md       # 性能优化指南
-    └── MULTI_AGENT_STRATEGY.md    # 开发协作策略
+│   ├── tests/
+│   │   ├── test_prompt_system.py  # 单元测试
+│   │   ├── test_e2e_with_api.py   # 端到端测试
+│   │   ├── performance_test.py    # 性能测试
+│   │   ├── benchmark.py           # 基准测试
+│   │   ├── examples.py            # 测试示例
+│   │   ├── additional_test_samples.md
+│   │   └── results/               # 测试结果
+│   │       ├── benchmark_results.json
+│   │       └── e2e_test_results.json
+├── 📚 文档体系
+│   ├── README.md                  # 🆕 项目主文档
+│   ├── TESTING.md                 # 🆕 完整测试指南
+│   ├── DEPLOYMENT_GUIDE.md        # 🆕 完整部署指南
+│   ├── API_SPECIFICATION.md       # API详细规范
+│   ├── ARCHITECTURE_ANATOMY.md    # 架构解析
+│   └── CHANGELOG.md               # 🆕 完整变更历史
+├── 🐳 部署配置
+│   ├── Dockerfile                 # 🔄 优化Docker配置
+│   ├── docker-compose.yml         # 🔄 多环境支持
+│   ├── .env.example              # 🔄 完整环境变量模板
+│   ├── .env.development          # 开发环境配置
+│   ├── .env.production           # 生产环境配置
+│   ├── requirements.prod.txt      # 🆕 生产依赖
+│   ├── requirements.dev.txt       # 🆕 开发依赖
+│   ├── validate-config.py         # 🆕 配置验证工具
+│   ├── deployment-check.py        # 🆕 部署验证工具
+│   └── Makefile                   # 🆕 自动化构建脚本
+├── ⚙️ 配置管理
+│   ├── config/                    # 应用配置
+│   ├── monitoring/                # 监控配置
+│   └── nginx/                     # Web服务器配置
+└── 🔒 环境管理
+    ├── flashcard/                 # Python虚拟环境
+    └── .github/workflows/         # CI/CD流程
 ```
 
 ### 🔄 技术栈
@@ -229,64 +246,72 @@ async def generate_cards():
 ### 🧪 测试
 ```bash
 # 运行单元测试
-python test_prompt_system.py
+python tests/test_prompt_system.py
 
 # 性能基准测试
-python benchmark.py
+python tests/benchmark.py
 
 # 完整性能测试
-python performance_test.py --concurrent-users 50
+python tests/performance_test.py --concurrent-users 50
 
 # 端到端测试
-python test_e2e_with_api.py
+python tests/test_e2e_with_api.py
 
 # 质量测试工具
-open quality_test_guide.html        # 质量测试指南
-open quality_assessment_tool.html   # 质量评估记录工具
+open frontend/tools/quality_test_guide.html        # 质量测试指南
+open frontend/tools/quality_assessment_tool.html   # 质量评估记录工具
+
+# 使用Makefile自动化测试
+make test         # 运行所有测试
+make verify       # 综合验证
 ```
 
 ### 🐳 生产部署
 ```bash
-# 构建生产镜像
+# 使用Makefile快速部署（推荐）
+make prod         # 生产环境
+make prod-full    # 完整生产环境（含监控）
+
+# 验证部署
+make verify       # 综合验证
+make health       # 健康检查
+
+# 手动部署
 docker build -t flashcard-generator .
+docker-compose up -d
 
-# 运行生产容器
-docker run -p 8000:8000 \
-  -e ENVIRONMENT=production \
-  flashcard-generator
-
-# 或使用docker-compose
-docker-compose -f docker-compose.prod.yml up -d
+# 配置验证
+make validate     # 验证配置
+python validate-config.py
 ```
 
 ### 📊 监控
 ```bash
-# 启动监控栈
-docker-compose -f monitoring/docker-compose.yml up -d
+# 启动完整监控（Prometheus + Grafana）
+make prod-full
 
-# 访问Grafana仪表板
-open http://localhost:3000
+# 访问监控面板
+make monitor      # 自动打开监控面板
+# 或手动访问：
+# Prometheus: http://localhost:9090
+# Grafana: http://localhost:3000 (admin/admin)
 ```
 
 ---
 
 ## 📚 文档导航
 
-### 🔍 技术文档
-- **[API规范](./API_SPECIFICATION.md)** - 完整的API接口文档
-- **[架构解析](./ARCHITECTURE_ANATOMY.md)** - 代码结构详细分析
-- **[性能指南](./PERFORMANCE_GUIDE.md)** - 优化策略和最佳实践
+### 🔍 核心文档 (6个主要文档)
+- **[README.md](./README.md)** - 项目概览和快速开始指南
+- **[TESTING.md](./TESTING.md)** - 完整测试框架和质量评估体系
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - 完整部署指南 (含检查清单和最佳实践)
+- **[API_SPECIFICATION.md](./API_SPECIFICATION.md)** - 完整的API接口文档
+- **[ARCHITECTURE_ANATOMY.md](./ARCHITECTURE_ANATOMY.md)** - 系统架构和代码结构分析
+- **[CHANGELOG.md](./CHANGELOG.md)** - 完整版本历史和变更记录
 
-### 🚀 操作指南  
-- **[部署指南](./DEPLOYMENT_GUIDE.md)** - 从开发到生产的完整部署
-- **[测试指南](./TESTING.md)** - 完整测试框架和质量评估体系
-- **[变更日志](./CHANGELOG.md)** - 完整版本历史和修复记录
-- **[升级指南](./UPGRADE_GUIDE.md)** - 版本升级和迁移说明
-
-### 🔬 开发参考
-- **[开发策略](./MULTI_AGENT_STRATEGY.md)** - 多代理协作开发模式
-- **[改进计划](./IMPROVEMENT_PLAN.md)** - 未来发展路线图
-- **[开发配置](./CLAUDE.md)** - 开发环境配置指南
+### 🎯 专门指南
+- **[前端指南](./frontend/FRONTEND.md)** - 前端开发和界面使用指南
+- **[开发配置](./CLAUDE.md)** - 开发环境配置和命令参考
 
 ---
 

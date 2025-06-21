@@ -22,17 +22,17 @@ pip install -r requirements.txt
 
 ### Running the Application
 ```bash
-# Local development
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
+# Local development (using refactored version)
+uvicorn main_refactored:app --reload --host 127.0.0.1 --port 8000
 
 # Production deployment
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+gunicorn main_refactored:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
 ### Testing
 ```bash
-# Access local version
-# Open local_index.html in browser
+# Access application interface
+# Open unified_index.html in browser
 
 # Test API endpoints
 curl http://127.0.0.1:8000/supported_models
@@ -40,13 +40,12 @@ curl http://127.0.0.1:8000/supported_models
 
 ## Architecture
 
-The application follows a simple three-tier architecture:
+The application follows a modern three-tier architecture:
 
-1. **Frontend**: Two HTML files with identical functionality
-   - `index.html` - Cloud deployment version (uses relative paths)
-   - `local_index.html` - Local development version (uses localhost)
+1. **Frontend**: Unified interface with environment auto-detection
+   - `unified_index.html` - Production-grade main interface (replaces multiple versions)
 
-2. **Backend**: Single-file FastAPI application (`main.py`) with:
+2. **Backend**: Refactored FastAPI application (`main_refactored.py`) with:
    - AI model configuration and management
    - OpenRouter API integration
    - Robust LLM output parsing with regex-based Q/A extraction
