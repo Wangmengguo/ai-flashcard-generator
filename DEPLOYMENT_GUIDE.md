@@ -32,6 +32,12 @@
 - 2 CPU核心
 - 20GB SSD磁盘空间
 
+### 2025年更新优化
+- 使用最新FastAPI 0.115.13+
+- 使用Uvicorn 0.34.3+内置多进程支持（推荐替代Gunicorn）
+- 支持HTTP/2和现代异步架构
+- 优化的容器镜像和多阶段构建
+
 ### 支持的操作系统
 - Linux (Ubuntu 20.04+, CentOS 8+, RHEL 8+)
 - macOS 12+
@@ -56,10 +62,15 @@ vim .env
 
 ### 3. 启动开发环境
 ```bash
-# 启动开发环境（带热重载）
+# 使用Makefile快速启动（推荐）
+make dev
+
+# 或手动启动开发环境（带热重载）
 docker-compose --profile dev up -d
 
 # 查看日志
+make dev-logs
+# 或
 docker-compose logs -f flashcard-dev
 
 # 应用将在 http://localhost:8001 运行
@@ -67,10 +78,25 @@ docker-compose logs -f flashcard-dev
 
 ### 4. 启动生产环境
 ```bash
-# 构建并启动生产环境
+# 使用Makefile快速启动（推荐）
+make prod
+
+# 或启动完整生产环境（含监控）
+make prod-full
+
+# 或手动构建并启动生产环境
 docker-compose up -d
 
 # 应用将在 http://localhost:8000 运行
+```
+
+### 5. 配置验证
+```bash
+# 验证部署配置
+python validate-config.py
+
+# 检查应用健康状态
+make health
 ```
 
 ## 环境配置
@@ -114,10 +140,22 @@ SSL_KEY_PATH=/etc/ssl/private/key.pem
 
 ## 容器化部署
 
+### 2025年优化特性
+
+本项目已升级至2025年最新标准：
+
+1. **Uvicorn多进程支持**: 使用Uvicorn 0.34.3+的内置多进程管理，替代Gunicorn
+2. **现代FastAPI**: 升级至FastAPI 0.115.13+，支持最新特性
+3. **优化的容器构建**: 多阶段构建，最小化镜像大小
+4. **结构化日志**: JSON格式日志，便于监控和分析
+
 ### Docker镜像构建
 
 ```bash
-# 构建生产镜像
+# 使用Makefile构建（推荐）
+make build
+
+# 或手动构建生产镜像
 docker build -t flashcard-generator:latest .
 
 # 构建并标记版本
@@ -522,23 +560,109 @@ docker-compose exec postgres psql -U user flashcard < backup_20241201.sql
 cp backup/config/* config/
 ```
 
+## 新增部署工具 (2025年更新)
+
+### 1. 配置验证工具
+```bash
+# 运行全面配置检查
+python validate-config.py
+
+# 检查特定配置文件
+python validate-config.py /path/to/project
+```
+
+### 2. Makefile快捷命令
+```bash
+# 查看所有可用命令
+make help
+
+# 开发环境管理
+make dev          # 启动开发环境
+make dev-logs     # 查看开发日志
+make dev-stop     # 停止开发环境
+
+# 生产环境管理
+make prod         # 启动生产环境
+make prod-full    # 启动完整生产环境（含监控）
+make prod-logs    # 查看生产日志
+
+# 测试和质量保证
+make test         # 运行测试
+make lint         # 代码检查
+make security     # 安全扫描
+
+# 维护工具
+make health       # 健康检查
+make backup       # 创建备份
+make clean        # 清理容器
+```
+
+### 3. 自动化部署脚本
+```bash
+# 快速开发环境搭建
+make quick-dev
+
+# 快速生产环境搭建
+make quick-prod
+
+# 远程部署
+make deploy SERVER=your-server.com
+```
+
+## 升级说明
+
+### 从旧版本升级
+
+如果从旧版本升级，请注意以下变更：
+
+1. **Uvicorn替代Gunicorn**: 新版本使用Uvicorn内置多进程支持
+2. **依赖包更新**: 所有核心依赖已升级至最新版本
+3. **日志格式**: 新增JSON格式结构化日志
+4. **环境变量**: 新增了一些可选的环境变量配置
+
+### 升级步骤
+```bash
+# 1. 备份当前配置
+make backup
+
+# 2. 拉取最新代码
+git pull origin main
+
+# 3. 验证新配置
+python validate-config.py
+
+# 4. 重新构建镜像
+make build
+
+# 5. 重启服务
+make prod
+
+# 6. 验证升级
+make health
+```
+
 ## 联系和支持
 
 如果在部署过程中遇到问题，请：
 
-1. 查看[故障排除](#故障排除)部分
-2. 检查GitHub Issues
-3. 提交新的Issue并包含：
-   - 错误信息
+1. 运行配置验证: `python validate-config.py`
+2. 查看[故障排除](#故障排除)部分
+3. 查看[部署检查清单](DEPLOYMENT_CHECKLIST.md)
+4. 查看[生产最佳实践](PRODUCTION_BEST_PRACTICES.md)
+5. 检查GitHub Issues
+6. 提交新的Issue并包含：
+   - 配置验证结果
+   - 错误信息和日志
    - 系统信息
    - 复现步骤
-   - 相关日志
 
 ---
 
 **注意**: 在生产环境部署前，请确保：
+- 运行 `python validate-config.py` 验证配置
 - 设置强密码和密钥
 - 配置正确的CORS域名
 - 启用HTTPS
 - 设置适当的防火墙规则
 - 定期备份重要数据
+- 查看[部署检查清单](DEPLOYMENT_CHECKLIST.md)

@@ -1,0 +1,17 @@
+# Production-only requirements - minimal set for production deployment
+# Core FastAPI dependencies
+fastapi[standard]>=0.115.13
+uvicorn[standard]>=0.34.3
+httpx>=0.28.1
+pydantic>=2.11.7
+python-dotenv>=1.0.0
+
+# Performance monitoring
+psutil>=6.1.0
+
+# Logging and monitoring
+structlog>=24.4.0
+prometheus-client>=0.21.1
+
+# Security
+bandit>=1.8.0

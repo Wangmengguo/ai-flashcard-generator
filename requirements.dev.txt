@@ -1,17 +1,21 @@
-# Core FastAPI dependencies (2025 optimized versions)
+# Development requirements - includes all dependencies for development and testing
+
+# Core FastAPI dependencies (from requirements.prod.txt)
 fastapi[standard]>=0.115.13
 uvicorn[standard]>=0.34.3
 httpx>=0.28.1
 pydantic>=2.11.7
 python-dotenv>=1.0.0
 
-# Production server (optional - uvicorn now has built-in multiprocess support)
-gunicorn>=23.0.0
-
-# Performance monitoring and testing
-aiohttp>=3.10.13
-memory-profiler>=0.61.0
+# Performance monitoring
 psutil>=6.1.0
+
+# Logging and monitoring
+structlog>=24.4.0
+prometheus-client>=0.21.1
+
+# Security
+bandit>=1.8.0
 
 # Development and testing dependencies
 pytest>=8.3.0
@@ -22,12 +26,9 @@ black>=24.0.0
 flake8>=7.0.0
 mypy>=1.13.0
 
-# Security
-bandit>=1.8.0
-
-# Logging and monitoring
-structlog>=24.4.0
-prometheus-client>=0.21.1
+# Performance testing
+aiohttp>=3.10.13
+memory-profiler>=0.61.0
 
 # Optional: Database support for future expansion  
 # alembic>=1.14.0
@@ -35,4 +36,4 @@ prometheus-client>=0.21.1
 # sqlalchemy[asyncio]>=2.0.36
 
 # Optional: Redis support for caching
-# redis>=5.2.1 
+# redis>=5.2.1

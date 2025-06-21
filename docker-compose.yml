@@ -16,6 +16,7 @@ services:
       - CORS_ORIGINS=${CORS_ORIGINS:-*}
       - MAX_TEXT_LENGTH=${MAX_TEXT_LENGTH:-10000}
       - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-60}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
       - ./logs:/app/logs
       - ./config:/app/config:ro
@@ -47,12 +48,13 @@ services:
       - ENVIRONMENT=development
       - LOG_LEVEL=debug
       - CORS_ORIGINS=*
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
       - .:/app
       - ./logs:/app/logs
     networks:
       - flashcard-network
-    command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug"]
     profiles:
       - dev
 

@@ -47,6 +47,9 @@ WORKDIR /app
 COPY --chown=appuser:appuser main.py .
 COPY --chown=appuser:appuser index.html .
 COPY --chown=appuser:appuser local_index.html .
+COPY --chown=appuser:appuser logging.json .
+COPY --chown=appuser:appuser config/ ./config/
+COPY --chown=appuser:appuser docker-health-check.sh ./
 
 # Create logs directory
 RUN mkdir -p /app/logs && chown appuser:appuser /app/logs
@@ -57,10 +60,11 @@ USER appuser
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s \
   --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/supported_models || exit 1
+  CMD ./docker-health-check.sh quick || exit 1
 
 # Expose port
 EXPOSE 8000
 
 # Start the application
-CMD ["gunicorn", "main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--access-logfile", "/app/logs/access.log", "--error-logfile", "/app/logs/error.log", "--log-level", "info"]
+# Use uvicorn with built-in multiprocess support (recommended for 2025)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--access-log", "--log-config", "/app/logging.json"]

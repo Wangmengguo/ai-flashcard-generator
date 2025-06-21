@@ -1,3 +1,35 @@
+<!--
+========================================
+ AI FLASHCARD GENERATOR - INTERFACE TESTING TOOL
+========================================
+
+ 用途：前端界面和API接口测试工具
+ 适用场景：
+ - 开发调试验证
+ - API接口测试
+ - 功能兼容性检查
+ - 浏览器兼容性测试
+
+ 核心功能：
+ ✅ API接口状态检测
+ ✅ 模型列表获取测试
+ ✅ 自定义Prompt功能测试
+ ✅ 浏览器兼容性检查
+ ✅ 新功能界面链接
+
+ 使用方法：
+ 1. 启动本地API服务（端口8000）
+ 2. 打开此文件进行测试
+ 3. 逐一验证各项功能
+ 4. 记录测试结果
+
+ API配置：
+ - 自动检测localhost环境
+ - 支持8000端口API服务
+
+ 更新日期：2025-06-21
+========================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -54,19 +86,52 @@
         textarea {
             height: 100px;
         }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .status.warning {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
     </style>
 </head>
 <body>
-    <h1>AI Flashcard Generator - 接口测试</h1>
+    <h1>🧪 AI Flashcard Generator - 接口测试工具</h1>
+    
+    <div class="status" id="apiStatus">
+        <strong>API状态：</strong><span id="statusText">检测中...</span>
+    </div>
+
+    <div class="test-card">
+        <h3>1. 📡 API连接测试</h3>
+        <p>测试与后端API服务的连接状态</p>
+        <button onclick="testApiConnection()">测试API连接</button>
+        <div id="connectionResult" class="result"></div>
+    </div>
     
     <div class="test-card">
-        <h3>1. 测试模型列表接口</h3>
+        <h3>2. 🤖 模型列表测试</h3>
+        <p>获取支持的AI模型列表并验证响应格式</p>
         <button onclick="testModels()">获取支持的模型</button>
         <div id="modelsResult" class="result"></div>
     </div>
 
     <div class="test-card">
-        <h3>2. 测试自定义Prompt功能</h3>
+        <h3>3. ⚙️ 闪卡生成测试</h3>
+        <p>测试自定义Prompt功能和闪卡生成</p>
         <input type="password" id="testApiKey" placeholder="输入API密钥进行测试（可选）">
         <select id="testModel">
             <option value="">选择模型...</option>
@@ -81,36 +146,99 @@ A: [答案]
     </div>
 
     <div class="test-card">
-        <h3>3. 测试新界面</h3>
-        <p>新的统一界面包含以下功能：</p>
+        <h3>4. 🖥️ 功能界面测试</h3>
+        <p>测试不同版本的用户界面</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <button onclick="openInterface('unified_index.html')">🚀 统一界面（推荐）</button>
+            <button onclick="openInterface('index.html')">☁️ 云端版本</button>
+            <button onclick="openInterface('local_index.html')">🔧 本地版本</button>
+            <button onclick="openInterface('frontend/tools/quality_assessment_tool.html')">📊 质量评估</button>
+        </div>
+        
+        <h4>界面功能清单：</h4>
         <ul>
-            <li>✅ Prompt模板选择器（默认、详细、简洁、自定义）</li>
+            <li>✅ Prompt模板选择器（默认、学术、考试、语言、技术、自定义）</li>
             <li>✅ 卡片数量滑块控制（5-50张）</li>
             <li>✅ 环境自动检测（本地/云端）</li>
             <li>✅ 批量文本处理</li>
             <li>✅ 历史记录查看</li>
             <li>✅ 多格式导出（Anki Markdown、CSV、JSON等）</li>
             <li>✅ 响应式设计，支持移动端</li>
+            <li>✅ 实时错误处理和用户反馈</li>
         </ul>
-        <button onclick="window.open('unified_index.html', '_blank')">打开新界面</button>
     </div>
 
     <div class="test-card">
-        <h3>4. 性能和兼容性检查</h3>
+        <h3>5. 🌐 浏览器兼容性检查</h3>
+        <p>检查当前浏览器对必要Web API的支持</p>
         <button onclick="testBrowserFeatures()">检查浏览器兼容性</button>
         <div id="compatResult" class="result"></div>
     </div>
 
+    <div class="test-card">
+        <h3>6. 📋 模板系统测试</h3>
+        <p>测试不同模板的专业特色</p>
+        <button onclick="testTemplates()">测试模板系统</button>
+        <div id="templateResult" class="result"></div>
+    </div>
+
     <script>
+        // API基础配置
         const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? 'http://127.0.0.1:8001' 
+            ? 'http://127.0.0.1:8000' 
             : '';
 
-        async function testModels() {
+        // 页面加载时自动检测API状态
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkApiStatus();
+            await testModels();
+        });
+
+        async function checkApiStatus() {
+            const statusElement = document.getElementById('apiStatus');
+            const statusText = document.getElementById('statusText');
+            
             try {
                 const response = await fetch(`${API_BASE}/supported_models`);
+                if (response.ok) {
+                    statusElement.className = 'status success';
+                    statusText.textContent = '✅ API服务正常运行';
+                } else {
+                    throw new Error(`API响应错误: ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.className = 'status error';
+                statusText.textContent = `❌ API连接失败: ${error.message}`;
+            }
+        }
+
+        async function testApiConnection() {
+            const resultElement = document.getElementById('connectionResult');
+            resultElement.textContent = '正在测试API连接...';
+            
+            try {
+                const startTime = performance.now();
+                const response = await fetch(`${API_BASE}/supported_models`);
+                const endTime = performance.now();
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultElement.textContent = `✅ 连接成功!\n响应时间: ${(endTime - startTime).toFixed(2)}ms\n状态码: ${response.status}\nAPI基础URL: ${API_BASE}`;
+                } else {
+                    resultElement.textContent = `❌ 连接失败\n状态码: ${response.status}\n错误信息: ${response.statusText}`;
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 连接错误: ${error.message}\n请确认API服务是否在 ${API_BASE} 运行`;
+            }
+        }
+
+        async function testModels() {
+            const resultElement = document.getElementById('modelsResult');
+            try {
+                resultElement.textContent = '正在获取模型列表...';
+                const response = await fetch(`${API_BASE}/supported_models`);
                 const data = await response.json();
-                document.getElementById('modelsResult').textContent = JSON.stringify(data, null, 2);
+                resultElement.textContent = JSON.stringify(data, null, 2);
                 
                 // 填充模型选择器
                 const select = document.getElementById('testModel');
@@ -124,7 +252,7 @@ A: [答案]
                     }
                 }
             } catch (error) {
-                document.getElementById('modelsResult').textContent = '错误: ' + error.message;
+                resultElement.textContent = '❌ 获取模型列表失败: ' + error.message;
             }
         }
 
@@ -133,18 +261,21 @@ A: [答案]
             const model = document.getElementById('testModel').value;
             const text = document.getElementById('testText').value.trim();
             const customPrompt = document.getElementById('customPrompt').value.trim();
+            const resultElement = document.getElementById('generateResult');
 
             if (!model) {
-                document.getElementById('generateResult').textContent = '请先选择模型';
+                resultElement.textContent = '❌ 请先选择模型';
                 return;
             }
 
             if (!text) {
-                document.getElementById('generateResult').textContent = '请输入测试文本';
+                resultElement.textContent = '❌ 请输入测试文本';
                 return;
             }
 
             try {
+                resultElement.textContent = '正在生成闪卡...';
+                
                 const requestBody = {
                     text: text,
                     api_key: apiKey || 'test-key',
@@ -152,7 +283,7 @@ A: [答案]
                 };
 
                 if (customPrompt) {
-                    requestBody.custom_prompt = customPrompt;
+                    requestBody.custom_system_prompt = customPrompt;
                 }
 
                 const response = await fetch(`${API_BASE}/generate_flashcards/`, {
@@ -164,44 +295,88 @@ A: [答案]
                 });
 
                 const data = await response.json();
-                document.getElementById('generateResult').textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    resultElement.textContent = `✅ 生成成功!\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultElement.textContent = `❌ 生成失败\n${JSON.stringify(data, null, 2)}`;
+                }
             } catch (error) {
-                document.getElementById('generateResult').textContent = '错误: ' + error.message;
+                resultElement.textContent = '❌ 请求错误: ' + error.message;
             }
+        }
+
+        function openInterface(filename) {
+            window.open(filename, '_blank');
         }
 
         function testBrowserFeatures() {
             const results = [];
+            const resultElement = document.getElementById('compatResult');
             
             // 检查基本的Web API支持
-            results.push(`浏览器: ${navigator.userAgent}`);
-            results.push(`Fetch API: ${typeof fetch !== 'undefined' ? '✅' : '❌'}`);
-            results.push(`Promise: ${typeof Promise !== 'undefined' ? '✅' : '❌'}`);
-            results.push(`Clipboard API: ${navigator.clipboard ? '✅' : '❌'}`);
-            results.push(`Local Storage: ${typeof localStorage !== 'undefined' ? '✅' : '❌'}`);
+            results.push(`🌐 浏览器: ${navigator.userAgent}`);
+            results.push(`📱 用户代理: ${navigator.platform}`);
+            results.push(`🔗 Fetch API: ${typeof fetch !== 'undefined' ? '✅ 支持' : '❌ 不支持'}`);
+            results.push(`⚡ Promise: ${typeof Promise !== 'undefined' ? '✅ 支持' : '❌ 不支持'}`);
+            results.push(`📋 Clipboard API: ${navigator.clipboard ? '✅ 支持' : '❌ 不支持'}`);
+            results.push(`💾 Local Storage: ${typeof localStorage !== 'undefined' ? '✅ 支持' : '❌ 不支持'}`);
             
             // 检查CSS特性
             const testDiv = document.createElement('div');
             testDiv.style.display = 'grid';
-            results.push(`CSS Grid: ${testDiv.style.display === 'grid' ? '✅' : '❌'}`);
+            results.push(`🎨 CSS Grid: ${testDiv.style.display === 'grid' ? '✅ 支持' : '❌ 不支持'}`);
             
             testDiv.style.display = 'flex';
-            results.push(`CSS Flexbox: ${testDiv.style.display === 'flex' ? '✅' : '❌'}`);
+            results.push(`📐 CSS Flexbox: ${testDiv.style.display === 'flex' ? '✅ 支持' : '❌ 不支持'}`);
             
             // 检查JavaScript特性
-            results.push(`ES6 Arrow Functions: ${(() => true)() ? '✅' : '❌'}`);
-            results.push(`Template Literals: ${`test` === 'test' ? '✅' : '❌'}`);
+            results.push(`🔧 ES6 Arrow Functions: ${(() => true)() ? '✅ 支持' : '❌ 不支持'}`);
+            results.push(`📝 Template Literals: ${`test` === 'test' ? '✅ 支持' : '❌ 不支持'}`);
+            results.push(`🎯 Destructuring: ${(() => { try { const [a] = [1]; return true; } catch(e) { return false; } })() ? '✅ 支持' : '❌ 不支持'}`);
             
             // 检查响应式设计
-            results.push(`屏幕宽度: ${window.innerWidth}px`);
-            results.push(`屏幕高度: ${window.innerHeight}px`);
-            results.push(`设备像素比: ${window.devicePixelRatio}`);
+            results.push(`📱 屏幕宽度: ${window.innerWidth}px`);
+            results.push(`📏 屏幕高度: ${window.innerHeight}px`);
+            results.push(`🔍 设备像素比: ${window.devicePixelRatio}`);
+            results.push(`📐 设备类型: ${window.innerWidth < 768 ? '📱 移动设备' : window.innerWidth < 1024 ? '📱 平板设备' : '🖥️ 桌面设备'}`);
             
-            document.getElementById('compatResult').textContent = results.join('\n');
+            // 性能检测
+            results.push(`⚡ Performance API: ${typeof performance !== 'undefined' ? '✅ 支持' : '❌ 不支持'}`);
+            results.push(`🧠 内存信息: ${navigator.deviceMemory ? `${navigator.deviceMemory}GB` : '未知'}`);
+            results.push(`⚙️ CPU核心数: ${navigator.hardwareConcurrency || '未知'}`);
+            
+            resultElement.textContent = results.join('\n');
         }
 
-        // 页面加载时自动测试模型列表
-        document.addEventListener('DOMContentLoaded', testModels);
+        async function testTemplates() {
+            const resultElement = document.getElementById('templateResult');
+            resultElement.textContent = '正在测试模板系统...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/templates`);
+                if (response.ok) {
+                    const data = await response.json();
+                    let result = '✅ 模板系统测试结果:\n\n';
+                    
+                    if (data.templates) {
+                        for (const [id, template] of Object.entries(data.templates)) {
+                            result += `📋 ${id}: ${template.name}\n`;
+                            result += `   📝 描述: ${template.description}\n`;
+                            result += `   🎯 最大卡片数: ${template.max_cards}\n\n`;
+                        }
+                    } else {
+                        result += '❌ 未找到模板数据\n';
+                    }
+                    
+                    resultElement.textContent = result;
+                } else {
+                    resultElement.textContent = `❌ 模板接口测试失败: ${response.status}`;
+                }
+            } catch (error) {
+                resultElement.textContent = '❌ 模板系统测试错误: ' + error.message;
+            }
+        }
     </script>
 </body>
 </html>

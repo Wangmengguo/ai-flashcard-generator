@@ -1,3 +1,36 @@
+<!--
+========================================
+ AI FLASHCARD GENERATOR - UNIFIED INTERFACE
+========================================
+
+ 用途：生产级主界面，功能最全面的版本
+ 适用场景：
+ - 生产环境部署
+ - 完整功能体验
+ - 高级用户使用
+
+ API配置：
+ - 本地开发：自动检测localhost环境，使用http://127.0.0.1:8000
+ - 生产部署：自动使用相对路径
+ - 文件访问：通过file://协议访问时，指向http://127.0.0.1:8000
+
+ 核心功能：
+ ✅ 多模板系统（Academic/Exam/Language/Technical/General/Custom）
+ ✅ 智能参数配置（卡片数量滑块、自定义Prompt）
+ ✅ 批量文本处理
+ ✅ 历史记录管理
+ ✅ 多格式导出（Anki Markdown/Tab/CSV/JSON）
+ ✅ 响应式设计
+ ✅ 环境自动检测
+
+ 使用说明：
+ 1. 本地开发：直接打开此文件即可，会自动连接本地API
+ 2. 生产部署：将此文件放在服务器根目录
+ 3. 推荐浏览器：Chrome、Firefox、Safari最新版本
+
+ 更新日期：2025-06-21
+========================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1151,7 +1184,7 @@
             // 检测当前访问方式
             if (location.protocol === 'file:') {
                 // 通过file://访问，需要指定完整的API地址
-                window.API_BASE_URL = 'http://127.0.0.1:8001';
+                window.API_BASE_URL = 'http://127.0.0.1:8000';
             } else if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
                 // 通过HTTP访问本地服务器，使用相对路径
                 window.API_BASE_URL = '';
