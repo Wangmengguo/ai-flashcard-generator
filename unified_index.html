@@ -60,6 +60,54 @@
             --radius-lg: 0.75rem;
         }
 
+        /* 深色主题变量 */
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --danger-color: #f87171;
+            --warning-color: #fbbf24;
+            --success-color: #34d399;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-tertiary: #374151;
+            --border-color: #4b5563;
+            --border-focus: #60a5fa;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+        }
+
+        /* 系统主题检测 */
+        @media (prefers-color-scheme: dark) {
+            [data-theme="auto"] {
+                --primary-color: #3b82f6;
+                --secondary-color: #10b981;
+                --danger-color: #f87171;
+                --warning-color: #fbbf24;
+                --success-color: #34d399;
+                --text-primary: #f9fafb;
+                --text-secondary: #d1d5db;
+                --bg-primary: #1f2937;
+                --bg-secondary: #111827;
+                --bg-tertiary: #374151;
+                --border-color: #4b5563;
+                --border-focus: #60a5fa;
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+                --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+                --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            }
+        }
+
+        /* 主题切换过渡动画 */
+        *, *::before, *::after {
+            transition: background-color 0.3s ease, 
+                       border-color 0.3s ease, 
+                       color 0.3s ease,
+                       box-shadow 0.3s ease;
+        }
+
         /* 基础样式重置 */
         * {
             box-sizing: border-box;
@@ -95,6 +143,7 @@
             color: white;
             padding: 2rem;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
@@ -106,6 +155,46 @@
         .header p {
             opacity: 0.9;
             font-size: 1.1rem;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.3);
         }
 
         /* 导航标签 */
@@ -741,6 +830,11 @@
         <div class="main-card">
             <!-- 标题栏 -->
             <header class="header">
+                <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+                    <svg id="themeIcon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zM11 1h2v3h-2V1zM11 20h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zM20 11h3v2h-3v-2zM1 11h3v2H1v-2zM18.364 16.95l-1.414 1.414-2.121-2.121 1.414-1.414 2.121 2.121zM5.636 7.05L7.05 5.636l-2.121-2.121L3.515 4.929 5.636 7.05z"/>
+                    </svg>
+                </button>
                 <h1>AI Flashcard 生成器</h1>
                 <p>智能问答卡片生成工具 - 支持自定义Prompt、批量处理</p>
             </header>
@@ -1027,10 +1121,10 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label class="form-label">主题设置</label>
-                                <select id="themeSelect" class="form-select">
+                                <select id="themeSelect" class="form-select" onchange="changeTheme(this.value)">
                                     <option value="light">浅色主题</option>
-                                    <option value="dark">深色主题（即将支持）</option>
-                                    <option value="auto">跟随系统（即将支持）</option>
+                                    <option value="dark">深色主题</option>
+                                    <option value="auto">跟随系统</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -1082,6 +1176,99 @@
 
         // 模板数据存储 (从后端API动态获取)
         let templateData = {};
+
+        // 主题管理变量
+        let currentTheme = 'light';
+
+        // 主题管理函数
+        function setTheme(theme) {
+            currentTheme = theme;
+            const body = document.body;
+            
+            // 移除之前的主题
+            body.removeAttribute('data-theme');
+            
+            // 应用新主题
+            if (theme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+            } else if (theme === 'auto') {
+                body.setAttribute('data-theme', 'auto');
+            }
+            // light主题不需要设置data-theme属性
+            
+            // 更新主题图标
+            updateThemeIcon(theme);
+            
+            // 更新下拉菜单选择
+            const themeSelect = document.getElementById('themeSelect');
+            if (themeSelect) {
+                themeSelect.value = theme;
+            }
+            
+            // 保存主题选择
+            localStorage.setItem('preferredTheme', theme);
+        }
+
+        function toggleTheme() {
+            // 循环切换: light -> dark -> auto -> light
+            if (currentTheme === 'light') {
+                setTheme('dark');
+            } else if (currentTheme === 'dark') {
+                setTheme('auto');
+            } else {
+                setTheme('light');
+            }
+        }
+
+        function changeTheme(theme) {
+            setTheme(theme);
+        }
+
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (!themeIcon) return;
+            
+            let iconPath = '';
+            
+            if (theme === 'dark') {
+                // 月亮图标 (深色模式)
+                iconPath = 'M9.37 5.51A7.35 7.35 0 009.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27A7.014 7.014 0 0112 19c-3.86 0-7-3.14-7-7 0-2.93 1.81-5.45 4.37-6.49z';
+            } else if (theme === 'auto') {
+                // 自动图标
+                iconPath = 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z';
+            } else {
+                // 太阳图标 (浅色模式)
+                iconPath = 'M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zM11 1h2v3h-2V1zM11 20h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zM20 11h3v2h-3v-2zM1 11h3v2H1v-2zM18.364 16.95l-1.414 1.414-2.121-2.121 1.414-1.414 2.121 2.121zM5.636 7.05L7.05 5.636l-2.121-2.121L3.515 4.929 5.636 7.05z';
+            }
+            
+            themeIcon.innerHTML = `<path d="${iconPath}"/>`;
+        }
+
+        function initializeTheme() {
+            // 从localStorage读取保存的主题
+            const savedTheme = localStorage.getItem('preferredTheme');
+            
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                // 检测系统主题偏好
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme('auto');
+                } else {
+                    setTheme('light');
+                }
+            }
+            
+            // 监听系统主题变化
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (currentTheme === 'auto') {
+                        // 如果当前是自动模式，重新应用主题以反映系统变化
+                        setTheme('auto');
+                    }
+                });
+            }
+        }
         
         // 从后端获取模板数据
         async function loadTemplates() {
@@ -1113,6 +1300,9 @@
         async function initializeApp() {
             // 首先检测环境并设置API基础URL
             detectEnvironment();
+            
+            // 初始化主题系统
+            initializeTheme();
             
             // 加载保存的API密钥
             loadSavedApiKey();
@@ -1865,7 +2055,7 @@ A: <精准、完整、简明扼要的答案>
         function resetSettings() {
             if (confirm('确定要重置所有设置吗？这将清除已保存的设置信息。')) {
                 // 重置表单
-                document.getElementById('themeSelect').value = 'light';
+                setTheme('light');
                 document.getElementById('autoSaveSelect').value = 'enabled';
                 document.getElementById('defaultExportSelect').value = 'anki_markdown';
                 
@@ -1882,6 +2072,10 @@ A: <精准、完整、简明扼要的答案>
                 updateHistoryDisplay();
                 document.getElementById('resultsSection').style.display = 'none';
                 document.getElementById('exportSection').classList.remove('show');
+                
+                // 重置主题
+                setTheme('light');
+                
                 showMessage('success', '所有数据已清除');
             }
         }
