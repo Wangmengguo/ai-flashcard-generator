@@ -103,17 +103,63 @@ create_directories() {
     log_success "目录创建完成（使用console日志模式）"
 }
 
+# Docker资源清理
+cleanup_docker_resources() {
+    log_info "清理Docker资源以释放内存..."
+    
+    # 显示清理前的资源使用
+    echo "清理前资源使用："
+    docker system df
+    echo
+    
+    # 清理停止的容器
+    log_info "清理停止的容器..."
+    docker container prune -f || true
+    
+    # 清理悬空镜像
+    log_info "清理悬空镜像..."
+    docker image prune -f || true
+    
+    # 清理构建缓存（保留最近的）
+    log_info "清理旧的构建缓存..."
+    docker builder prune -f --filter until=24h || true
+    
+    # 显示清理后的资源使用
+    echo "清理后资源使用："
+    docker system df
+    echo
+    
+    log_success "Docker资源清理完成"
+}
+
+# 检查是否需要强制重建
+should_force_rebuild() {
+    if [[ "$1" == "--force-rebuild" ]] || [[ "$FORCE_REBUILD" == "true" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # 构建和启动应用
 deploy_application() {
     log_info "开始构建和部署应用..."
+    
+    # 执行Docker资源清理
+    cleanup_docker_resources
     
     # 停止现有容器
     log_info "停止现有容器..."
     docker compose down || true
     
-    # 构建镜像
-    log_info "构建Docker镜像..."
-    docker compose build --no-cache
+    # 构建镜像（智能选择是否使用缓存）
+    if should_force_rebuild "$1"; then
+        log_info "强制重建Docker镜像（无缓存）..."
+        docker compose build --no-cache
+    else
+        log_info "构建Docker镜像（使用缓存）..."
+        docker compose build
+    fi
     
     # 启动应用
     log_info "启动应用容器..."
@@ -232,7 +278,7 @@ main() {
     check_environment
     setup_environment
     create_directories
-    deploy_application
+    deploy_application "$1"
     verify_deployment
     show_deployment_info
 }
@@ -243,12 +289,15 @@ case "${1:-}" in
         echo "用法: $0 [选项]"
         echo ""
         echo "选项:"
-        echo "  help    显示此帮助信息"
-        echo "  logs    显示应用日志"
-        echo "  status  显示容器状态"
-        echo "  restart 重启应用"
+        echo "  help               显示此帮助信息"
+        echo "  logs               显示应用日志"
+        echo "  status             显示容器状态"
+        echo "  restart            重启应用"
+        echo "  cleanup            仅执行Docker清理"
+        echo "  --force-rebuild    强制重建（不使用缓存）"
         echo ""
         echo "快速部署: $0"
+        echo "强制重建: $0 --force-rebuild"
         exit 0
         ;;
     "logs")
@@ -269,6 +318,16 @@ case "${1:-}" in
         log_info "注意：当前使用console日志模式，无文件权限问题"
         log_info "查看日志请使用: docker compose logs -f flashcard-app"
         exit 0
+        ;;
+    "cleanup")
+        log_info "执行Docker资源清理..."
+        cleanup_docker_resources
+        log_success "清理完成"
+        exit 0
+        ;;
+    "--force-rebuild")
+        # 强制重建模式
+        main "$1"
         ;;
     "")
         # 默认执行部署
