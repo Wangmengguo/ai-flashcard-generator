@@ -44,12 +44,16 @@ COPY --from=builder /venv /venv
 WORKDIR /app
 
 # Copy application code
-COPY --chown=appuser:appuser main.py .
-COPY --chown=appuser:appuser index.html .
-COPY --chown=appuser:appuser local_index.html .
+COPY --chown=appuser:appuser main_refactored.py .
+COPY --chown=appuser:appuser unified_index.html .
 COPY --chown=appuser:appuser logging.json .
+COPY --chown=appuser:appuser prompt_manager.py .
+COPY --chown=appuser:appuser prompt_templates.json .
 COPY --chown=appuser:appuser config/ ./config/
 COPY --chown=appuser:appuser docker-health-check.sh ./
+
+# Make health check script executable
+RUN chmod +x docker-health-check.sh
 
 # Create logs directory
 RUN mkdir -p /app/logs && chown appuser:appuser /app/logs
@@ -66,5 +70,5 @@ HEALTHCHECK --interval=30s --timeout=30s \
 EXPOSE 8000
 
 # Start the application
-# Use uvicorn with built-in multiprocess support (recommended for 2025)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--access-log", "--log-config", "/app/logging.json"]
+# Use uvicorn with optimized worker count for 2GB RAM
+CMD ["uvicorn", "main_refactored:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2", "--access-log", "--log-config", "/app/logging.json"]
