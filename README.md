@@ -1,6 +1,7 @@
 # 🚀 AI Flashcard Generator
 
-[![Production Ready](https://img.shields.io/badge/status-99%25%20complete-brightgreen)](./CHANGELOG.md)
+[![Production Ready](https://img.shields.io/badge/status-DEPLOYED-brightgreen)](./CHANGELOG.md)
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](http://198.23.164.200:8000)
 [![Docker Support](https://img.shields.io/badge/docker-supported-blue)](./Dockerfile)
 [![API Documentation](https://img.shields.io/badge/docs-API-orange)](./API_SPECIFICATION.md)
 [![Testing](https://img.shields.io/badge/testing-comprehensive-brightgreen)](./TESTING.md)
@@ -9,11 +10,20 @@
 
 **下一代智能抽认卡生成系统** - 将任意文本转化为高质量学习卡片的专业工具
 
+🌟 **[在线体验 → http://198.23.164.200:8000](http://198.23.164.200:8000)** 🌟
+
 ---
 
 ## 📖 项目概述
 
 AI Flashcard Generator 是一个企业级的智能抽认卡生成平台，支持多种AI模型、灵活的模板系统和完整的容器化部署。项目已完成从MVP到生产就绪应用的完整转型，具备专业的架构设计、全面的文档体系和精简的代码结构。
+
+### 🎉 **部署状态**
+- ✅ **生产环境**: 已成功部署至 Debian 12 服务器
+- ✅ **在线演示**: http://198.23.164.200:8000
+- ✅ **Docker容器**: 正常运行中
+- ✅ **功能验证**: 所有核心功能已测试通过
+- ✅ **API服务**: 稳定响应中
 
 ### 🎯 核心价值主张
 
