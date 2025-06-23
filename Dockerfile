@@ -43,6 +43,9 @@ COPY --from=builder /venv /venv
 # Set working directory
 WORKDIR /app
 
+# Create logs directory with proper permissions BEFORE switching user
+RUN mkdir -p /app/logs && chown appuser:appuser /app/logs && chmod 755 /app/logs
+
 # Copy application code
 COPY --chown=appuser:appuser main_refactored.py .
 COPY --chown=appuser:appuser unified_index.html .
@@ -52,11 +55,10 @@ COPY --chown=appuser:appuser prompt_templates.json .
 COPY --chown=appuser:appuser config/ ./config/
 COPY --chown=appuser:appuser docker-health-check.sh ./
 
-# Make health check script executable
-RUN chmod +x docker-health-check.sh
-
-# Create logs directory
-RUN mkdir -p /app/logs && chown appuser:appuser /app/logs
+# Make health check script executable and ensure logs directory permissions
+RUN chmod +x docker-health-check.sh && \
+    chown -R appuser:appuser /app/logs && \
+    chmod -R 755 /app/logs
 
 # Switch to non-root user
 USER appuser

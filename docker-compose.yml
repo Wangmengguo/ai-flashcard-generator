@@ -1,4 +1,5 @@
-version: '3.8'
+# Docker Compose file for AI Flashcard Generator
+# Note: version field is now obsolete in Docker Compose 2.x
 
 services:
   # Main application service

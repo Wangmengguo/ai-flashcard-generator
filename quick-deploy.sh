@@ -96,8 +96,17 @@ EOF
 create_directories() {
     log_info "创建必要目录..."
     mkdir -p logs nginx/ssl
+    
+    # 确保logs目录权限正确（重要：解决权限问题）
     chmod 755 logs
     chmod 700 nginx/ssl
+    
+    # 如果logs目录已有文件，修复权限
+    if [ -d "logs" ] && [ "$(ls -A logs)" ]; then
+        log_info "修复已存在的日志文件权限..."
+        chmod 644 logs/* 2>/dev/null || true
+    fi
+    
     log_success "目录创建完成"
 }
 
@@ -260,6 +269,18 @@ case "${1:-}" in
         log_info "重启应用..."
         docker compose restart flashcard-app
         log_success "应用已重启"
+        exit 0
+        ;;
+    "fix-logs")
+        log_info "修复日志权限问题..."
+        # 停止容器
+        docker compose down
+        # 修复权限
+        chmod 755 logs 2>/dev/null || mkdir -p logs && chmod 755 logs
+        chmod 644 logs/* 2>/dev/null || true
+        # 重新启动
+        docker compose up -d
+        log_success "日志权限已修复"
         exit 0
         ;;
     "")
