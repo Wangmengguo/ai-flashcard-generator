@@ -20,7 +20,7 @@ services:
       - WORKERS=${WORKERS:-2}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
-      - ./logs:/app/logs
+      # Logs are now console-only, no volume needed
       - ./config:/app/config:ro
     networks:
       - flashcard-network
@@ -53,7 +53,7 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
       - .:/app
-      - ./logs:/app/logs
+      # Logs are console-only in development too
     networks:
       - flashcard-network
     command: ["uvicorn", "main_refactored:app", "--reload", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug"]

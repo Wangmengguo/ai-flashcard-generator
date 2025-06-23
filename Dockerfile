@@ -43,13 +43,13 @@ COPY --from=builder /venv /venv
 # Set working directory
 WORKDIR /app
 
-# Create logs directory with proper permissions BEFORE switching user
+# Create logs directory (optional for console logging)
 RUN mkdir -p /app/logs && chown appuser:appuser /app/logs && chmod 755 /app/logs
 
 # Copy application code
 COPY --chown=appuser:appuser main_refactored.py .
 COPY --chown=appuser:appuser unified_index.html .
-COPY --chown=appuser:appuser logging.json .
+COPY --chown=appuser:appuser logging-simple.json ./logging.json
 COPY --chown=appuser:appuser prompt_manager.py .
 COPY --chown=appuser:appuser prompt_templates.json .
 COPY --chown=appuser:appuser config/ ./config/
