@@ -75,7 +75,7 @@ Thumbs.db
 # Local development files
 local_index.html
 test_new_interface.html
-unified_index.html
+# unified_index.html - NEEDED for Docker build
 
 # Build artifacts
 dist/
@@ -100,7 +100,7 @@ safety-report.json
 # Development scripts
 deployment-check.py
 validate-config.py
-docker-health-check.sh
+# docker-health-check.sh - NEEDED for Docker build
 
 # Large files that shouldn't be in containers
 *.zip
