@@ -415,12 +415,12 @@ async def get_unified_interface():
 @app.get("/test")
 async def get_test_interface():
     """提供测试界面的便捷访问"""
-    return FileResponse("test_new_interface.html")
+    return FileResponse("unified_index.html")
 
 @app.get("/quality")
 async def get_quality_guide():
     """提供质量测试指南"""
-    return FileResponse("quality_test_guide.html")
+    return FileResponse("frontend/tools/quality_test_guide.html")
 
 # API端点定义
 

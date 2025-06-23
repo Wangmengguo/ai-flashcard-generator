@@ -509,13 +509,104 @@ make prod-full
 
 ### 安全最佳实践
 
-#### 1. 容器安全
+#### 1. 系统级安全加固
+
+**用户权限管理**
+```bash
+# 创建专用应用用户
+sudo useradd -m -s /bin/bash flashcard
+sudo usermod -aG sudo flashcard
+
+# 禁用root SSH登录（可选）
+sudo sed -i 's/#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+
+# 设置强密码策略
+sudo apt install -y libpam-pwquality
+sudo sed -i 's/# minlen = 8/minlen = 12/' /etc/security/pwquality.conf
+```
+
+**SSH安全加固**
+```bash
+# 更改SSH默认端口（可选）
+sudo sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
+
+# 禁用密码认证，仅使用密钥认证（推荐）
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+
+# 限制SSH访问尝试
+echo "MaxAuthTries 3" | sudo tee -a /etc/ssh/sshd_config
+echo "MaxSessions 2" | sudo tee -a /etc/ssh/sshd_config
+
+# 重启SSH服务
+sudo systemctl restart ssh
+```
+
+**Fail2ban配置增强**
+```bash
+# 创建自定义jail配置
+sudo tee /etc/fail2ban/jail.local > /dev/null <<EOF
+[DEFAULT]
+# 禁止时间（秒）
+bantime = 3600
+# 查找时间窗口（秒）
+findtime = 600
+# 最大尝试次数
+maxretry = 3
+
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+
+[nginx-http-auth]
+enabled = true
+filter = nginx-http-auth
+port = http,https
+logpath = /var/log/nginx/error.log
+EOF
+
+# 重启Fail2ban
+sudo systemctl restart fail2ban
+sudo systemctl enable fail2ban
+```
+
+#### 2. 容器安全
 
 **非root用户运行**
 ```dockerfile
 # 确保应用以非root用户运行
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 USER appuser
+```
+
+**增强Docker配置**
+```bash
+# 创建增强的Docker配置
+sudo tee /etc/docker/daemon.json > /dev/null <<EOF
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "default-runtime": "runc",
+  "storage-driver": "overlay2",
+  "live-restore": true,
+  "userland-proxy": false,
+  "no-new-privileges": true,
+  "seccomp-profile": "/etc/docker/seccomp.json",
+  "default-address-pools": [
+    {"base": "172.30.0.0/16", "size": 24}
+  ]
+}
+EOF
+
+# 重启Docker
+sudo systemctl restart docker
 ```
 
 **最小化镜像**
@@ -599,6 +690,150 @@ RATE_LIMIT_WINDOW=60
 CORS_ORIGINS=https://yourdomain.com
 ```
 
+#### 4. 安全监控和事件响应
+
+**安全监控脚本**
+```bash
+# 创建安全监控脚本
+cat > ~/security-monitor.sh << 'EOF'
+#!/bin/bash
+
+LOG_FILE="$HOME/security-monitor.log"
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+echo "[$DATE] Security Monitor Report" >> $LOG_FILE
+
+# 检查失败的SSH登录
+echo "Recent failed SSH attempts:" >> $LOG_FILE
+sudo grep "Failed password" /var/log/auth.log | tail -10 >> $LOG_FILE
+
+# 检查Fail2ban状态
+echo "Fail2ban status:" >> $LOG_FILE
+sudo fail2ban-client status >> $LOG_FILE
+
+# 检查端口监听
+echo "Listening ports:" >> $LOG_FILE
+sudo netstat -tlnp >> $LOG_FILE
+
+# 检查异常进程
+echo "High CPU processes:" >> $LOG_FILE
+ps aux --sort=-%cpu | head -10 >> $LOG_FILE
+
+# 检查Docker容器状态
+echo "Docker containers:" >> $LOG_FILE
+docker ps >> $LOG_FILE
+
+echo "----------------------------------------" >> $LOG_FILE
+EOF
+
+chmod +x ~/security-monitor.sh
+
+# 设置定期安全检查
+(crontab -l 2>/dev/null; echo "0 */6 * * * $HOME/security-monitor.sh") | crontab -
+```
+
+**自动威胁检测**
+```bash
+# 创建自动威胁检测脚本
+cat > ~/threat-detection.sh << 'EOF'
+#!/bin/bash
+
+# 检查异常连接
+CONNECTIONS=$(netstat -an | grep :8000 | wc -l)
+if [ $CONNECTIONS -gt 100 ]; then
+    echo "$(date): High connection count detected: $CONNECTIONS" >> ~/security-events.log
+    # 自动限制连接
+    sudo iptables -A INPUT -p tcp --dport 8000 -m connlimit --connlimit-above 20 -j DROP
+fi
+
+# 检查CPU使用率
+CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1)
+if (( $(echo "$CPU_USAGE > 90" | bc -l) )); then
+    echo "$(date): High CPU usage detected: $CPU_USAGE%" >> ~/security-events.log
+fi
+
+# 检查内存使用
+MEM_USAGE=$(free | grep Mem | awk '{printf("%.1f", $3/$2 * 100)}')
+if (( $(echo "$MEM_USAGE > 90" | bc -l) )); then
+    echo "$(date): High memory usage detected: $MEM_USAGE%" >> ~/security-events.log
+fi
+
+# 检查异常日志
+if grep -q "error\|failed\|denied" ~/apps/flashcard_generator_mvp/logs/app.log; then
+    echo "$(date): Error patterns detected in application logs" >> ~/security-events.log
+fi
+EOF
+
+chmod +x ~/threat-detection.sh
+
+# 每分钟运行威胁检测
+(crontab -l 2>/dev/null; echo "* * * * * $HOME/threat-detection.sh") | crontab -
+```
+
+**紧急安全响应**
+```bash
+# 创建紧急安全响应脚本
+cat > ~/emergency-response.sh << 'EOF'
+#!/bin/bash
+
+# 紧急安全响应脚本
+# 用法: ./emergency-response.sh [lockdown|isolate|restore]
+
+case "$1" in
+    "lockdown")
+        echo "Initiating security lockdown..."
+        
+        # 停止所有Web服务
+        docker compose stop
+        
+        # 阻止所有入站连接
+        sudo ufw deny in
+        
+        # 记录事件
+        echo "$(date): Emergency lockdown initiated" >> ~/security-events.log
+        
+        echo "Lockdown complete. Only SSH access allowed."
+        ;;
+        
+    "isolate")
+        echo "Isolating compromised services..."
+        
+        # 停止主应用
+        docker compose stop flashcard-app
+        
+        # 保持监控运行
+        echo "$(date): Services isolated" >> ~/security-events.log
+        ;;
+        
+    "restore")
+        echo "Restoring normal operations..."
+        
+        # 恢复防火墙规则
+        sudo ufw --force reset
+        sudo ufw default deny incoming
+        sudo ufw default allow outgoing
+        sudo ufw allow ssh
+        sudo ufw allow 80/tcp
+        sudo ufw allow 443/tcp
+        sudo ufw allow 8000/tcp
+        sudo ufw enable
+        
+        # 重启服务
+        docker compose up -d
+        
+        echo "$(date): Normal operations restored" >> ~/security-events.log
+        ;;
+        
+    *)
+        echo "Usage: $0 [lockdown|isolate|restore]"
+        exit 1
+        ;;
+esac
+EOF
+
+chmod +x ~/emergency-response.sh
+```
+
 ### 性能优化最佳实践
 
 #### 1. 容器配置优化
@@ -660,6 +895,175 @@ location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
 - `/health` - 基础健康状态
 - `/ready` - 就绪状态检查
 - `/metrics` - Prometheus指标
+
+### 实时监控仪表板
+
+```bash
+# 创建综合监控脚本
+cat > ~/dashboard.sh << 'EOF'
+#!/bin/bash
+
+# 清屏并显示标题
+clear
+echo "=== AI Flashcard Generator - 实时监控仪表板 ==="
+echo "服务器：Debian 12 | RAM：2GB | 时间：$(date)"
+echo "==============================================="
+
+# 系统负载
+echo "📊 系统负载："
+uptime
+
+# 内存使用
+echo "💾 内存使用："
+free -h | awk 'NR==2{printf "内存使用: %s/%s (%.2f%%)\n", $3,$2,$3*100/$2}'
+
+# Docker容器状态
+echo "🐳 Docker容器状态："
+if command -v docker &> /dev/null; then
+    docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+else
+    echo "Docker未安装或未运行"
+fi
+
+# 应用健康检查
+echo "🏥 应用健康状态："
+if curl -sf http://localhost:8000/health >/dev/null 2>&1; then
+    echo "✅ 应用健康状态：正常"
+else
+    echo "❌ 应用健康状态：异常"
+fi
+
+if curl -sf http://localhost:8000/supported_models >/dev/null 2>&1; then
+    echo "✅ API端点：可访问"
+else
+    echo "❌ API端点：无法访问"
+fi
+
+echo ""
+echo "==============================================="
+echo "刷新：watch -n 30 ~/dashboard.sh"
+echo "退出：Ctrl+C"
+EOF
+
+chmod +x ~/dashboard.sh
+```
+
+### 性能监控和告警
+
+```bash
+# 创建性能监控脚本
+cat > ~/performance-monitor.sh << 'EOF'
+#!/bin/bash
+
+LOG_FILE="$HOME/performance-monitor.log"
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+
+# 获取系统指标
+CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1)
+MEM_USAGE=$(free | grep Mem | awk '{printf("%.1f", $3/$2 * 100)}')
+DISK_USAGE=$(df / | awk 'NR==2{print $5}' | cut -d'%' -f1)
+LOAD_AVG=$(uptime | awk '{print $10 $11 $12}')
+
+# 获取Docker指标
+if command -v docker &> /dev/null; then
+    CONTAINER_COUNT=$(docker ps -q | wc -l)
+    CONTAINER_MEM=$(docker stats --no-stream --format "{{.MemUsage}}" | head -1)
+else
+    CONTAINER_COUNT=0
+    CONTAINER_MEM="N/A"
+fi
+
+# 获取网络指标
+CONNECTIONS=$(ss -tu | wc -l)
+API_RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}' http://localhost:8000/health || echo "N/A")
+
+# 记录到日志文件
+echo "$TIMESTAMP,CPU:$CPU_USAGE%,MEM:$MEM_USAGE%,DISK:$DISK_USAGE%,LOAD:$LOAD_AVG,CONTAINERS:$CONTAINER_COUNT,CONNECTIONS:$CONNECTIONS,API_TIME:${API_RESPONSE_TIME}s" >> $LOG_FILE
+
+# 性能警告检查
+if (( $(echo "$CPU_USAGE > 80" | bc -l) )); then
+    echo "$TIMESTAMP: HIGH CPU USAGE: $CPU_USAGE%" >> $HOME/alerts.log
+fi
+
+if (( $(echo "$MEM_USAGE > 85" | bc -l) )); then
+    echo "$TIMESTAMP: HIGH MEMORY USAGE: $MEM_USAGE%" >> $HOME/alerts.log
+fi
+
+if [ "$DISK_USAGE" -gt 85 ]; then
+    echo "$TIMESTAMP: HIGH DISK USAGE: $DISK_USAGE%" >> $HOME/alerts.log
+fi
+
+# 保留最近30天的数据
+find $HOME -name "performance-monitor.log" -mtime +30 -delete
+EOF
+
+chmod +x ~/performance-monitor.sh
+
+# 设置每5分钟收集一次性能数据
+(crontab -l 2>/dev/null; echo "*/5 * * * * $HOME/performance-monitor.sh") | crontab -
+```
+
+### 应用监控和自动恢复
+
+```bash
+# 创建应用专用监控脚本
+cat > ~/app-monitor.sh << 'EOF'
+#!/bin/bash
+
+APP_LOG="$HOME/app-monitor.log"
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+APP_DIR="$HOME/apps/flashcard_generator_mvp"
+
+cd $APP_DIR
+
+# 检查Docker容器状态
+CONTAINER_STATUS=$(docker compose ps --services --filter "status=running" | wc -l)
+TOTAL_CONTAINERS=$(docker compose ps --services | wc -l)
+
+# API健康检查
+API_HEALTH="FAILED"
+API_RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000/health)
+if [ "$API_RESPONSE_CODE" = "200" ]; then
+    API_HEALTH="OK"
+fi
+
+# 检查支持的模型端点
+MODELS_HEALTH="FAILED"
+MODELS_RESPONSE=$(curl -s http://localhost:8000/supported_models | wc -l)
+if [ "$MODELS_RESPONSE" -gt 0 ]; then
+    MODELS_HEALTH="OK"
+fi
+
+# 记录监控数据
+echo "$TIMESTAMP,CONTAINERS:$CONTAINER_STATUS/$TOTAL_CONTAINERS,API:$API_HEALTH,MODELS:$MODELS_HEALTH" >> $APP_LOG
+
+# 自动恢复逻辑
+if [ "$API_HEALTH" = "FAILED" ] && [ "$CONTAINER_STATUS" -gt 0 ]; then
+    echo "$TIMESTAMP: API健康检查失败，重启应用容器" >> $HOME/auto-recovery.log
+    docker compose restart flashcard-app
+    sleep 10
+    
+    # 再次检查
+    API_RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000/health)
+    if [ "$API_RESPONSE_CODE" = "200" ]; then
+        echo "$TIMESTAMP: 应用重启成功" >> $HOME/auto-recovery.log
+    else
+        echo "$TIMESTAMP: 应用重启失败，需要人工介入" >> $HOME/alerts.log
+    fi
+fi
+
+if [ "$CONTAINER_STATUS" -eq 0 ]; then
+    echo "$TIMESTAMP: 容器全部停止，尝试重启" >> $HOME/auto-recovery.log
+    docker compose up -d
+    echo "$TIMESTAMP: 容器重启命令已执行" >> $HOME/auto-recovery.log
+fi
+EOF
+
+chmod +x ~/app-monitor.sh
+
+# 设置每2分钟检查一次应用状态
+(crontab -l 2>/dev/null; echo "*/2 * * * * $HOME/app-monitor.sh") | crontab -
+```
 
 ### 结构化日志配置
 
