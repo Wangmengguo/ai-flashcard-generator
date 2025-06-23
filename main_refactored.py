@@ -426,7 +426,12 @@ async def get_quality_guide():
 
 @app.get("/")
 async def root():
-    """根端点，返回API信息"""
+    """根端点，返回前端页面"""
+    return FileResponse("unified_index.html")
+
+@app.get("/api")
+async def api_info():
+    """API信息端点"""
     return {
         "message": "AI Flashcard Generator API",
         "version": "2.0.0",
