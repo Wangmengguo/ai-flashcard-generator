@@ -720,6 +720,71 @@
             color: #dc2626;
         }
 
+        /* 批量处理汇总区域 */
+        .batch-summary {
+            background: var(--bg-primary);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .summary-header {
+            margin-bottom: 1rem;
+        }
+
+        .summary-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            min-width: 80px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-item.success .stat-number {
+            color: #16a34a;
+        }
+
+        .stat-item.primary .stat-number {
+            color: var(--primary-color);
+        }
+
+        .stat-item.error .stat-number {
+            color: #dc2626;
+        }
+
+        .summary-actions {
+            text-align: center;
+        }
+
         /* 历史记录区域 */
         .history-section {
             max-height: 500px;
@@ -2131,6 +2196,9 @@ A: <精准、完整、简明扼要的答案>
             }
 
             showMessage('success', '批量处理完成！');
+            
+            // 显示批量处理结果汇总
+            displayBatchSummary();
         }
 
         function displayBatchProgress() {
@@ -2190,7 +2258,94 @@ A: <精准、完整、简明扼要的答案>
         function clearBatch() {
             document.getElementById('batchTexts').value = '';
             document.getElementById('batchProgress').style.display = 'none';
+            document.getElementById('batchSummary').style.display = 'none';
             batchProcesses = [];
+        }
+
+        // 批量处理结果汇总
+        function displayBatchSummary() {
+            const successfulProcesses = batchProcesses.filter(p => p.status === 'completed' && p.result);
+            const failedProcesses = batchProcesses.filter(p => p.status === 'error');
+            const totalCards = successfulProcesses.reduce((sum, p) => sum + p.result.length, 0);
+
+            if (totalCards === 0) {
+                return; // 没有成功生成任何卡片，不显示汇总
+            }
+
+            const summaryDiv = document.getElementById('batchSummary');
+            if (!summaryDiv) {
+                // 如果不存在汇总区域，创建一个
+                const newSummaryDiv = document.createElement('div');
+                newSummaryDiv.id = 'batchSummary';
+                newSummaryDiv.className = 'batch-summary';
+                document.getElementById('batchProgress').appendChild(newSummaryDiv);
+            }
+
+            document.getElementById('batchSummary').style.display = 'block';
+            document.getElementById('batchSummary').innerHTML = `
+                <div class="summary-header">
+                    <h3 class="summary-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-5H16V4.5C16 3.12 14.88 2 13.5 2h-3C9.12 2 8 3.12 8 4.5V6H4.5C3.67 6 3 6.67 3 7.5S3.67 9 4.5 9H6v10.5C6 20.88 7.12 22 8.5 22h7c1.38 0 2.5-1.12 2.5-2.5V9h1.5C20.33 9 21 8.33 21 7.5S20.33 6 19.5 6zM10 4.5c0-.28.22-.5.5-.5h3c.28 0 .5.22.5.5V6h-4V4.5z"/>
+                        </svg>
+                        批量处理结果汇总
+                    </h3>
+                </div>
+                <div class="summary-stats">
+                    <div class="stat-item success">
+                        <span class="stat-number">${successfulProcesses.length}</span>
+                        <span class="stat-label">个文本成功</span>
+                    </div>
+                    <div class="stat-item primary">
+                        <span class="stat-number">${totalCards}</span>
+                        <span class="stat-label">张卡片生成</span>
+                    </div>
+                    ${failedProcesses.length > 0 ? `
+                    <div class="stat-item error">
+                        <span class="stat-number">${failedProcesses.length}</span>
+                        <span class="stat-label">个文本失败</span>
+                    </div>
+                    ` : ''}
+                </div>
+                <div class="summary-actions">
+                    <button class="btn btn-primary" onclick="exportAllBatchResults()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                        </svg>
+                        查看并导出所有卡片
+                    </button>
+                </div>
+            `;
+        }
+
+        // 导出所有批量处理结果
+        function exportAllBatchResults() {
+            // 收集所有成功生成的卡片
+            const allCards = batchProcesses
+                .filter(p => p.status === 'completed' && p.result)
+                .flatMap(p => p.result.map(card => ({
+                    ...card,
+                    id: card.id || `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                })));
+
+            if (allCards.length === 0) {
+                showMessage('error', '没有可导出的卡片');
+                return;
+            }
+
+            // 设置到当前导出系统
+            currentFlashcards = allCards;
+            
+            // 跳转到单文本页面并显示结果
+            switchTab('single');
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('exportSection').classList.add('show');
+            displayFlashcards(currentFlashcards);
+            
+            // 滚动到结果区域
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            
+            showMessage('success', `已加载 ${allCards.length} 张批量生成的卡片，可以进行导出操作！`);
         }
 
         // 历史记录功能
