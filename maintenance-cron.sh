@@ -28,9 +28,9 @@ log_error() {
 }
 
 # 项目配置
-PROJECT_DIR="$HOME/apps/flashcard_generator_mvp"
-LOG_DIR="$HOME/maintenance_logs"
-BACKUP_DIR="$HOME/backups"
+PROJECT_DIR="/root/ai-flashcard-generator"
+LOG_DIR="/root/maintenance_logs"
+BACKUP_DIR="/root/backups"
 
 # 创建必要目录
 setup_directories() {
@@ -106,6 +106,7 @@ weekly_cleanup() {
                 "$PROJECT_DIR/.env" \
                 "$PROJECT_DIR/docker-compose.yml" \
                 "$PROJECT_DIR/unified_index.html" \
+                "$PROJECT_DIR/main_refactored.py" \
                 2>/dev/null || echo "部分文件备份失败"
             echo "配置备份完成: $backup_name"
         fi

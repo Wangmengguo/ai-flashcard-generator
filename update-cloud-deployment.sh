@@ -29,7 +29,7 @@ log_error() {
 
 # 服务器信息
 SERVER_IP="198.23.164.200"
-PROJECT_DIR="~/apps/flashcard_generator_mvp"
+PROJECT_DIR="/root/ai-flashcard-generator"
 APP_URL="http://198.23.164.200:8000"
 
 echo "=== AI Flashcard Generator - 云端部署更新 ==="
@@ -55,7 +55,7 @@ show_update_commands() {
     log_info "请在服务器上执行以下命令："
     echo
     echo "# 1. SSH连接到服务器"
-    echo "ssh user@$SERVER_IP"
+    echo "ssh root@$SERVER_IP"
     echo
     echo "# 2. 进入项目目录"
     echo "cd $PROJECT_DIR"
@@ -218,13 +218,13 @@ show_ssh_tips() {
     echo
     log_info "SSH连接提示："
     echo "1. 如果使用密钥认证："
-    echo "   ssh -i /path/to/private-key user@$SERVER_IP"
+    echo "   ssh -i /path/to/private-key root@$SERVER_IP"
     echo
     echo "2. 如果服务器使用非标准端口："
-    echo "   ssh -p 2222 user@$SERVER_IP"
+    echo "   ssh -p 2222 root@$SERVER_IP"
     echo
     echo "3. 传输更新脚本到服务器："
-    echo "   scp remote-update.sh user@$SERVER_IP:$PROJECT_DIR/"
+    echo "   scp remote-update.sh root@$SERVER_IP:$PROJECT_DIR/"
     echo
     echo "4. 在服务器上执行："
     echo "   cd $PROJECT_DIR && ./remote-update.sh"

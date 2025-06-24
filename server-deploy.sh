@@ -304,24 +304,24 @@ EOF
     chmod +x ~/monitor.sh
     
     # 创建健康检查脚本
-    cat > ~/health_check.sh << 'EOF'
+    cat > /root/health_check.sh << 'EOF'
 #!/bin/bash
-cd ~/apps/flashcard_generator_mvp
+cd /root/ai-flashcard-generator
 
 # 检查容器状态
 if ! docker compose ps | grep -q "Up"; then
-    echo "$(date): Containers down, restarting..." >> ~/health_check.log
+    echo "$(date): Containers down, restarting..." >> /root/health_check.log
     docker compose up -d
 fi
 
 # 检查API响应
 if ! curl -f http://localhost:8000/health >/dev/null 2>&1; then
-    echo "$(date): API not responding, restarting..." >> ~/health_check.log
+    echo "$(date): API not responding, restarting..." >> /root/health_check.log
     docker compose restart flashcard-app
 fi
 EOF
     
-    chmod +x ~/health_check.sh
+    chmod +x /root/health_check.sh
     
     log_success "监控脚本创建完成"
 }
@@ -331,21 +331,21 @@ setup_backup() {
     log_info "设置自动备份..."
     
     # 创建备份脚本
-    cat > ~/backup.sh << 'EOF'
+    cat > /root/backup.sh << 'EOF'
 #!/bin/bash
-BACKUP_DIR="$HOME/backups"
+BACKUP_DIR="/root/backups"
 DATE=$(date +%Y%m%d_%H%M%S)
 
 mkdir -p "$BACKUP_DIR"
 
 # 备份配置文件
 tar -czf "$BACKUP_DIR/config_$DATE.tar.gz" \
-    ~/apps/flashcard_generator_mvp/.env \
-    ~/apps/flashcard_generator_mvp/docker-compose.yml
+    /root/ai-flashcard-generator/.env \
+    /root/ai-flashcard-generator/docker-compose.yml
 
 # 备份日志
 tar -czf "$BACKUP_DIR/logs_$DATE.tar.gz" \
-    ~/apps/flashcard_generator_mvp/logs/
+    /root/ai-flashcard-generator/logs/ 2>/dev/null || true
 
 # 清理旧备份（保留7天）
 find "$BACKUP_DIR" -name "*.tar.gz" -mtime +7 -delete
@@ -353,10 +353,10 @@ find "$BACKUP_DIR" -name "*.tar.gz" -mtime +7 -delete
 echo "Backup completed: $DATE"
 EOF
     
-    chmod +x ~/backup.sh
+    chmod +x /root/backup.sh
     
     # 设置定时备份
-    (crontab -l 2>/dev/null; echo "0 2 * * * $HOME/backup.sh >> $HOME/backup.log 2>&1") | crontab -
+    (crontab -l 2>/dev/null; echo "0 2 * * * /root/backup.sh >> /root/backup.log 2>&1") | crontab -
     
     log_success "自动备份设置完成"
 }
@@ -374,9 +374,9 @@ show_deployment_info() {
     echo "查看状态: docker compose ps"
     echo "查看日志: docker compose logs -f flashcard-app"
     echo "重启应用: docker compose restart flashcard-app"
-    echo "系统监控: ~/monitor.sh"
-    echo "健康检查: ~/health_check.sh"
-    echo "手动备份: ~/backup.sh"
+    echo "系统监控: /root/monitor.sh"
+    echo "健康检查: /root/health_check.sh"
+    echo "手动备份: /root/backup.sh"
     echo
     echo "=== 重要提醒 ==="
     echo "1. 请确保已设置正确的OPENROUTER_API_KEY"

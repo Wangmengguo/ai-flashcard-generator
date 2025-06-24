@@ -4,12 +4,12 @@
 
 ### 1️⃣ **SSH连接到云端服务器**
 ```bash
-ssh user@198.23.164.200
+ssh root@198.23.164.200
 ```
 
 ### 2️⃣ **进入项目目录**
 ```bash
-cd ~/apps/flashcard_generator_mvp
+cd /root/ai-flashcard-generator
 ```
 
 ### 3️⃣ **拉取最新代码**
