@@ -297,6 +297,7 @@
             font-size: 1rem;
             transition: all 0.2s;
             background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         .form-input:focus,
@@ -307,6 +308,27 @@
             box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
         }
 
+        /* Placeholder样式 */
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        [data-theme="dark"] .form-input::placeholder,
+        [data-theme="dark"] .form-textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            [data-theme="auto"] .form-input::placeholder,
+            [data-theme="auto"] .form-textarea::placeholder {
+                color: var(--text-secondary);
+                opacity: 0.8;
+            }
+        }
+
         .form-textarea {
             min-height: 200px;
             resize: vertical;
@@ -315,6 +337,24 @@
         .form-help {
             font-size: 0.875rem;
             color: var(--text-secondary);
+        }
+
+        /* Select option样式 */
+        .form-select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .form-select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            [data-theme="auto"] .form-select option {
+                background: var(--bg-primary);
+                color: var(--text-primary);
+            }
         }
 
         /* Prompt自定义区域 */
@@ -884,6 +924,53 @@
             color: var(--text-secondary);
         }
 
+        /* Code标签样式 */
+        code {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.2em 0.4em;
+            border-radius: var(--radius-sm);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875em;
+        }
+
+        [data-theme="dark"] code {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            [data-theme="auto"] code {
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+            }
+        }
+
+        /* 自定义Prompt帮助文本样式 */
+        .custom-prompt-help {
+            margin-top: 8px;
+            padding: 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        [data-theme="dark"] .custom-prompt-help {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: var(--text-primary);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            [data-theme="auto"] .custom-prompt-help {
+                background: rgba(34, 197, 94, 0.1);
+                border-color: rgba(34, 197, 94, 0.3);
+                color: var(--text-primary);
+            }
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .app-container {
@@ -1046,7 +1133,7 @@
                             <div class="form-group">
                                 <label for="customPrompt" class="form-label">自定义 Prompt（仅在选择自定义模式时生效）</label>
                                 <textarea id="customPrompt" class="form-textarea" placeholder="输入你的自定义Prompt..." style="min-height: 120px; display: none;"></textarea>
-                                <div id="customPromptHelp" class="form-help" style="display: none; margin-top: 8px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 0.875rem; line-height: 1.5;">
+                                <div id="customPromptHelp" class="form-help custom-prompt-help" style="display: none;">
                                     <strong>📝 格式要求：</strong><br>
                                     • 必须指定输出格式：<code>Q: 问题内容</code> 和 <code>A: 答案内容</code><br>
                                     • 问答对之间用 <code>---</code> 分隔<br>
