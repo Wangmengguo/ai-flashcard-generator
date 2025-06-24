@@ -478,6 +478,74 @@
             transform: none !important;
         }
 
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            min-height: 36px;
+        }
+
+        /* 配置显示样式 */
+        .config-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .config-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 1rem 0;
+        }
+
+        .config-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .config-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .config-value {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .config-value.status-success {
+            color: var(--success-color);
+        }
+
+        .config-value.status-warning {
+            color: var(--warning-color);
+        }
+
+        .config-value.status-error {
+            color: var(--danger-color);
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
         /* 消息样式 */
         .message {
             padding: 1rem;
@@ -1061,6 +1129,35 @@
                             </svg>
                             批量文本处理
                         </h2>
+                        
+                        <!-- 当前配置显示区域 -->
+                        <div id="batchConfigDisplay" class="config-display">
+                            <h3 class="config-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                当前配置
+                            </h3>
+                            <div class="config-content">
+                                <div class="config-item">
+                                    <span class="config-label">API密钥:</span>
+                                    <span id="batchApiKeyStatus" class="config-value">未设置</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="config-label">AI模型:</span>
+                                    <span id="batchModelStatus" class="config-value">未选择</span>
+                                </div>
+                                <div class="config-item">
+                                    <span class="config-label">模板设置:</span>
+                                    <span id="batchTemplateStatus" class="config-value">未配置</span>
+                                </div>
+                            </div>
+                            <div class="config-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="switchToSingleTab()">前往配置</button>
+                                <button id="refreshBatchConfig" class="btn btn-secondary btn-sm" onclick="updateBatchConfigDisplay()">刷新状态</button>
+                            </div>
+                        </div>
+                        
                         <div class="batch-section">
                             <div class="form-group">
                                 <label for="batchTexts" class="form-label">批量文本输入（每行一个文本片段）</label>
@@ -1329,6 +1426,7 @@
             
             apiKeyInput.addEventListener('input', () => {
                 localStorage.setItem('openRouterApiKey', apiKeyInput.value);
+                updateBatchConfigDisplay();
             });
         }
 
@@ -1346,6 +1444,11 @@
             // 导出格式选择
             document.querySelectorAll('.format-option').forEach(option => {
                 option.addEventListener('click', () => selectExportFormat(option.dataset.format));
+            });
+
+            // 自定义Prompt输入监听
+            document.getElementById('customPrompt').addEventListener('input', () => {
+                updateBatchConfigDisplay();
             });
         }
 
@@ -1366,7 +1469,10 @@
 
         function initializeSlider() {
             const slider = document.getElementById('cardCount');
-            slider.addEventListener('input', updateSlider);
+            slider.addEventListener('input', function() {
+                updateSlider();
+                updateBatchConfigDisplay();
+            });
             updateSlider(); // 初始化
         }
 
@@ -1397,6 +1503,87 @@
                 panel.classList.remove('active');
             });
             document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            // 如果切换到批量处理页面，更新配置显示
+            if (tabName === 'batch') {
+                updateBatchConfigDisplay();
+            }
+        }
+
+        function switchToSingleTab() {
+            switchTab('single');
+        }
+
+        function updateBatchConfigDisplay() {
+            // 更新API密钥状态
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const apiKeyStatus = document.getElementById('batchApiKeyStatus');
+            if (apiKey) {
+                const maskedKey = apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 8);
+                apiKeyStatus.textContent = maskedKey + ' (已设置)';
+                apiKeyStatus.className = 'config-value status-success';
+            } else {
+                apiKeyStatus.textContent = '未设置';
+                apiKeyStatus.className = 'config-value status-error';
+            }
+
+            // 更新模型状态
+            const modelSelect = document.getElementById('modelSelect');
+            const modelStatus = document.getElementById('batchModelStatus');
+            if (modelSelect.value && modelSelect.value !== '') {
+                const selectedOption = modelSelect.options[modelSelect.selectedIndex];
+                modelStatus.textContent = selectedOption.text;
+                modelStatus.className = 'config-value status-success';
+            } else {
+                modelStatus.textContent = '未选择';
+                modelStatus.className = 'config-value status-error';
+            }
+
+            // 更新模板状态
+            const templateStatus = document.getElementById('batchTemplateStatus');
+            try {
+                const templateConfig = getCurrentTemplateConfig();
+                if (templateConfig.template_id) {
+                    // 预设模板
+                    const templateNames = {
+                        'academic': '学术研究',
+                        'exam': '考试备考',
+                        'language': '语言学习',
+                        'technical': '技术文档',
+                        'general': '通用模板'
+                    };
+                    const templateName = templateNames[templateConfig.template_id] || templateConfig.template_id;
+                    const maxCards = templateConfig.max_cards || '默认';
+                    templateStatus.textContent = `${templateName} (${maxCards}张)`;
+                    templateStatus.className = 'config-value status-success';
+                } else if (templateConfig.custom_system_prompt) {
+                    // 自定义模板
+                    templateStatus.textContent = '自定义模板';
+                    templateStatus.className = 'config-value status-success';
+                } else {
+                    templateStatus.textContent = '未配置';
+                    templateStatus.className = 'config-value status-warning';
+                }
+            } catch (error) {
+                templateStatus.textContent = '配置错误';
+                templateStatus.className = 'config-value status-error';
+            }
+
+            // 更新批量处理按钮状态
+            const batchButton = document.getElementById('batchProcessButton');
+            const hasApiKey = apiKey && apiKey.length > 0;
+            const hasModel = modelSelect.value && modelSelect.value !== '';
+            
+            if (hasApiKey && hasModel) {
+                batchButton.disabled = false;
+                batchButton.title = '';
+            } else {
+                batchButton.disabled = true;
+                let missingItems = [];
+                if (!hasApiKey) missingItems.push('API密钥');
+                if (!hasModel) missingItems.push('AI模型');
+                batchButton.title = `请先配置: ${missingItems.join('、')}`;
+            }
         }
 
         function selectTemplate(templateName) {
@@ -1407,6 +1594,9 @@
             document.querySelector(`[data-template="${templateName}"]`).classList.add('selected');
 
             currentTemplate = templateName;
+            
+            // 更新批量处理配置显示
+            updateBatchConfigDisplay();
 
             // 显示/隐藏自定义Prompt输入框和帮助信息
             const customPromptTextarea = document.getElementById('customPrompt');
@@ -1485,7 +1675,10 @@
                     }
 
                     // 添加变化监听器
-                    modelSelect.addEventListener('change', updateModelDescription);
+                    modelSelect.addEventListener('change', () => {
+                        updateModelDescription();
+                        updateBatchConfigDisplay();
+                    });
                     updateModelDescription();
                 } else {
                     modelSelect.innerHTML = '<option value="">无可用模型</option>';
@@ -1911,7 +2104,7 @@ A: <精准、完整、简明扼要的答案>
                             text: process.text,
                             api_key: apiKey,
                             model_name: modelName,
-                            custom_prompt: getCurrentPrompt()
+                            ...getCurrentTemplateConfig()
                         })
                     });
 
