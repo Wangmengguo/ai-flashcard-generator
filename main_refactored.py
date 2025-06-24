@@ -14,6 +14,7 @@ import re
 import time
 import json
 from prompt_manager import prompt_manager, CustomPromptTemplate
+from config.health import health_checker, metrics_collector
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
@@ -424,6 +425,27 @@ async def get_quality_guide():
 
 # API端点定义
 
+# 健康检查端点
+@app.get("/health")
+async def health_check():
+    """综合健康检查端点"""
+    return await health_checker.check_application_health()
+
+@app.get("/ready")
+async def readiness_check():
+    """就绪性检查端点"""
+    return health_checker.get_readiness_status()
+
+@app.get("/live")
+async def liveness_check():
+    """存活性检查端点"""
+    return health_checker.get_liveness_status()
+
+@app.get("/metrics")
+async def get_metrics():
+    """获取应用指标"""
+    return metrics_collector.get_metrics()
+
 @app.get("/")
 async def root():
     """根端点，返回前端页面"""
@@ -494,22 +516,29 @@ async def remove_template(template_id: str):
 async def create_flashcards(request: FlashcardRequest):
     """生成Flashcards的主要端点"""
     
-    # 基本输入验证
-    if not request.text.strip():
-        return FlashcardResponse(flashcards=[], error="输入文本不能为空")
-    
-    if not request.api_key.strip():
-        return FlashcardResponse(flashcards=[], error="API密钥不能为空")
-    
-    # 文本长度限制
-    MAX_TEXT_LENGTH = 10000
-    if len(request.text) > MAX_TEXT_LENGTH:
-        return FlashcardResponse(
-            flashcards=[],
-            error=f"文本太长，请保持在{MAX_TEXT_LENGTH}字符以内"
-        )
+    start_time = time.time()
+    success = False
+    error_code = None
     
     try:
+        # 基本输入验证
+        if not request.text.strip():
+            error_code = "empty_text"
+            return FlashcardResponse(flashcards=[], error="输入文本不能为空")
+        
+        if not request.api_key.strip():
+            error_code = "empty_api_key"
+            return FlashcardResponse(flashcards=[], error="API密钥不能为空")
+        
+        # 文本长度限制
+        MAX_TEXT_LENGTH = 10000
+        if len(request.text) > MAX_TEXT_LENGTH:
+            error_code = "text_too_long"
+            return FlashcardResponse(
+                flashcards=[],
+                error=f"文本太长，请保持在{MAX_TEXT_LENGTH}字符以内"
+            )
+        
         # 调用LLM生成Flashcards
         generated_cards, processing_info = await generate_flashcards_from_llm(
             text_to_process=request.text,
@@ -523,10 +552,14 @@ async def create_flashcards(request: FlashcardRequest):
         )
         
         if not generated_cards:
+            error_code = "no_cards_generated"
             return FlashcardResponse(
                 flashcards=[],
                 error="未能生成任何有效的Flashcards"
             )
+        
+        success = True
+        metrics_collector.record_flashcards_generated(len(generated_cards))
         
         return FlashcardResponse(
             flashcards=generated_cards,
@@ -536,12 +569,22 @@ async def create_flashcards(request: FlashcardRequest):
         )
     
     except HTTPException as e:
-        # 重新抛出HTTP异常
+        error_code = f"http_{e.status_code}"
         raise e
     except Exception as e:
-        # 处理其他未预期的错误
+        error_code = "unknown_error"
         logger.error(f"处理请求时发生未知错误: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+    
+    finally:
+        # 记录请求指标
+        response_time = time.time() - start_time
+        metrics_collector.record_request(
+            success=success,
+            response_time=response_time,
+            model_name=request.model_name,
+            error_code=error_code
+        )
 
 if __name__ == "__main__":
     import uvicorn
