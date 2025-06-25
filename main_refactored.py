@@ -15,6 +15,7 @@ import time
 import json
 from prompt_manager import prompt_manager, CustomPromptTemplate
 from config.health import health_checker, metrics_collector
+from model_manager import model_manager
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
@@ -249,7 +250,7 @@ async def generate_flashcards_from_llm(
                 )
         else:
             template = prompt_manager.get_default_template()
-            template_id = 'default'
+            template_id = prompt_manager.default_template_key
         
         # 处理max_cards参数
         if max_cards:
@@ -282,12 +283,27 @@ async def generate_flashcards_from_llm(
                 logger.info(f"Cache hit for key: {cache_key[:8]}...")
                 return cache_entry['flashcards'], cache_entry['processing_info']
     
-    # 验证模型是否支持
-    if model_name not in SUPPORTED_MODELS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"不支持的模型。当前仅支持: {list(SUPPORTED_MODELS.keys())}"
-        )
+    # 验证模型是否支持 - 使用动态模型管理器
+    try:
+        dynamic_models = await model_manager.get_all_models()
+        if model_name not in dynamic_models:
+            available_models = [model_id for model_id, model_info in dynamic_models.items() 
+                              if model_info.status != "deprecated"]
+            raise HTTPException(
+                status_code=400,
+                detail=f"不支持的模型。当前支持 {len(available_models)} 个模型，请从模型列表中选择有效模型。"
+            )
+    except HTTPException:
+        # 重新抛出HTTPException，不要捕获它
+        raise
+    except Exception as e:
+        # 如果动态模型获取失败，回退到静态模型列表
+        logger.warning(f"Failed to get dynamic models for validation, falling back to static: {e}")
+        if model_name not in SUPPORTED_MODELS:
+            raise HTTPException(
+                status_code=400,
+                detail=f"不支持的模型。当前仅支持: {list(SUPPORTED_MODELS.keys())}"
+            )
     
     # 构建API请求
     payload = {
@@ -467,17 +483,47 @@ async def api_info():
 
 @app.get("/supported_models")
 async def get_supported_models():
-    """返回支持的模型列表"""
-    if DEFAULT_MODEL_ID not in SUPPORTED_MODELS:
-        logger.warning(f"Default model ID '{DEFAULT_MODEL_ID}' not found in SUPPORTED_MODELS")
-        actual_default_id = next(iter(SUPPORTED_MODELS)) if SUPPORTED_MODELS else None
-    else:
-        actual_default_id = DEFAULT_MODEL_ID
-    
-    return {
-        "default_model_id": actual_default_id,
-        "models": SUPPORTED_MODELS
-    }
+    """返回支持的模型列表 - 使用动态模型管理器"""
+    try:
+        # 获取动态模型列表
+        dynamic_models = await model_manager.get_all_models()
+        
+        # 转换为旧版API格式以保持兼容性
+        legacy_format_models = {}
+        for model_id, model_info in dynamic_models.items():
+            if model_info.status != "deprecated":  # 过滤掉已下线的模型
+                legacy_format_models[model_id] = model_info.to_legacy_format()
+        
+        # 确定默认模型ID
+        if DEFAULT_MODEL_ID not in legacy_format_models:
+            logger.warning(f"Default model ID '{DEFAULT_MODEL_ID}' not found in dynamic models")
+            actual_default_id = next(iter(legacy_format_models)) if legacy_format_models else None
+        else:
+            actual_default_id = DEFAULT_MODEL_ID
+        
+        return {
+            "default_model_id": actual_default_id,
+            "models": legacy_format_models,
+            "source": "dynamic",
+            "last_updated": model_manager.get_sync_status()["last_sync"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get dynamic models, falling back to static: {e}")
+        
+        # 回退到静态模型列表
+        if DEFAULT_MODEL_ID not in SUPPORTED_MODELS:
+            logger.warning(f"Default model ID '{DEFAULT_MODEL_ID}' not found in SUPPORTED_MODELS")
+            actual_default_id = next(iter(SUPPORTED_MODELS)) if SUPPORTED_MODELS else None
+        else:
+            actual_default_id = DEFAULT_MODEL_ID
+        
+        return {
+            "default_model_id": actual_default_id,
+            "models": SUPPORTED_MODELS,
+            "source": "static_fallback",
+            "error": str(e)
+        }
 
 @app.get("/templates", response_model=TemplateListResponse)
 async def get_templates():
@@ -511,6 +557,61 @@ async def remove_template(template_id: str):
         return {"message": f"模板 {template_id} 删除成功"}
     else:
         raise HTTPException(status_code=400, detail="删除模板失败")
+
+# 模型管理相关端点
+@app.get("/api/models/sync/status")
+async def get_model_sync_status():
+    """获取模型同步状态"""
+    return model_manager.get_sync_status()
+
+@app.post("/api/models/sync")
+async def sync_models():
+    """手动同步OpenRouter模型"""
+    try:
+        models = await model_manager.get_all_models(force_refresh=True)
+        return {
+            "success": True,
+            "message": f"同步完成，发现 {len(models)} 个模型",
+            "models_count": len(models),
+            "sync_status": model_manager.get_sync_status()
+        }
+    except Exception as e:
+        logger.error(f"Failed to sync models: {e}")
+        raise HTTPException(status_code=500, detail=f"同步失败: {str(e)}")
+
+@app.get("/api/models/all")
+async def get_all_models_with_metadata():
+    """获取所有模型（包含完整元数据）"""
+    try:
+        models = await model_manager.get_all_models()
+        
+        # 转换为JSON可序列化的格式
+        serializable_models = {}
+        for model_id, model_info in models.items():
+            serializable_models[model_id] = {
+                "id": model_info.id,
+                "name": model_info.name,
+                "description": model_info.description,
+                "pricing": model_info.pricing,
+                "context_length": model_info.context_length,
+                "suggested_use": model_info.suggested_use,
+                "local_notes": model_info.local_notes,
+                "quality_rating": model_info.quality_rating,
+                "cost_efficiency": model_info.cost_efficiency,
+                "preferred_for": model_info.preferred_for,
+                "status": model_info.status,
+                "last_updated": model_info.last_updated,
+                "test_results": model_info.test_results
+            }
+        
+        return {
+            "models": serializable_models,
+            "sync_status": model_manager.get_sync_status()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get all models: {e}")
+        raise HTTPException(status_code=500, detail=f"获取模型失败: {str(e)}")
 
 @app.post("/generate_flashcards/", response_model=FlashcardResponse)
 async def create_flashcards(request: FlashcardRequest):
