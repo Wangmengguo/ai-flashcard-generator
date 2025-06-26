@@ -43,8 +43,10 @@ COPY --from=builder /venv /venv
 # Set working directory
 WORKDIR /app
 
-# Create logs directory (optional for console logging)
-RUN mkdir -p /app/logs && chown appuser:appuser /app/logs && chmod 755 /app/logs
+# Create logs and cache directories
+RUN mkdir -p /app/logs /app/cache && \
+    chown appuser:appuser /app/logs /app/cache && \
+    chmod 755 /app/logs /app/cache
 
 # Copy application code
 COPY --chown=appuser:appuser main_refactored.py .
@@ -52,13 +54,15 @@ COPY --chown=appuser:appuser unified_index.html .
 COPY --chown=appuser:appuser logging-simple.json ./logging.json
 COPY --chown=appuser:appuser prompt_manager.py .
 COPY --chown=appuser:appuser prompt_templates.json .
+COPY --chown=appuser:appuser model_manager.py .
+COPY --chown=appuser:appuser local_model_metadata.json .
 COPY --chown=appuser:appuser config/ ./config/
 COPY --chown=appuser:appuser docker-health-check.sh ./
 
-# Make health check script executable and ensure logs directory permissions
+# Make health check script executable and ensure directory permissions
 RUN chmod +x docker-health-check.sh && \
-    chown -R appuser:appuser /app/logs && \
-    chmod -R 755 /app/logs
+    chown -R appuser:appuser /app/logs /app/cache && \
+    chmod -R 755 /app/logs /app/cache
 
 # Switch to non-root user
 USER appuser

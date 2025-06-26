@@ -54,6 +54,16 @@ check_environment() {
         exit 1
     fi
     
+    if [ ! -f "model_manager.py" ]; then
+        log_error "模型管理文件 model_manager.py 不存在"
+        exit 1
+    fi
+    
+    if [ ! -f "local_model_metadata.json" ]; then
+        log_error "模型元数据文件 local_model_metadata.json 不存在"
+        exit 1
+    fi
+    
     log_success "环境检查通过"
 }
 
@@ -96,11 +106,13 @@ EOF
 create_directories() {
     log_info "创建必要目录..."
     mkdir -p nginx/ssl
+    mkdir -p cache
     
     # 注意：日志现在使用console模式，无需logs目录权限处理
     chmod 700 nginx/ssl
+    chmod 755 cache
     
-    log_success "目录创建完成（使用console日志模式）"
+    log_success "目录创建完成（包含模型缓存目录）"
 }
 
 # Docker资源清理
@@ -201,6 +213,13 @@ verify_deployment() {
         fi
     done
     
+    # 测试模型管理端点
+    if curl -f -s http://localhost:8000/api/models/sync/status > /dev/null; then
+        log_success "模型管理端点响应正常"
+    else
+        log_warning "模型管理端点未响应（可能需要OpenRouter API密钥）"
+    fi
+    
     if [ $attempt -gt $max_attempts ]; then
         log_error "API端点无响应"
         return 1
@@ -236,6 +255,8 @@ show_deployment_info() {
     echo "=== 测试命令 ==="
     echo "curl http://localhost:8000/supported_models"
     echo "curl http://localhost:8000/health"
+    echo "curl http://localhost:8000/api/models/sync/status"
+    echo "curl http://localhost:8000/api/models/all"
     echo
     echo "=== 重要提醒 ==="
     log_warning "请确保已在 .env 文件中设置正确的 OPENROUTER_API_KEY"
