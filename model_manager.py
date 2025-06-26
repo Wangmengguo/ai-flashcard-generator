@@ -259,6 +259,48 @@ class ModelManager:
         
         return False
     
+    def _generate_smart_suggestion(self, api_model: OpenRouterModel) -> str:
+        """基于模型ID、定价和特征智能生成简短建议"""
+        model_id = api_model.id.lower()
+        try:
+            input_cost = float(api_model.pricing.get("prompt", 0)) if api_model.pricing.get("prompt") else 0
+            output_cost = float(api_model.pricing.get("completion", 0)) if api_model.pricing.get("completion") else 0
+        except (ValueError, TypeError):
+            input_cost = 0
+            output_cost = 0
+        
+        # 基于模型名称特征判断
+        if "flash" in model_id:
+            return "快速响应，适合批量处理"
+        elif "mini" in model_id or "small" in model_id:
+            return "经济实用，日常任务首选"
+        elif "large" in model_id or "pro" in model_id:
+            return "性能强劲，复杂任务专用"
+        elif "reasoning" in model_id or "think" in model_id:
+            return "推理能力强，适合逻辑分析"
+        elif "preview" in model_id or "beta" in model_id:
+            return "预览版本，新功能尝鲜"
+        
+        # 基于提供商特征
+        if model_id.startswith("anthropic/"):
+            return "Claude系列，文本理解优秀"
+        elif model_id.startswith("google/"):
+            return "Gemini系列，多模态能力"
+        elif model_id.startswith("openai/"):
+            return "GPT系列，通用性强"
+        elif model_id.startswith("qwen/"):
+            return "通义千问，中文优化"
+        elif model_id.startswith("x-ai/"):
+            return "Grok系列，创新实验"
+        
+        # 基于成本分析
+        if input_cost <= 0.3:
+            return "低成本模型，适合大量调用"
+        elif input_cost >= 3.0:
+            return "高端模型，追求最佳质量"
+        else:
+            return "性价比均衡，多场景适用"
+    
     async def get_all_models(self, force_refresh: bool = False) -> Dict[str, CombinedModelInfo]:
         """获取所有模型（API数据 + 本地元数据）"""
         
@@ -282,15 +324,15 @@ class ModelManager:
             metadata = self.local_metadata.get(api_model.id)
             
             if metadata is None:
-                # 新发现的模型，创建默认元数据
+                # 新发现的模型，创建智能默认元数据
                 metadata = ModelMetadata(
-                    suggested_use="新发现模型，等待人工评估",
+                    suggested_use=self._generate_smart_suggestion(api_model),
                     local_notes=f"从OpenRouter API自动发现于 {datetime.now().strftime('%Y-%m-%d')}",
                     status="new",
                     added_by="system"
                 )
                 self.local_metadata[api_model.id] = metadata
-                logger.info(f"New model discovered: {api_model.id}")
+                logger.info(f"New model discovered: {api_model.id} - {metadata.suggested_use}")
             
             # 创建融合模型信息
             combined_model = CombinedModelInfo(

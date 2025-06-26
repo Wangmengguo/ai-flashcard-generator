@@ -58,12 +58,13 @@ class HealthChecker:
     async def _check_app_basics(self) -> Dict[str, Any]:
         """Check basic application functionality."""
         try:
-            # Test basic imports and functionality
-            from config.app_config import SUPPORTED_MODELS
+            # 获取动态模型数量
+            from model_manager import model_manager
+            models = await model_manager.get_all_models()
             
             return {
                 "healthy": True,
-                "models_count": len(SUPPORTED_MODELS),
+                "models_count": len(models),
                 "check_time": datetime.now().isoformat()
             }
         except Exception as e:

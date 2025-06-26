@@ -613,6 +613,147 @@ async def get_all_models_with_metadata():
         logger.error(f"Failed to get all models: {e}")
         raise HTTPException(status_code=500, detail=f"获取模型失败: {str(e)}")
 
+# 管理后台API端点
+@app.put("/api/models/{model_id:path}/metadata")
+async def update_model_metadata_endpoint(model_id: str, metadata: Dict[str, Any]):
+    """更新模型元数据"""
+    success = model_manager.update_model_metadata(model_id, metadata)
+    if success:
+        return {"success": True, "message": f"模型 {model_id} 元数据更新成功"}
+    else:
+        raise HTTPException(status_code=400, detail="更新模型元数据失败")
+
+@app.get("/api/admin/dashboard")
+async def get_admin_dashboard():
+    """管理仪表板数据"""
+    try:
+        # 获取系统健康状态
+        health_status = await health_checker.check_application_health()
+        metrics = metrics_collector.get_metrics()
+        sync_status = model_manager.get_sync_status()
+        
+        # 获取模型统计
+        models = await model_manager.get_all_models()
+        
+        return {
+            "system_health": health_status,
+            "metrics": metrics,
+            "sync_status": sync_status,
+            "model_stats": {
+                "total": len(models),
+                "new": sum(1 for m in models.values() if m.status == "new"),
+                "verified": sum(1 for m in models.values() if m.status == "verified"),
+                "deprecated": sum(1 for m in models.values() if m.status == "deprecated"),
+                "avg_quality": round(sum(m.quality_rating for m in models.values() if m.quality_rating > 0) / max(1, sum(1 for m in models.values() if m.quality_rating > 0)), 1)
+            }
+        }
+    except Exception as e:
+        logger.error(f"Failed to get admin dashboard: {e}")
+        raise HTTPException(status_code=500, detail=f"获取仪表板数据失败: {str(e)}")
+
+@app.post("/api/models/batch/update")
+async def batch_update_models(updates: List[Dict[str, Any]]):
+    """批量更新模型"""
+    results = []
+    for update in updates:
+        model_id = update.get("model_id")
+        metadata = update.get("metadata", {})
+        
+        if not model_id:
+            results.append({"model_id": model_id, "success": False, "error": "缺少model_id"})
+            continue
+            
+        success = model_manager.update_model_metadata(model_id, metadata)
+        results.append({"model_id": model_id, "success": success})
+    
+    success_count = sum(1 for r in results if r["success"])
+    return {
+        "total": len(updates),
+        "success": success_count,
+        "failed": len(updates) - success_count,
+        "results": results
+    }
+
+@app.post("/api/models/regenerate-suggestions")
+async def regenerate_model_suggestions():
+    """重新生成所有模型的智能建议"""
+    try:
+        models = await model_manager.get_all_models()
+        updated_count = 0
+        
+        for model_id, model_info in models.items():
+            # 重新生成智能建议
+            from model_manager import OpenRouterModel
+            api_model = OpenRouterModel(
+                id=model_info.id,
+                name=model_info.name,
+                description=model_info.description,
+                pricing=model_info.pricing,
+                context_length=model_info.context_length
+            )
+            
+            new_suggestion = model_manager._generate_smart_suggestion(api_model)
+            
+            # 只更新还是默认建议的模型
+            if "新发现模型，等待人工评估" in model_info.suggested_use:
+                success = model_manager.update_model_metadata(model_id, {
+                    "suggested_use": new_suggestion
+                })
+                if success:
+                    updated_count += 1
+        
+        return {
+            "success": True,
+            "message": f"重新生成完成，更新了 {updated_count} 个模型建议",
+            "updated_count": updated_count
+        }
+    except Exception as e:
+        logger.error(f"Failed to regenerate suggestions: {e}")
+        raise HTTPException(status_code=500, detail=f"重新生成建议失败: {str(e)}")
+
+@app.get("/api/models/stats")
+async def get_model_statistics():
+    """模型统计数据"""
+    try:
+        models = await model_manager.get_all_models()
+        
+        # 按状态分组
+        by_status = {}
+        by_rating = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        cost_ranges = {"低成本": 0, "中等": 0, "高成本": 0}
+        
+        for model in models.values():
+            # 状态统计
+            status = model.status
+            by_status[status] = by_status.get(status, 0) + 1
+            
+            # 评级统计
+            if model.quality_rating > 0:
+                by_rating[model.quality_rating] += 1
+            
+            # 成本分析
+            input_cost = model.pricing.get("prompt", 0)
+            try:
+                input_cost = float(input_cost) if input_cost else 0
+                if input_cost <= 0.5:
+                    cost_ranges["低成本"] += 1
+                elif input_cost <= 2.0:
+                    cost_ranges["中等"] += 1
+                else:
+                    cost_ranges["高成本"] += 1
+            except (ValueError, TypeError):
+                cost_ranges["低成本"] += 1  # 默认归类为低成本
+        
+        return {
+            "by_status": by_status,
+            "by_rating": by_rating,
+            "cost_distribution": cost_ranges,
+            "total_models": len(models)
+        }
+    except Exception as e:
+        logger.error(f"Failed to get model statistics: {e}")
+        raise HTTPException(status_code=500, detail=f"获取统计数据失败: {str(e)}")
+
 @app.post("/generate_flashcards/", response_model=FlashcardResponse)
 async def create_flashcards(request: FlashcardRequest):
     """生成Flashcards的主要端点"""

@@ -512,6 +512,24 @@
             background: #dc2626;
         }
 
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #d97706;
+        }
+
+        .btn-success {
+            background: var(--success-color) !important;
+            color: white !important;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #16a34a !important;
+        }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -1043,6 +1061,328 @@
         .mt-0 { margin-top: 0 !important; }
         .mt-1 { margin-top: 0.5rem !important; }
         .mt-2 { margin-top: 1rem !important; }
+
+        /* 管理员面板样式 */
+        .admin-tab {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .admin-stat-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .admin-stat-card .stat-number {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .admin-stat-card .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .admin-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .batch-actions {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-primary);
+        }
+
+        .batch-actions > div {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .admin-table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-primary);
+            table-layout: fixed;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        /* 模型名称列：允许换行 */
+        .admin-table td:nth-child(2) {
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            line-height: 1.3;
+        }
+
+        /* 建议用途列：允许换行 */
+        .admin-table td:nth-child(4) {
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            line-height: 1.3;
+            max-width: 0; /* 配合table-layout:fixed使用 */
+        }
+
+        /* 其他列：省略号处理 */
+        .admin-table td:not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 列宽分配优化 */
+        .admin-table th:nth-child(1) { width: 3%; }  /* 复选框 */
+        .admin-table th:nth-child(2) { width: 20%; } /* 模型名称 */
+        .admin-table th:nth-child(3) { width: 10%; } /* 状态 */
+        .admin-table th:nth-child(4) { width: 20%; } /* 建议用途(换行) */
+        .admin-table th:nth-child(5) { width: 16%; } /* 成本 */
+        .admin-table th:nth-child(6) { width: 13%; } /* 评分 */
+        .admin-table th:nth-child(7) { width: 9%; }  /* 上下文 */
+        .admin-table th:nth-child(8) { width: 9%; }  /* 操作 */
+
+        .admin-table td:nth-child(1) { width: 3%; }
+        .admin-table td:nth-child(2) { width: 20%; }
+        .admin-table td:nth-child(3) { width: 10%; }
+        .admin-table td:nth-child(4) { width: 20%; }
+        .admin-table td:nth-child(5) { width: 16%; }
+        .admin-table td:nth-child(6) { width: 13%; }
+        .admin-table td:nth-child(7) { width: 9%; }
+        .admin-table td:nth-child(8) { width: 9%; }
+
+        .admin-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .admin-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .admin-table td {
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            white-space: nowrap;
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .status-new {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-verified {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-deprecated {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* 夜间模式状态标签 */
+        [data-theme="dark"] .status-new {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        [data-theme="dark"] .status-verified {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        [data-theme="dark"] .status-deprecated {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            [data-theme="auto"] .status-new {
+                background: rgba(251, 191, 36, 0.2);
+                color: #fbbf24;
+            }
+
+            [data-theme="auto"] .status-verified {
+                background: rgba(34, 197, 94, 0.2);
+                color: #22c55e;
+            }
+
+            [data-theme="auto"] .status-deprecated {
+                background: rgba(239, 68, 68, 0.2);
+                color: #ef4444;
+            }
+        }
+
+        .rating-stars {
+            color: #fbbf24;
+        }
+
+        .model-name {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            line-height: 1.3;
+            border-radius: 0.25rem;
+        }
+
+        .cost-info {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            white-space: pre-line;
+        }
+
+        /* 上下文长度样式 */
+        .context-length {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-group-small {
+            display: flex;
+            gap: 0.15rem;
+            justify-content: center;
+        }
+
+        .btn-group-small .btn {
+            padding: 0.25rem 0.35rem;
+            font-size: 0.8rem;
+            min-width: 26px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-input {
+            border: 1px solid var(--primary-color);
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            width: 100%;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+
+        @media (max-width: 768px) {
+            .admin-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .admin-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .batch-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .admin-table-container {
+                overflow-x: scroll;
+                background: var(--bg-primary);
+            }
+            
+            /* 移动端列宽调整 */
+            .admin-table th:nth-child(1) { width: 3%; }  /* 复选框 */
+            .admin-table th:nth-child(2) { width: 22%; } /* 模型名称 */
+            .admin-table th:nth-child(3) { width: 11%; } /* 状态 */
+            .admin-table th:nth-child(4) { width: 18%; } /* 建议用途(换行) */
+            .admin-table th:nth-child(5) { width: 17%; } /* 成本 */
+            .admin-table th:nth-child(6) { width: 13%; } /* 评分 */
+            .admin-table th:nth-child(7) { width: 9%; }  /* 上下文 */
+            .admin-table th:nth-child(8) { width: 6%; }  /* 操作 */
+            
+            .admin-table td:nth-child(1) { width: 3%; }
+            .admin-table td:nth-child(2) { width: 22%; }
+            .admin-table td:nth-child(3) { width: 11%; }
+            .admin-table td:nth-child(4) { width: 18%; }
+            .admin-table td:nth-child(5) { width: 17%; }
+            .admin-table td:nth-child(6) { width: 13%; }
+            .admin-table td:nth-child(7) { width: 9%; }
+            .admin-table td:nth-child(8) { width: 6%; }
+            
+            .cost-info {
+                font-size: 0.65rem;
+                line-height: 1.2;
+            }
+            
+            .status-badge {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+                min-width: 50px;
+            }
+            
+            .btn-group-small .btn {
+                padding: 0.15rem 0.3rem;
+                font-size: 0.6rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1065,6 +1405,11 @@
                 <button class="nav-tab" data-tab="batch">批量处理</button>
                 <button class="nav-tab" data-tab="history">历史记录</button>
                 <button class="nav-tab" data-tab="settings">设置</button>
+                <button class="nav-tab admin-tab" data-tab="admin" title="管理后台">
+                    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                        <path fill="currentColor" d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/>
+                    </svg>
+                </button>
             </nav>
 
             <!-- 内容区域 -->
@@ -1411,6 +1756,135 @@
                         </div>
                     </section>
                 </div>
+
+                <!-- 管理后台面板 -->
+                <div id="tab-admin" class="tab-panel">
+                    <!-- 仪表板总览 -->
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                            </svg>
+                            系统仪表板
+                        </h2>
+                        
+                        <!-- 统计卡片 -->
+                        <div class="admin-stats-grid">
+                            <div class="admin-stat-card">
+                                <div class="stat-number" id="admin-total-models">-</div>
+                                <div class="stat-label">总模型数</div>
+                            </div>
+                            <div class="admin-stat-card">
+                                <div class="stat-number" id="admin-new-models">-</div>
+                                <div class="stat-label">新模型</div>
+                            </div>
+                            <div class="admin-stat-card">
+                                <div class="stat-number" id="admin-system-status">-</div>
+                                <div class="stat-label">系统状态</div>
+                            </div>
+                            <div class="admin-stat-card">
+                                <div class="stat-number" id="admin-avg-quality">-</div>
+                                <div class="stat-label">平均评分</div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="refreshAdminData()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                                </svg>
+                                刷新数据
+                            </button>
+                            <button class="btn btn-secondary" onclick="syncModels()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                                </svg>
+                                同步模型
+                            </button>
+                            <button class="btn btn-warning" onclick="regenerateSuggestions()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                                </svg>
+                                智能建议
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 模型管理 -->
+                    <section class="form-section">
+                        <h2 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            模型管理
+                            <button class="btn btn-small btn-secondary" onclick="toggleBatchMode()" id="batch-mode-btn" style="margin-left: auto;">
+                                批量模式
+                            </button>
+                        </h2>
+                        
+                        <!-- 搜索和筛选 -->
+                        <div class="admin-filters">
+                            <input type="text" id="model-search" placeholder="搜索模型..." class="form-input" style="flex: 1;">
+                            <select id="status-filter" class="form-select" style="width: 150px;">
+                                <option value="">全部状态</option>
+                                <option value="new">新模型</option>
+                                <option value="verified">已验证</option>
+                                <option value="deprecated">已下线</option>
+                            </select>
+                            <select id="provider-filter" class="form-select" style="width: 150px;">
+                                <option value="">全部提供商</option>
+                                <option value="google">Google</option>
+                                <option value="anthropic">Anthropic</option>
+                                <option value="openai">OpenAI</option>
+                                <option value="qwen">Qwen</option>
+                                <option value="x-ai">xAI</option>
+                            </select>
+                        </div>
+
+                        <!-- 批量操作栏 -->
+                        <div id="batch-actions" class="batch-actions" style="display: none;">
+                            <span id="selected-count">已选择 0 个模型</span>
+                            <div>
+                                <select id="batch-operation" class="form-select">
+                                    <option value="">选择操作</option>
+                                    <option value="status-verified">标记为已验证</option>
+                                    <option value="status-deprecated">标记为已下线</option>
+                                    <option value="rating-1">评分: 1星</option>
+                                    <option value="rating-2">评分: 2星</option>
+                                    <option value="rating-3">评分: 3星</option>
+                                    <option value="rating-4">评分: 4星</option>
+                                    <option value="rating-5">评分: 5星</option>
+                                </select>
+                                <button class="btn btn-primary" onclick="applyBatchUpdate()">应用</button>
+                                <button class="btn btn-secondary" onclick="cancelBatchMode()">取消</button>
+                            </div>
+                        </div>
+
+                        <!-- 模型表格 -->
+                        <div class="admin-table-container">
+                            <table class="admin-table" id="models-table">
+                                <thead>
+                                    <tr>
+                                        <th id="batch-header" style="display: none;">
+                                            <input type="checkbox" id="select-all" onchange="toggleSelectAll()">
+                                        </th>
+                                        <th>模型名称</th>
+                                        <th>状态</th>
+                                        <th>建议用途</th>
+                                        <th>成本 ($/M tokens)</th>
+                                        <th>评分</th>
+                                        <th>上下文</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="models-table-body">
+                                    <!-- 动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
             </main>
         </div>
     </div>
@@ -1428,6 +1902,12 @@
 
         // 主题管理变量
         let currentTheme = 'light';
+
+        // 管理员模式变量
+        let adminModels = [];
+        let filteredModels = [];
+        let isBatchMode = false;
+        let selectedModels = new Set();
 
         // 主题管理函数
         function setTheme(theme) {
@@ -1660,6 +2140,14 @@
             if (tabName === 'batch') {
                 updateBatchConfigDisplay();
             }
+            
+            // 如果切换到管理员页面，加载管理数据
+            if (tabName === 'admin') {
+                setTimeout(() => {
+                    loadAdminDashboard();
+                    setupAdminFilters();
+                }, 100);
+            }
         }
 
         function switchToSingleTab() {
@@ -1799,31 +2287,31 @@
 
         async function loadModels() {
             try {
-                const response = await fetch(`${window.API_BASE_URL}/supported_models`);
-                if (!response.ok) {
-                    throw new Error(`获取模型列表失败: ${response.status}`);
+                // 首先确保加载管理界面数据
+                if (!adminModels || adminModels.length === 0) {
+                    await loadAdminModels();
                 }
-                const data = await response.json();
 
                 const modelSelect = document.getElementById('modelSelect');
                 const modelDescription = document.getElementById('modelDescription');
                 
                 modelSelect.innerHTML = '';
 
-                if (data && data.models && Object.keys(data.models).length > 0) {
-                    for (const modelId in data.models) {
-                        const model = data.models[modelId];
+                if (adminModels && adminModels.length > 0) {
+                    // 只添加状态不是deprecated的模型
+                    const activeModels = adminModels.filter(model => model.status !== 'deprecated');
+                    
+                    for (const model of activeModels) {
                         const option = document.createElement('option');
-                        option.value = modelId;
+                        option.value = model.id;
                         option.textContent = model.name;
-                        option.dataset.description = model.description || '';
-                        option.dataset.suggestedUse = model.suggested_use || '';
+                        // 不再使用dataset，直接从adminModels读取
                         modelSelect.appendChild(option);
                     }
 
-                    // 设置默认选择
-                    if (data.default_model_id && modelSelect.querySelector(`option[value="${data.default_model_id}"]`)) {
-                        modelSelect.value = data.default_model_id;
+                    // 设置默认选择为第一个模型
+                    if (activeModels.length > 0) {
+                        modelSelect.value = activeModels[0].id;
                     }
 
                     // 添加变化监听器
@@ -1832,6 +2320,8 @@
                         updateBatchConfigDisplay();
                     });
                     updateModelDescription();
+                    
+                    console.log(`已加载 ${activeModels.length} 个模型，数据来源：管理界面`);
                 } else {
                     modelSelect.innerHTML = '<option value="">无可用模型</option>';
                     modelSelect.disabled = true;
@@ -1848,20 +2338,85 @@
         function updateModelDescription() {
             const modelSelect = document.getElementById('modelSelect');
             const modelDescription = document.getElementById('modelDescription');
-            const selectedOption = modelSelect.options[modelSelect.selectedIndex];
             
-            if (selectedOption && selectedOption.value) {
-                const desc = selectedOption.dataset.description;
-                const use = selectedOption.dataset.suggestedUse;
-                let displayText = '';
-                if (desc) displayText += `${desc}. `;
-                if (use) displayText += `建议用途: ${use}`;
+            console.log('updateModelDescription调用:', {
+                selectedModel: modelSelect?.value,
+                adminModelsLength: adminModels?.length || 0,
+                adminModelsExists: !!adminModels
+            });
+            
+            if (modelSelect && modelSelect.value) {
+                // 直接从管理界面数据读取
+                const adminModel = adminModels ? adminModels.find(m => m.id === modelSelect.value) : null;
+                
+                console.log('找到的模型数据:', adminModel ? {
+                    id: adminModel.id,
+                    suggested_use: adminModel.suggested_use,
+                    description_length: adminModel.description?.length || 0
+                } : null);
+                
+                if (adminModel) {
+                    const use = adminModel.suggested_use || '';
+                    
+                    // 格式化成本信息
+                    let costText = '';
+                    if (adminModel.pricing) {
+                        const inputCost = parseFloat(adminModel.pricing.prompt || 0);
+                        const outputCost = parseFloat(adminModel.pricing.completion || 0);
+                        
+                        if (inputCost > 0 || outputCost > 0) {
+                            const formatCost = (cost) => {
+                                if (cost === 0) return '免费';
+                                if (cost < 0.000001) return (cost * 1000000).toFixed(3) + '¢';
+                                if (cost < 0.001) return '$' + (cost * 1000).toFixed(3);
+                                return '$' + cost.toFixed(3);
+                            };
+                            costText = `成本: ${formatCost(inputCost)}/M输入 ${formatCost(outputCost)}/M输出`;
+                        }
+                    }
+                    
+                    // 格式化评分信息
+                    let ratingText = '';
+                    const quality = adminModel.quality_rating || 0;
+                    if (quality > 0) {
+                        const stars = (rating) => '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                        ratingText = `质量评分: ${stars(quality)}`;
+                    }
+                    
+                    // 格式化上下文信息
+                    let contextText = '';
+                    const contextLength = adminModel.context_length || 0;
+                    if (contextLength > 0) {
+                        if (contextLength >= 1000000) {
+                            contextText = `上下文: ${(contextLength / 1000000).toFixed(1)}M tokens`;
+                        } else if (contextLength >= 1000) {
+                            contextText = `上下文: ${(contextLength / 1000).toFixed(0)}K tokens`;
+                        } else {
+                            contextText = `上下文: ${contextLength} tokens`;
+                        }
+                    }
+                    
+                    // 组合显示文本
+                    let displayParts = [];
+                    if (use) displayParts.push(`建议用途: ${use}`);
+                    if (costText) displayParts.push(costText);
+                    if (ratingText) displayParts.push(ratingText);
+                    if (contextText) displayParts.push(contextText);
+                    
+                    const displayText = displayParts.join(' | ');
+                    
+                    console.log('显示文本:', displayText);
 
-                if (displayText) {
-                    modelDescription.textContent = displayText.trim();
-                    modelDescription.style.display = 'block';
+                    if (displayText) {
+                        modelDescription.textContent = displayText;
+                        modelDescription.style.display = 'block';
+                        console.log('✅ 模型描述已更新:', modelSelect.value);
+                    } else {
+                        modelDescription.style.display = 'none';
+                    }
                 } else {
                     modelDescription.style.display = 'none';
+                    console.warn('❌ 未找到模型数据:', modelSelect.value, '可用模型数:', adminModels?.length || 0);
                 }
             } else {
                 modelDescription.style.display = 'none';
@@ -2543,15 +3098,430 @@ A: <精准、完整、简明扼要的答案>
             return date.toLocaleDateString('zh-CN');
         }
 
-        // 添加fade out动画样式
+        // ========== 管理员功能 ==========
+        
+        
+        // 管理员专用工具函数
+        function showAlert(message, type = 'info') {
+            // 创建简单的通知
+            const alertDiv = document.createElement('div');
+            alertDiv.textContent = message;
+            alertDiv.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 10000;
+                padding: 12px 20px; border-radius: 4px; color: white;
+                background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                animation: slideIn 0.3s ease-out;
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                alertDiv.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 3000);
+        }
+
+        // 加载管理仪表板数据
+        async function loadAdminDashboard() {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/api/admin/dashboard`);
+                const data = await response.json();
+                
+                // 更新统计卡片
+                document.getElementById('admin-total-models').textContent = data.model_stats.total || 0;
+                document.getElementById('admin-new-models').textContent = data.model_stats.new || 0;
+                document.getElementById('admin-system-status').textContent = data.system_health.status === 'healthy' ? '健康' : '异常';
+                document.getElementById('admin-avg-quality').textContent = data.model_stats.avg_quality || 0;
+                
+                // 加载模型数据
+                await loadAdminModels();
+                
+            } catch (error) {
+                console.error('加载管理数据失败:', error);
+                showAlert('加载管理数据失败: ' + error.message, 'error');
+            }
+        }
+
+        // 加载模型数据
+        async function loadAdminModels() {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/api/models/all`);
+                const data = await response.json();
+                
+                adminModels = Object.values(data.models);
+                filteredModels = [...adminModels];
+                renderModelsTable();
+                
+            } catch (error) {
+                console.error('加载模型数据失败:', error);
+                showAlert('加载模型数据失败: ' + error.message, 'error');
+            }
+        }
+
+        // 渲染模型表格
+        function renderModelsTable() {
+            const tbody = document.getElementById('models-table-body');
+            tbody.innerHTML = '';
+            
+            filteredModels.forEach(model => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    ${isBatchMode ? `<td><input type="checkbox" value="${model.id}" onchange="updateSelection()"></td>` : ''}
+                    <td><span class="model-name">${model.name}</span></td>
+                    <td><span class="status-badge status-${model.status}">${getStatusText(model.status)}</span></td>
+                    <td><span id="suggest-${model.id}" ondblclick="editSuggestion('${model.id}')" title="双击编辑">${model.suggested_use}</span></td>
+                    <td><span class="cost-info">${formatCost(model.pricing)}</span></td>
+                    <td>
+                        <span id="rating-${model.id}" class="rating-stars" ondblclick="editRating('${model.id}')" title="双击编辑评分" data-rating="${model.quality_rating || 0}">
+                            ${generateStars(model.quality_rating)}
+                        </span>
+                    </td>
+                    <td><span class="context-length">${formatContextLength(model.context_length)}</span></td>
+                    <td>
+                        <div class="btn-group-small">
+                            <button class="btn btn-small btn-primary" onclick="editSuggestion('${model.id}')" title="编辑建议">✏️</button>
+                            <button class="btn btn-small btn-warning" onclick="editRating('${model.id}')" title="评分">⭐</button>
+                            <button class="btn btn-small btn-secondary" onclick="updateModelStatus('${model.id}', '${model.status === 'verified' ? 'new' : 'verified'}')" title="${model.status === 'verified' ? '取消验证' : '验证'}">
+                                ${model.status === 'verified' ? '✗' : '✓'}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 工具函数
+        function getStatusText(status) {
+            const statusMap = {
+                'new': '新模型',
+                'verified': '已验证', 
+                'deprecated': '已下线'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatCost(pricing) {
+            try {
+                const input = parseFloat(pricing.prompt || 0);
+                const output = parseFloat(pricing.completion || 0);
+                
+                // 转换为每百万tokens的价格
+                const formatPricePerMillion = (price) => {
+                    if (price === 0) return '0.00';
+                    const pricePerMillion = price * 1000000;
+                    return pricePerMillion.toFixed(2);
+                };
+                
+                const inputPerM = formatPricePerMillion(input);
+                const outputPerM = formatPricePerMillion(output);
+                
+                return `$${inputPerM}/M input<br>$${outputPerM}/M output`;
+            } catch (error) {
+                console.warn('Cost formatting error:', error, pricing);
+                return '$0.00/M input<br>$0.00/M output';
+            }
+        }
+
+        function generateStars(rating) {
+            try {
+                const numRating = parseInt(rating) || 0;
+                if (numRating <= 0) return '-';
+                return '★'.repeat(Math.min(numRating, 5)) + '☆'.repeat(Math.max(0, 5 - numRating));
+            } catch (error) {
+                console.warn('Rating formatting error:', error, rating);
+                return '-';
+            }
+        }
+
+        function formatContextLength(length) {
+            try {
+                const numLength = parseInt(length) || 0;
+                if (numLength <= 0) return '-';
+                if (numLength >= 1000000) return `${(numLength / 1000000).toFixed(1)}M`;
+                if (numLength >= 1000) return `${(numLength / 1000).toFixed(0)}K`;
+                return numLength.toString();
+            } catch (error) {
+                console.warn('Context length formatting error:', error, length);
+                return '-';
+            }
+        }
+
+        // 管理员操作函数
+        async function refreshAdminData() {
+            await loadAdminDashboard();
+            showAlert('数据刷新完成', 'success');
+        }
+
+        async function syncModels() {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/api/models/sync`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                showAlert(`同步完成: 发现 ${data.models_count} 个模型`, 'success');
+                await loadAdminModels();
+            } catch (error) {
+                showAlert('同步失败: ' + error.message, 'error');
+            }
+        }
+
+        async function regenerateSuggestions() {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/api/models/regenerate-suggestions`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                showAlert(`智能建议生成完成: 更新了 ${data.updated_count} 个模型`, 'success');
+                await loadAdminModels();
+                // 刷新主界面的模型列表以同步更新
+                updateModelDescription();
+            } catch (error) {
+                showAlert('智能建议生成失败: ' + error.message, 'error');
+            }
+        }
+
+        // 批量模式管理
+        function toggleBatchMode() {
+            isBatchMode = !isBatchMode;
+            document.getElementById('batch-header').style.display = isBatchMode ? '' : 'none';
+            document.getElementById('batch-actions').style.display = isBatchMode ? '' : 'none';
+            document.getElementById('batch-mode-btn').textContent = isBatchMode ? '退出批量' : '批量模式';
+            selectedModels.clear();
+            renderModelsTable();
+        }
+
+        function cancelBatchMode() {
+            toggleBatchMode();
+        }
+
+        function updateSelection() {
+            const checkboxes = document.querySelectorAll('#models-table-body input[type="checkbox"]');
+            selectedModels.clear();
+            checkboxes.forEach(cb => {
+                if (cb.checked) selectedModels.add(cb.value);
+            });
+            document.getElementById('selected-count').textContent = `已选择 ${selectedModels.size} 个模型`;
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('#models-table-body input[type="checkbox"]');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateSelection();
+        }
+
+        async function applyBatchUpdate() {
+            const operation = document.getElementById('batch-operation').value;
+            if (!operation || selectedModels.size === 0) {
+                showAlert('请选择要更新的模型和操作', 'warning');
+                return;
+            }
+
+            try {
+                let metadata = {};
+                
+                if (operation.startsWith('status-')) {
+                    metadata.status = operation.replace('status-', '');
+                } else if (operation.startsWith('rating-')) {
+                    metadata.quality_rating = parseInt(operation.replace('rating-', ''));
+                }
+
+                const updates = Array.from(selectedModels).map(modelId => ({
+                    model_id: modelId,
+                    metadata: metadata
+                }));
+
+                const response = await fetch(`${window.API_BASE_URL}/api/models/batch/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updates)
+                });
+
+                const result = await response.json();
+                showAlert(`批量更新完成: ${result.success} 成功, ${result.failed} 失败`, 'success');
+                await loadAdminModels();
+                // 刷新主界面的模型列表以同步更新
+                updateModelDescription();
+                cancelBatchMode();
+
+            } catch (error) {
+                showAlert('批量更新失败: ' + error.message, 'error');
+            }
+        }
+
+        // 单个模型编辑
+        async function editRating(modelId) {
+            const span = document.getElementById(`rating-${modelId}`);
+            const currentRating = parseInt(span.dataset.rating) || 0;
+            
+            // 创建评分选择器
+            const select = document.createElement('select');
+            select.className = 'form-select';
+            select.style.width = '80px';
+            
+            for (let i = 0; i <= 5; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i === 0 ? '未评分' : `${i}星`;
+                if (i === currentRating) option.selected = true;
+                select.appendChild(option);
+            }
+            
+            select.onblur = () => saveRating(modelId, select.value, span);
+            select.onchange = () => saveRating(modelId, select.value, span);
+            
+            span.style.display = 'none';
+            span.parentNode.insertBefore(select, span.nextSibling);
+            select.focus();
+        }
+
+        async function saveRating(modelId, newRating, span) {
+            try {
+                const rating = parseInt(newRating);
+                const response = await fetch(`${window.API_BASE_URL}/api/models/${modelId}/metadata`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quality_rating: rating })
+                });
+
+                if (response.ok) {
+                    span.innerHTML = generateStars(rating);
+                    span.dataset.rating = rating;
+                    showAlert('评分已更新', 'success');
+                    // 刷新主界面的模型列表以同步更新
+                    updateModelDescription();
+                } else {
+                    throw new Error('更新失败');
+                }
+            } catch (error) {
+                showAlert('评分更新失败: ' + error.message, 'error');
+            } finally {
+                const select = span.nextSibling;
+                if (select && select.tagName === 'SELECT') {
+                    select.remove();
+                }
+                span.style.display = '';
+            }
+        }
+
+        async function editSuggestion(modelId) {
+            const span = document.getElementById(`suggest-${modelId}`);
+            const current = span.textContent;
+            
+            const input = document.createElement('input');
+            input.className = 'edit-input';
+            input.value = current;
+            input.onblur = () => saveSuggestion(modelId, input.value, span);
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') input.blur();
+                if (e.key === 'Escape') { span.textContent = current; span.style.display = ''; }
+            };
+            
+            span.style.display = 'none';
+            span.parentNode.insertBefore(input, span.nextSibling);
+            input.focus();
+        }
+
+        async function saveSuggestion(modelId, newValue, span) {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/api/models/${modelId}/metadata`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ suggested_use: newValue })
+                });
+
+                if (response.ok) {
+                    span.textContent = newValue;
+                    showAlert('建议用途已更新', 'success');
+                    // 刷新主界面的模型列表以同步更新
+                    updateModelDescription();
+                } else {
+                    throw new Error('更新失败');
+                }
+            } catch (error) {
+                showAlert('更新失败: ' + error.message, 'error');
+            } finally {
+                const input = span.nextSibling;
+                if (input && input.tagName === 'INPUT') {
+                    input.remove();
+                }
+                span.style.display = '';
+            }
+        }
+
+        async function updateModelStatus(modelId, newStatus) {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/api/models/${modelId}/metadata`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (response.ok) {
+                    showAlert('模型状态已更新', 'success');
+                    await loadAdminModels();
+                    // 刷新主界面的模型列表以同步更新
+                    updateModelDescription();
+                } else {
+                    throw new Error('更新失败');
+                }
+            } catch (error) {
+                showAlert('更新失败: ' + error.message, 'error');
+            }
+        }
+
+        // 搜索和筛选
+        function setupAdminFilters() {
+            document.getElementById('model-search').addEventListener('input', filterModels);
+            document.getElementById('status-filter').addEventListener('change', filterModels);
+            document.getElementById('provider-filter').addEventListener('change', filterModels);
+        }
+
+        function filterModels() {
+            const search = document.getElementById('model-search').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            const providerFilter = document.getElementById('provider-filter').value;
+
+            filteredModels = adminModels.filter(model => {
+                const matchSearch = !search || 
+                    model.name.toLowerCase().includes(search) || 
+                    model.suggested_use.toLowerCase().includes(search);
+                
+                const matchStatus = !statusFilter || model.status === statusFilter;
+                
+                const matchProvider = !providerFilter || 
+                    model.id.toLowerCase().startsWith(providerFilter + '/');
+
+                return matchSearch && matchStatus && matchProvider;
+            });
+
+            renderModelsTable();
+        }
+
+
+        // 添加动画样式
         const style = document.createElement('style');
         style.textContent = `
             @keyframes fadeOut {
                 from { opacity: 1; transform: scale(1); }
                 to { opacity: 0; transform: scale(0.9); }
             }
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes slideOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
         `;
         document.head.appendChild(style);
+
     </script>
 </body>
 </html>

@@ -166,40 +166,40 @@
     }
   },
   "google/gemini-2.5-flash-lite-preview-06-17": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
-    "quality_rating": 0,
+    "quality_rating": 4,
     "cost_efficiency": 0,
     "preferred_for": [],
-    "status": "new",
+    "status": "verified",
     "last_updated": "2025-06-25",
     "added_by": "system",
     "test_results": {}
   },
   "google/gemini-2.5-flash": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "极速响应，高性价比首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
-    "quality_rating": 0,
+    "quality_rating": 5,
     "cost_efficiency": 0,
     "preferred_for": [],
-    "status": "new",
+    "status": "verified",
     "last_updated": "2025-06-25",
     "added_by": "system",
     "test_results": {}
   },
   "google/gemini-2.5-pro": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
-    "quality_rating": 0,
+    "quality_rating": 5,
     "cost_efficiency": 0,
     "preferred_for": [],
-    "status": "new",
+    "status": "verified",
     "last_updated": "2025-06-25",
     "added_by": "system",
     "test_results": {}
   },
   "openai/o3-pro": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "性能强劲，复杂任务专用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -210,7 +210,7 @@
     "test_results": {}
   },
   "x-ai/grok-3-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -221,7 +221,7 @@
     "test_results": {}
   },
   "x-ai/grok-3": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Grok系列，创新实验",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -232,7 +232,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-qwen-7b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -243,7 +243,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-0528-qwen3-8b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -254,7 +254,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-0528-qwen3-8b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -265,7 +265,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-0528:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -276,7 +276,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-0528": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -287,7 +287,7 @@
     "test_results": {}
   },
   "anthropic/claude-opus-4": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -298,7 +298,7 @@
     "test_results": {}
   },
   "google/gemma-3n-e4b-it:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -309,7 +309,7 @@
     "test_results": {}
   },
   "google/gemini-2.5-flash-preview-05-20:thinking": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -320,7 +320,7 @@
     "test_results": {}
   },
   "openai/codex-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -331,7 +331,7 @@
     "test_results": {}
   },
   "google/gemini-2.5-pro-preview-05-06": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -342,7 +342,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-prover-v2": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "性能强劲，复杂任务专用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -353,7 +353,7 @@
     "test_results": {}
   },
   "qwen/qwen3-30b-a3b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -364,7 +364,7 @@
     "test_results": {}
   },
   "qwen/qwen3-30b-a3b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -375,7 +375,7 @@
     "test_results": {}
   },
   "qwen/qwen3-8b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -386,7 +386,7 @@
     "test_results": {}
   },
   "qwen/qwen3-8b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -397,7 +397,7 @@
     "test_results": {}
   },
   "qwen/qwen3-14b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -408,7 +408,7 @@
     "test_results": {}
   },
   "qwen/qwen3-14b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -419,7 +419,7 @@
     "test_results": {}
   },
   "qwen/qwen3-32b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -430,7 +430,7 @@
     "test_results": {}
   },
   "qwen/qwen3-32b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -441,7 +441,7 @@
     "test_results": {}
   },
   "qwen/qwen3-235b-a22b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -452,7 +452,7 @@
     "test_results": {}
   },
   "google/gemini-2.5-flash-preview:thinking": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -463,7 +463,7 @@
     "test_results": {}
   },
   "openai/o4-mini-high": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -474,7 +474,7 @@
     "test_results": {}
   },
   "openai/o3": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -485,7 +485,7 @@
     "test_results": {}
   },
   "openai/o4-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -496,7 +496,7 @@
     "test_results": {}
   },
   "openai/gpt-4.1": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -507,7 +507,7 @@
     "test_results": {}
   },
   "openai/gpt-4.1-nano": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -518,7 +518,7 @@
     "test_results": {}
   },
   "x-ai/grok-3-beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -529,7 +529,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-v3-base:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -540,7 +540,7 @@
     "test_results": {}
   },
   "google/gemini-2.5-pro-exp-03-25": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -551,7 +551,7 @@
     "test_results": {}
   },
   "qwen/qwen2.5-vl-32b-instruct:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -562,7 +562,7 @@
     "test_results": {}
   },
   "qwen/qwen2.5-vl-32b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -573,7 +573,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-chat-v3-0324:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -584,7 +584,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-chat-v3-0324": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -595,7 +595,7 @@
     "test_results": {}
   },
   "openai/o1-pro": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "性能强劲，复杂任务专用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -606,7 +606,7 @@
     "test_results": {}
   },
   "google/gemma-3-4b-it:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -617,7 +617,7 @@
     "test_results": {}
   },
   "google/gemma-3-4b-it": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -628,7 +628,7 @@
     "test_results": {}
   },
   "ai21/jamba-1.6-large": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "性能强劲，复杂任务专用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -639,7 +639,7 @@
     "test_results": {}
   },
   "ai21/jamba-1.6-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -650,7 +650,7 @@
     "test_results": {}
   },
   "google/gemma-3-12b-it:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -661,7 +661,7 @@
     "test_results": {}
   },
   "google/gemma-3-12b-it": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -672,7 +672,7 @@
     "test_results": {}
   },
   "cohere/command-a": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -683,7 +683,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-mini-search-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -694,7 +694,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-search-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -705,7 +705,7 @@
     "test_results": {}
   },
   "google/gemma-3-27b-it:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -716,7 +716,7 @@
     "test_results": {}
   },
   "google/gemma-3-27b-it": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -727,7 +727,7 @@
     "test_results": {}
   },
   "qwen/qwq-32b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -738,7 +738,7 @@
     "test_results": {}
   },
   "qwen/qwq-32b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -749,7 +749,7 @@
     "test_results": {}
   },
   "openai/gpt-4.5-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -760,7 +760,7 @@
     "test_results": {}
   },
   "google/gemini-2.0-flash-lite-001": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -771,7 +771,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.7-sonnet:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -782,7 +782,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.7-sonnet:thinking": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "推理能力强，适合逻辑分析",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -793,7 +793,7 @@
     "test_results": {}
   },
   "openai/o3-mini-high": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -804,7 +804,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-llama-8b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -815,7 +815,7 @@
     "test_results": {}
   },
   "google/gemini-2.0-flash-001": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -826,7 +826,7 @@
     "test_results": {}
   },
   "qwen/qwen-vl-plus": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -837,7 +837,7 @@
     "test_results": {}
   },
   "qwen/qwen-vl-max": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -848,7 +848,7 @@
     "test_results": {}
   },
   "qwen/qwen-turbo": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -859,7 +859,7 @@
     "test_results": {}
   },
   "qwen/qwen2.5-vl-72b-instruct:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -870,7 +870,7 @@
     "test_results": {}
   },
   "qwen/qwen2.5-vl-72b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -881,7 +881,7 @@
     "test_results": {}
   },
   "qwen/qwen-plus": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -892,7 +892,7 @@
     "test_results": {}
   },
   "qwen/qwen-max": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -903,7 +903,7 @@
     "test_results": {}
   },
   "openai/o3-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -914,7 +914,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-qwen-1.5b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -925,18 +925,18 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-qwen-32b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
     "preferred_for": [],
-    "status": "new",
-    "last_updated": "2025-06-25",
+    "status": "deprecated",
+    "last_updated": "2025-06-26",
     "added_by": "system",
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-qwen-32b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -947,7 +947,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-qwen-14b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -958,7 +958,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-qwen-14b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -969,7 +969,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-llama-70b:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -980,7 +980,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1-distill-llama-70b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -991,7 +991,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1002,7 +1002,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-r1": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1013,7 +1013,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-chat:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1024,7 +1024,7 @@
     "test_results": {}
   },
   "deepseek/deepseek-chat": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1035,7 +1035,7 @@
     "test_results": {}
   },
   "openai/o1": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1046,7 +1046,7 @@
     "test_results": {}
   },
   "x-ai/grok-2-1212": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Grok系列，创新实验",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1057,7 +1057,7 @@
     "test_results": {}
   },
   "cohere/command-r7b-12-2024": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1068,7 +1068,7 @@
     "test_results": {}
   },
   "google/gemini-2.0-flash-exp:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1079,7 +1079,7 @@
     "test_results": {}
   },
   "qwen/qwq-32b-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1090,7 +1090,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-2024-11-20": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1101,7 +1101,7 @@
     "test_results": {}
   },
   "qwen/qwen-2.5-coder-32b-instruct:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1112,7 +1112,7 @@
     "test_results": {}
   },
   "qwen/qwen-2.5-coder-32b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1123,7 +1123,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-haiku:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1134,7 +1134,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-haiku": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1145,7 +1145,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-haiku-20241022:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1156,7 +1156,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-haiku-20241022": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1167,7 +1167,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-sonnet:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1178,7 +1178,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-sonnet": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1189,7 +1189,7 @@
     "test_results": {}
   },
   "x-ai/grok-beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1200,7 +1200,7 @@
     "test_results": {}
   },
   "qwen/qwen-2.5-7b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1211,7 +1211,7 @@
     "test_results": {}
   },
   "google/gemini-flash-1.5-8b": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1222,7 +1222,7 @@
     "test_results": {}
   },
   "qwen/qwen-2.5-72b-instruct:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1233,7 +1233,7 @@
     "test_results": {}
   },
   "qwen/qwen-2.5-72b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1244,7 +1244,7 @@
     "test_results": {}
   },
   "openai/o1-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1255,7 +1255,7 @@
     "test_results": {}
   },
   "openai/o1-preview-2024-09-12": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1266,7 +1266,7 @@
     "test_results": {}
   },
   "openai/o1-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1277,7 +1277,7 @@
     "test_results": {}
   },
   "openai/o1-mini-2024-09-12": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1288,7 +1288,7 @@
     "test_results": {}
   },
   "cohere/command-r-plus-08-2024": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1299,7 +1299,7 @@
     "test_results": {}
   },
   "cohere/command-r-08-2024": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1310,7 +1310,7 @@
     "test_results": {}
   },
   "qwen/qwen-2.5-vl-7b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1321,7 +1321,7 @@
     "test_results": {}
   },
   "openai/chatgpt-4o-latest": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1332,7 +1332,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-2024-08-06": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1343,7 +1343,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-mini": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1354,7 +1354,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-mini-2024-07-18": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1365,7 +1365,7 @@
     "test_results": {}
   },
   "google/gemma-2-27b-it": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1376,7 +1376,7 @@
     "test_results": {}
   },
   "google/gemma-2-9b-it:free": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1387,7 +1387,7 @@
     "test_results": {}
   },
   "google/gemma-2-9b-it": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Gemini系列，多模态能力",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1398,7 +1398,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-sonnet-20240620:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1409,7 +1409,7 @@
     "test_results": {}
   },
   "anthropic/claude-3.5-sonnet-20240620": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1420,7 +1420,7 @@
     "test_results": {}
   },
   "qwen/qwen-2-72b-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "通义千问，中文优化",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1431,7 +1431,7 @@
     "test_results": {}
   },
   "google/gemini-flash-1.5": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "快速响应，适合批量处理",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1442,7 +1442,7 @@
     "test_results": {}
   },
   "openai/gpt-4o": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1453,7 +1453,7 @@
     "test_results": {}
   },
   "openai/gpt-4o:extended": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1464,7 +1464,7 @@
     "test_results": {}
   },
   "openai/gpt-4o-2024-05-13": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1475,7 +1475,7 @@
     "test_results": {}
   },
   "google/gemini-pro-1.5": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "经济实用，日常任务首选",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1486,7 +1486,7 @@
     "test_results": {}
   },
   "openai/gpt-4-turbo": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1497,7 +1497,7 @@
     "test_results": {}
   },
   "cohere/command-r-plus": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1508,7 +1508,7 @@
     "test_results": {}
   },
   "cohere/command-r-plus-04-2024": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1519,7 +1519,7 @@
     "test_results": {}
   },
   "cohere/command": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1530,7 +1530,7 @@
     "test_results": {}
   },
   "cohere/command-r": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1541,7 +1541,7 @@
     "test_results": {}
   },
   "anthropic/claude-3-haiku:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1552,7 +1552,7 @@
     "test_results": {}
   },
   "anthropic/claude-3-opus:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1563,7 +1563,7 @@
     "test_results": {}
   },
   "anthropic/claude-3-opus": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1574,7 +1574,7 @@
     "test_results": {}
   },
   "anthropic/claude-3-sonnet:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1585,7 +1585,7 @@
     "test_results": {}
   },
   "anthropic/claude-3-sonnet": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1596,7 +1596,7 @@
     "test_results": {}
   },
   "cohere/command-r-03-2024": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "低成本模型，适合大量调用",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1607,7 +1607,7 @@
     "test_results": {}
   },
   "openai/gpt-3.5-turbo-0613": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1618,7 +1618,7 @@
     "test_results": {}
   },
   "openai/gpt-4-turbo-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1629,7 +1629,7 @@
     "test_results": {}
   },
   "anthropic/claude-2.1:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1640,7 +1640,7 @@
     "test_results": {}
   },
   "anthropic/claude-2.1": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1651,7 +1651,7 @@
     "test_results": {}
   },
   "anthropic/claude-2:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1662,7 +1662,7 @@
     "test_results": {}
   },
   "anthropic/claude-2": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1673,7 +1673,7 @@
     "test_results": {}
   },
   "openai/gpt-4-1106-preview": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1684,7 +1684,7 @@
     "test_results": {}
   },
   "openai/gpt-3.5-turbo-instruct": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1695,7 +1695,7 @@
     "test_results": {}
   },
   "openai/gpt-3.5-turbo-16k": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1706,7 +1706,7 @@
     "test_results": {}
   },
   "anthropic/claude-2.0:beta": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "预览版本，新功能尝鲜",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1717,7 +1717,7 @@
     "test_results": {}
   },
   "anthropic/claude-2.0": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "Claude系列，文本理解优秀",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1728,7 +1728,7 @@
     "test_results": {}
   },
   "openai/gpt-4": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
@@ -1739,7 +1739,7 @@
     "test_results": {}
   },
   "openai/gpt-4-0314": {
-    "suggested_use": "新发现模型，等待人工评估",
+    "suggested_use": "GPT系列，通用性强",
     "local_notes": "从OpenRouter API自动发现于 2025-06-25",
     "quality_rating": 0,
     "cost_efficiency": 0,
