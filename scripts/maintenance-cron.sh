@@ -48,9 +48,9 @@ daily_cleanup() {
         
         # 基础Docker清理
         echo "执行Docker基础清理..."
-        if [ -f "$PROJECT_DIR/docker-cleanup.sh" ]; then
+        if [ -f "$PROJECT_DIR/scripts/docker-cleanup.sh" ]; then
             cd "$PROJECT_DIR"
-            ./docker-cleanup.sh basic
+            ./scripts/docker-cleanup.sh basic
         else
             docker container prune -f
             docker image prune -f
@@ -86,10 +86,10 @@ weekly_cleanup() {
         
         # Docker深度清理
         echo "执行Docker深度清理..."
-        if [ -f "$PROJECT_DIR/docker-cleanup.sh" ]; then
+        if [ -f "$PROJECT_DIR/scripts/docker-cleanup.sh" ]; then
             cd "$PROJECT_DIR"
             # 自动确认深度清理
-            echo "y" | ./docker-cleanup.sh deep
+            echo "y" | ./scripts/docker-cleanup.sh deep
         else
             docker system prune -a -f
         fi
@@ -105,8 +105,8 @@ weekly_cleanup() {
             tar -czf "$BACKUP_DIR/$backup_name" \
                 "$PROJECT_DIR/.env" \
                 "$PROJECT_DIR/docker-compose.yml" \
-                "$PROJECT_DIR/unified_index.html" \
-                "$PROJECT_DIR/main_refactored.py" \
+                "$PROJECT_DIR/src/unified_index.html" \
+                "$PROJECT_DIR/src/main_refactored.py" \
                 2>/dev/null || echo "部分文件备份失败"
             echo "配置备份完成: $backup_name"
         fi
@@ -190,13 +190,13 @@ install_cron_jobs() {
 
 # AI Flashcard Generator 维护任务
 # 每日2点执行基础清理
-0 2 * * * $PROJECT_DIR/maintenance-cron.sh daily >> $LOG_DIR/cron.log 2>&1
+0 2 * * * $PROJECT_DIR/scripts/maintenance-cron.sh daily >> $LOG_DIR/cron.log 2>&1
 
 # 每周日4点执行深度清理
-0 4 * * 0 $PROJECT_DIR/maintenance-cron.sh weekly >> $LOG_DIR/cron.log 2>&1
+0 4 * * 0 $PROJECT_DIR/scripts/maintenance-cron.sh weekly >> $LOG_DIR/cron.log 2>&1
 
 # 每小时执行健康检查
-0 * * * * $PROJECT_DIR/maintenance-cron.sh health >> $LOG_DIR/cron.log 2>&1
+0 * * * * $PROJECT_DIR/scripts/maintenance-cron.sh health >> $LOG_DIR/cron.log 2>&1
 
 EOF
     

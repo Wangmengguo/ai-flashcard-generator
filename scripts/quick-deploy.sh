@@ -44,23 +44,23 @@ check_environment() {
     fi
     
     # 检查文件
-    if [ ! -f "main_refactored.py" ]; then
-        log_error "主程序文件 main_refactored.py 不存在"
+    if [ ! -f "src/main_refactored.py" ]; then
+        log_error "主程序文件 src/main_refactored.py 不存在"
         exit 1
     fi
     
-    if [ ! -f "unified_index.html" ]; then
-        log_error "前端文件 unified_index.html 不存在"
+    if [ ! -f "src/unified_index.html" ]; then
+        log_error "前端文件 src/unified_index.html 不存在"
         exit 1
     fi
     
-    if [ ! -f "model_manager.py" ]; then
-        log_error "模型管理文件 model_manager.py 不存在"
+    if [ ! -f "src/model_manager.py" ]; then
+        log_error "模型管理文件 src/model_manager.py 不存在"
         exit 1
     fi
     
-    if [ ! -f "local_model_metadata.json" ]; then
-        log_error "模型元数据文件 local_model_metadata.json 不存在"
+    if [ ! -f "src/local_model_metadata.json" ]; then
+        log_error "模型元数据文件 src/local_model_metadata.json 不存在"
         exit 1
     fi
     
