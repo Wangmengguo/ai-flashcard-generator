@@ -24,7 +24,7 @@ git log --oneline -3
 
 ### 5️⃣ **执行快速部署**
 ```bash
-./quick-deploy.sh
+scripts/quick-deploy.sh
 ```
 
 ### 6️⃣ **验证部署状态**
@@ -112,7 +112,7 @@ git log --oneline -5
 git reset --hard HEAD~1
 
 # 重新部署
-./quick-deploy.sh
+scripts/quick-deploy.sh
 ```
 
 ---

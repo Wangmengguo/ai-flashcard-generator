@@ -102,3 +102,22 @@ Core requirements:
 - Maximum input text length is limited to 10,000 characters
 - API keys are stored in localStorage for user convenience
 - CORS is configured for development (should be restricted in production)
+
+## Testing Requirements
+
+**每次增加新功能后必须要测试** - All new features must be tested after implementation using the available testing commands and verifying functionality works as expected.
+
+### Testing Checklist for New Features
+- [ ] 单元测试：`python tests/test_prompt_system.py`
+- [ ] 端到端测试：`python tests/test_e2e_with_api.py`
+- [ ] 性能测试：`python tests/performance_test.py`
+- [ ] 功能验证：确保所有核心功能正常工作
+- [ ] API测试：验证API端点响应正常
+- [ ] 前端测试：确保UI界面功能完整
+
+### Production Deployment Testing
+- [ ] 域名访问测试：`curl -I https://explain1thing.top/ai-flashcard-generator/`
+- [ ] API代理测试：`curl https://explain1thing.top/ai-flashcard-generator/api/health`
+- [ ] 安全配置验证：确认8000端口外部访问被阻止
+- [ ] nginx配置测试：`nginx -t`
+- [ ] Docker容器健康检查：`docker ps` 和容器日志检查

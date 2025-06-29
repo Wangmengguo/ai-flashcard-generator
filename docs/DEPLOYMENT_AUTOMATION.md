@@ -30,7 +30,7 @@
 
 ```bash
 # 使用完整部署脚本
-./deploy.sh
+scripts/deploy.sh
 
 # 功能特性：
 # ✅ 环境检查和SSH连接验证
@@ -52,7 +52,7 @@
 
 ```bash
 # 快速更新代码
-./quick-deploy.sh
+scripts/quick-deploy.sh
 
 # 功能特性：
 # ⚡ 仅同步核心应用文件
@@ -71,10 +71,10 @@
 
 ```bash
 # 交互式回滚菜单
-./rollback.sh
+scripts/rollback.sh
 
 # 快速回滚模式
-./rollback.sh --quick
+scripts/rollback.sh --quick
 
 # 功能特性：
 # 🔄 查看可用备份
@@ -249,7 +249,7 @@ ssh root@198.23.164.200 'nginx -t'
 ssh root@198.23.164.200 'tail -f /var/log/nginx/error.log'
 
 # 恢复备份配置
-./rollback.sh
+scripts/rollback.sh
 ```
 
 #### 4. SSL证书问题
@@ -310,15 +310,15 @@ jobs:
     - uses: actions/checkout@v2
     - name: Deploy to server
       run: |
-        chmod +x ./quick-deploy.sh
-        ./quick-deploy.sh
+        chmod +x scripts/quick-deploy.sh
+        scripts/quick-deploy.sh
 ```
 
 ### 部署策略
 
-- **开发环境** → 自动部署 (quick-deploy.sh)
-- **预发布环境** → 手动审批 + 完整部署 (deploy.sh)  
-- **生产环境** → 手动部署 + 回滚准备 (deploy.sh + rollback.sh)
+- **开发环境** → 自动部署 (scripts/quick-deploy.sh)
+- **预发布环境** → 手动审批 + 完整部署 (scripts/deploy.sh)  
+- **生产环境** → 手动部署 + 回滚准备 (scripts/deploy.sh + scripts/rollback.sh)
 
 ## 📈 未来优化方向
 
@@ -334,16 +334,16 @@ jobs:
 
 ```bash
 # 日常更新 (最常用)
-./quick-deploy.sh
+scripts/quick-deploy.sh
 
 # 重要发布
-./deploy.sh
+scripts/deploy.sh
 
 # 紧急回滚
-./rollback.sh --quick
+scripts/rollback.sh --quick
 
 # 检查服务状态
-./rollback.sh  # 选择选项1
+scripts/rollback.sh  # 选择选项1
 ```
 
 **记住**：新的HTTPS架构需要特别注意SSL证书和nginx配置的一致性！

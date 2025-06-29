@@ -67,7 +67,7 @@ show_update_commands() {
     echo "git log --oneline -3"
     echo
     echo "# 5. 使用快速部署脚本更新"
-    echo "./quick-deploy.sh"
+    echo "scripts/quick-deploy.sh"
     echo
     echo "# 或者手动更新："
     echo "# docker compose build --no-cache"
