@@ -10,7 +10,9 @@
 
 **下一代智能抽认卡生成系统** - 将任意文本转化为高质量学习卡片的专业工具
 
-🌟 **[在线体验 → http://198.23.164.200:8000](http://198.23.164.200:8000)** 🌟
+🌟 **[在线体验 → https://explain1thing.top/ai-flashcard-generator](https://explain1thing.top/ai-flashcard-generator)** 🌟
+
+📋 **[个人主页 → https://www.explain1thing.top](https://www.explain1thing.top)** 📋
 
 ---
 
@@ -19,13 +21,16 @@
 AI Flashcard Generator 是一个企业级的智能抽认卡生成平台，支持多种AI模型、灵活的模板系统和完整的容器化部署。项目已完成从MVP到生产就绪应用的完整转型，具备专业的架构设计、全面的文档体系和精简的代码结构。
 
 ### 🎉 **部署状态**
-- ✅ **云端生产环境**: 已成功部署至云端服务器
-- ✅ **在线演示**: http://198.23.164.200:8000
-- ✅ **Docker容器**: 正常运行中
+- ✅ **云端生产环境**: 已成功部署至云端服务器  
+- ✅ **域名映射**: https://explain1thing.top/ai-flashcard-generator
+- ✅ **个人主页**: https://www.explain1thing.top
+- ✅ **Docker容器**: 正常运行中，端口已安全保护
+- ✅ **nginx反向代理**: 已配置完成，支持API路由
 - ✅ **功能验证**: 所有核心功能已测试通过
 - ✅ **API服务**: 稳定响应中
 - ✅ **批量处理**: 已修复批量处理功能，配置界面优化完成
 - 🆕 **新增功能**: 夜间模式已上线，批量处理配置可视化
+- ✅ **SSL证书**: 已完成端到端HTTPS加密，使用Let's Encrypt证书
 
 ### 🎯 核心价值主张
 
@@ -81,11 +86,12 @@ AI Flashcard Generator 是一个企业级的智能抽认卡生成平台，支持
 
 ### 🌐 方式一：在线体验（最简单）
 
-**直接访问云端部署**: [http://198.23.164.200:8000](http://198.23.164.200:8000)
+**直接访问云端部署**: [https://explain1thing.top/ai-flashcard-generator](https://explain1thing.top/ai-flashcard-generator)
 - 无需安装，即开即用
 - 所有功能完整可用
 - 支持夜间模式切换
 - 🆕 **管理后台**: 访问管理页面查看模型统计和配置
+- 🔒 **安全访问**: 通过域名访问，8000端口已被保护
 
 ### 🐳 方式二：Docker部署（推荐本地）
 
@@ -409,6 +415,55 @@ docker-compose up -d
 # 配置验证
 make validate     # 验证配置
 python validate-config.py
+```
+
+### 🌐 域名映射部署（生产级）
+
+**将应用从IP访问升级到域名访问，提供更好的用户体验和安全性**
+
+#### 📋 部署指南
+详细的域名映射配置步骤，请参考：**[域名映射部署指南](./DOMAIN_MAPPING_GUIDE.md)**
+
+#### 🎯 架构概览
+```
+用户 → Cloudflare (HTTPS) → nginx (HTTPS) → Docker容器 (本地8000)
+     ↓
+个人主页: www.explain1thing.top
+AI应用: explain1thing.top/ai-flashcard-generator  
+API: explain1thing.top/ai-flashcard-generator/api/*
+```
+
+#### ✅ 已完成功能
+- ✅ nginx反向代理配置
+- ✅ Docker端口安全保护（仅本地访问）
+- ✅ 防火墙规则配置
+- ✅ API路由代理
+- ✅ 前端路径修复
+- ✅ Cloudflare DNS配置
+- ✅ **SSL证书配置**: Let's Encrypt证书，443端口HTTPS服务
+- ✅ **端到端加密**: Cloudflare完全(严格)模式
+- ✅ **HTTP重定向**: 自动301重定向到HTTPS
+
+#### ✅ 完成功能
+- ✅ **SSL证书配置**: 已完成端到端HTTPS加密，使用Let's Encrypt证书
+- ✅ **SSL模式升级**: 已升级到Cloudflare"完全(严格)"模式
+- ✅ **证书自动续期**: Let's Encrypt自动续期机制已配置
+
+#### 🔧 快速命令
+```bash
+# 检查当前部署状态
+curl -I https://explain1thing.top/ai-flashcard-generator/
+curl https://explain1thing.top/ai-flashcard-generator/api/health
+
+# 验证安全配置
+docker ps | grep 8000                    # 确认端口绑定
+ufw status | grep 8000                   # 确认防火墙规则
+curl --connect-timeout 5 http://198.23.164.200:8000/health || echo "外部访问已被阻止 ✓"
+
+# 验证SSL证书
+openssl s_client -connect explain1thing.top:443 -servername explain1thing.top < /dev/null 2>/dev/null | openssl x509 -noout -issuer -subject -dates
+ss -tlnp | grep :443                     # 确认443端口监听
+curl -I http://explain1thing.top/ai-flashcard-generator/  # 验证HTTP重定向
 ```
 
 ### 📊 监控
